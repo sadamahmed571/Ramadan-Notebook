@@ -1,0 +1,1027 @@
+/* إعادة ضبط الأنماط */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* الألوان الأساسية */
+    --navy-blue: #0a1931;
+    --gold: #d4af37;
+    --off-white: #f8f5f1;
+    --light-gray: #e6e6e6;
+    --medium-gray: #b0b0b0;
+    --dark-gray: #555;
+    --success: #4caf50;
+    --warning: #ff9800;
+    --danger: #f44336;
+    
+    /* الظلال */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+    
+    /* الزوايا المدورة */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    
+    /* التباعد */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    
+    /* وضع السكينة */
+    --serenity-blue: #e8f4f8;
+    --serenity-text: #2c3e50;
+}
+
+/* التصميم المظلم */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --navy-blue: #0d1b2a;
+        --off-white: #1b263b;
+        --light-gray: #415a77;
+        --medium-gray: #778da9;
+        --dark-gray: #e0e1dd;
+    }
+}
+
+/* وضع السكينة */
+.serenity-mode {
+    background-color: var(--serenity-blue) !important;
+    color: var(--serenity-text) !important;
+}
+
+.serenity-mode .card {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* أنماط أساسية */
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--off-white);
+    color: var(--navy-blue);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: 80px; /* مساحة لزر الفعل العائم */
+}
+
+/* إخفاء شريط التمرير ولكن مع السماح بالتمرير */
+body::-webkit-scrollbar {
+    width: 6px;
+}
+
+body::-webkit-scrollbar-track {
+    background: var(--light-gray);
+}
+
+body::-webkit-scrollbar-thumb {
+    background: var(--medium-gray);
+    border-radius: 3px;
+}
+
+/* الهيكل الرئيسي */
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: var(--space-md);
+}
+
+/* شريط العنوان */
+.header {
+    background-color: var(--navy-blue);
+    color: white;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.app-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.date-display {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* البطاقات */
+.card {
+    background-color: white;
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--light-gray);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--navy-blue);
+}
+
+.progress-text {
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 1.1rem;
+}
+
+/* دائرة التقدم */
+.progress-container {
+    display: flex;
+    justify-content: center;
+    margin: var(--space-md) 0;
+}
+
+.progress-circle {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.progress-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.progress-percent {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+}
+
+.progress-label {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+}
+
+.progress-time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+    margin-top: var(--space-md);
+}
+
+.progress-time i {
+    margin-left: var(--space-xs);
+}
+
+/* الصلاة القادمة */
+.next-prayer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.prayer-info h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+    color: var(--navy-blue);
+}
+
+.countdown {
+    display: flex;
+    gap: var(--space-xs);
+    font-family: monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin: var(--space-sm) 0;
+}
+
+.countdown-number {
+    background-color: var(--navy-blue);
+    color: white;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    min-width: 40px;
+    text-align: center;
+}
+
+.prayer-time {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+}
+
+.prayer-icon {
+    color: var(--gold);
+    font-size: 1.2rem;
+}
+
+/* التتبع اليومي */
+.tracker-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.tracker-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.tracker-icon {
+    width: 40px;
+    height: 40px;
+    background-color: var(--light-gray);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--navy-blue);
+}
+
+.tracker-label {
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.tracker-toggle {
+    margin-top: var(--space-xs);
+}
+
+/* التبديل (Toggle) */
+.toggle-checkbox {
+    display: none;
+}
+
+.toggle-label {
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    background-color: var(--medium-gray);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.toggle-label::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    right: 2px;
+    transition: transform 0.2s;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+    background-color: var(--success);
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+    transform: translateX(-20px);
+}
+
+/* تقدم القرآن */
+.quran-progress {
+    margin-top: var(--space-md);
+}
+
+.quran-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: var(--space-md);
+}
+
+.quran-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.quran-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+}
+
+.quran-stat-label {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+}
+
+.progress-bar-container {
+    margin-top: var(--space-lg);
+}
+
+.progress-bar {
+    height: 8px;
+    background-color: var(--light-gray);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--gold);
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+.progress-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-xs);
+    font-size: 0.8rem;
+    color: var(--medium-gray);
+}
+
+/* التحدي اليومي */
+.challenge-content {
+    padding: var(--space-md);
+    background-color: rgba(212, 175, 55, 0.1);
+    border-radius: var(--radius-sm);
+    margin-top: var(--space-md);
+}
+
+.challenge-content p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.challenge-icon {
+    color: var(--gold);
+    font-size: 1.2rem;
+}
+
+/* خريطة الأثر */
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+    margin-top: var(--space-md);
+}
+
+.impact-star {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--light-gray);
+    transition: background-color 0.3s;
+}
+
+.impact-star.active {
+    background-color: var(--gold);
+}
+
+.impact-count {
+    font-weight: 700;
+    color: var(--gold);
+}
+
+/* الإهداء */
+.dedication-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(212, 175, 55, 0.1);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-top: var(--space-lg);
+}
+
+.dedication-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex: 1;
+}
+
+.dedication-content i {
+    color: var(--danger);
+}
+
+/* الأزرار */
+.btn-primary, .btn-secondary, .btn-danger {
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background-color: var(--navy-blue);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #152642;
+}
+
+.btn-secondary {
+    background-color: var(--light-gray);
+    color: var(--navy-blue);
+}
+
+.btn-secondary:hover {
+    background-color: #d6d6d6;
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #d32f2f;
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    color: var(--navy-blue);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.text-btn:hover {
+    color: #152642;
+}
+
+.small-text-btn {
+    font-size: 0.8rem;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--navy-blue);
+    font-size: 1.1rem;
+}
+
+.icon-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.small-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+}
+
+/* زر الفعل العائم (المسبحة) */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--gold);
+    color: white;
+    border: none;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.2s;
+}
+
+.fab:hover {
+    transform: scale(1.05);
+}
+
+.fab-counter {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    background-color: var(--danger);
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* النوافذ المنبثقة (Modals) */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: var(--radius-lg);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.compact-modal {
+    padding: var(--space-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-lg);
+}
+
+.modal-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--medium-gray);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.modal-body {
+    margin-bottom: var(--space-lg);
+}
+
+/* نموذج المسبحة */
+.tasbih-display {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.tasbih-count {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+    margin-bottom: var(--space-sm);
+}
+
+.tasbih-type {
+    font-size: 1.2rem;
+    color: var(--medium-gray);
+}
+
+.tasbih-controls {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-bottom: var(--space-xl);
+}
+
+.tasbih-btn {
+    font-size: 1.2rem;
+    padding: var(--space-lg) var(--space-xl);
+}
+
+.tasbih-presets {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.preset-btn {
+    padding: var(--space-md);
+    background-color: var(--light-gray);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.preset-btn:hover {
+    background-color: #d6d6d6;
+}
+
+/* نموذج القرآن */
+.input-group {
+    margin-bottom: var(--space-lg);
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    font-weight: 500;
+    color: var(--navy-blue);
+}
+
+.input-with-button {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.input-with-button input {
+    flex: 1;
+}
+
+.quran-inputs {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.input-with-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.input-with-label input {
+    width: 70px;
+}
+
+.stats-summary {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--light-gray);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--space-md);
+    background-color: var(--light-gray);
+    border-radius: var(--radius-sm);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+    margin-top: var(--space-xs);
+}
+
+/* نموذج الإهداء */
+textarea {
+    width: 100%;
+    padding: var(--space-md);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius-sm);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    resize: vertical;
+}
+
+/* نموذج الصلوات */
+.prayer-table {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.prayer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.prayer-row:last-child {
+    border-bottom: none;
+}
+
+.prayer-name {
+    font-weight: 500;
+    color: var(--navy-blue);
+}
+
+.prayer-status {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.prayer-status.completed {
+    color: var(--success);
+}
+
+.prayer-status.pending {
+    color: var(--warning);
+}
+
+.prayer-status.upcoming {
+    color: var(--gold);
+}
+
+/* نموذج الإعدادات */
+.settings-group {
+    margin-bottom: var(--space-xl);
+}
+
+.settings-group h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: var(--space-lg);
+    color: var(--navy-blue);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.toggle-switch {
+    position: relative;
+}
+
+.about-info {
+    line-height: 1.6;
+}
+
+.about-info p {
+    margin-bottom: var(--space-sm);
+}
+
+.contact-links {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.contact-link {
+    color: var(--navy-blue);
+    font-size: 1.2rem;
+    text-decoration: none;
+}
+
+.contact-link:hover {
+    color: var(--gold);
+}
+
+/* رسالة الخصوصية */
+.privacy-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(10, 25, 49, 0.95);
+    color: white;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+}
+
+.privacy-content {
+    text-align: center;
+    max-width: 400px;
+}
+
+.privacy-icons {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xl);
+}
+
+.privacy-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.privacy-icon i {
+    font-size: 2.5rem;
+    color: var(--gold);
+}
+
+.privacy-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: var(--space-xl);
+}
+
+/* تهنئة العيد */
+.eid-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(212, 175, 55, 0.95);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-lg);
+}
+
+.eid-content {
+    background-color: white;
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.eid-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--navy-blue);
+    margin-bottom: var(--space-md);
+}
+
+.eid-message {
+    font-size: 1.2rem;
+    color: var(--navy-blue);
+    margin-bottom: var(--space-sm);
+}
+
+.eid-submessage {
+    color: var(--medium-gray);
+    margin-bottom: var(--space-xl);
+}
+
+.eid-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: var(--space-xl) 0;
+}
+
+.eid-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.eid-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+.eid-stat-label {
+    font-size: 0.9rem;
+    color: var(--medium-gray);
+    margin-top: var(--space-xs);
+}
+
+.eid-signature {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--light-gray);
+    color: var(--medium-gray);
+    font-size: 0.9rem;
+}
+
+/* الأدوات المساعدة */
+.hidden {
+    display: none !important;
+}
+
+.score {
+    font-weight: 700;
+    color: var(--gold);
+    font-size: 1.1rem;
+}
+
+input[type="text"], input[type="number"] {
+    padding: var(--space-md);
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius-sm);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+/* استجابة التصميم */
+@media (max-width: 400px) {
+    .container {
+        padding: var(--space-sm);
+    }
+    
+    .tracker-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-lg);
+    }
+    
+    .countdown-number {
+        min-width: 30px;
+        font-size: 1.2rem;
+    }
+    
+    .tasbih-controls {
+        flex-direction: column;
+    }
+}
+
+@media (min-width: 500px) {
+    .container {
+        padding: var(--space-lg);
+    }
+    
+    .fab {
+        left: auto;
+        right: 20px;
+    }
+}
+
