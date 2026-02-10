@@ -1,490 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مفكرة رمضان</title>
-    <meta name="description" content="تطبيق مفكرة رمضان - تتبع عباداتك في شهر الصيام">
-    <meta name="theme-color" content="#0a1931">
-    
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
-    
-    <!-- خط Tajawal -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- خدمة العملاء للـ PWA -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js');
-            });
-        }
-    </script>
-</head>
-<body>
-    <!-- الرسالة الأولى للخصوصية -->
-    <div id="privacyMessage" class="privacy-modal">
-        <div class="privacy-content">
-            <div class="privacy-icons">
-                <div class="privacy-icon"><i class="fas fa-lock"></i> محلي</div>
-                <div class="privacy-icon"><i class="fas fa-wifi-slash"></i> بدون إنترنت</div>
-                <div class="privacy-icon"><i class="fas fa-user-slash"></i> بدون حساب</div>
-            </div>
-            <p class="privacy-text">بياناتك تبقى على جهازك فقط. لا توجد خوادم خارجية ولا تتبع.</p>
-            <button id="privacyClose" class="btn-primary">إنتقل للتطبيق</button>
-        </div>
-    </div>
-
-    <!-- الشاشة الرئيسية -->
-    <div class="container">
-        <!-- شريط العنوان -->
-        <header class="header">
-            <div class="header-content">
-                <h1 class="app-title">مفكرة رمضان</h1>
-                <div class="header-actions">
-                    <button id="settingsBtn" class="icon-btn" title="الإعدادات">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <button id="exportBtn" class="icon-btn" title="تصدير البيانات">
-                        <i class="fas fa-download"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="date-display">
-                <span id="hijriDate">رمضان 1445</span>
-                <span id="gregorianDate"> - 1 أبريل 2024</span>
-            </div>
-        </header>
-
-        <!-- لوحة التحكم الرئيسية -->
-        <main class="dashboard">
-            <!-- عنصر تقدم اليوم -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">تقدم اليوم</h2>
-                    <span id="dayProgressText" class="progress-text">75%</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-circle">
-                        <svg width="120" height="120" viewBox="0 0 120 120">
-                            <circle cx="60" cy="60" r="54" stroke="#e6e6e6" stroke-width="10" fill="none"></circle>
-                            <circle id="progressRing" cx="60" cy="60" r="54" stroke="#d4af37" stroke-width="10" fill="none" stroke-dasharray="339.292" stroke-dashoffset="84.823" transform="rotate(-90 60 60)"></circle>
-                        </svg>
-                        <div class="progress-center">
-                            <span id="progressPercent" class="progress-percent">75%</span>
-                            <span class="progress-label">إنجاز</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="progress-time">
-                    <span><i class="far fa-clock"></i> متبقي: <span id="timeRemaining">4 ساعات</span></span>
-                    <span><i class="fas fa-calendar-day"></i> اليوم: <span id="dayNumber">15</span> من 30</span>
-                </div>
-            </div>
-
-            <!-- الصلاة القادمة -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">الصلاة القادمة</h2>
-                    <span class="prayer-icon"><i class="fas fa-mosque"></i></span>
-                </div>
-                <div class="next-prayer">
-                    <div class="prayer-info">
-                        <h3 id="nextPrayerName">المغرب</h3>
-                        <div class="countdown" id="prayerCountdown">
-                            <span class="countdown-number">02</span>:<span class="countdown-number">45</span>:<span class="countdown-number">18</span>
-                        </div>
-                        <div class="prayer-time">
-                            <i class="far fa-clock"></i>
-                            <span id="nextPrayerTime">19:23</span>
-                        </div>
-                    </div>
-                    <button id="prayerTableBtn" class="icon-btn small-btn" title="جدول الصلوات">
-                        <i class="fas fa-list"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- التتبع اليومي -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">التتبع اليومي</h2>
-                    <span id="todayScore" class="score">8/10</span>
-                </div>
-                <div class="tracker-grid">
-                    <div class="tracker-item" data-action="fajr">
-                        <div class="tracker-icon"><i class="fas fa-sun"></i></div>
-                        <span class="tracker-label">الفجر</span>
-                        <div class="tracker-toggle">
-                            <input type="checkbox" id="fajrToggle" class="toggle-checkbox">
-                            <label for="fajrToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    <div class="tracker-item" data-action="dhuhr">
-                        <div class="tracker-icon"><i class="fas fa-sun"></i></div>
-                        <span class="tracker-label">الظهر</span>
-                        <div class="tracker-toggle">
-                            <input type="checkbox" id="dhuhrToggle" class="toggle-checkbox">
-                            <label for="dhuhrToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    <div class="tracker-item" data-action="asr">
-                        <div class="tracker-icon"><i class="fas fa-sun"></i></div>
-                        <span class="tracker-label">العصر</span>
-                        <div class="tracker-toggle">
-                            <input type="checkbox" id="asrToggle" class="toggle-checkbox">
-                            <label for="asrToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    <div class="tracker-item" data-action="maghrib">
-                        <div class="tracker-icon"><i class="fas fa-moon"></i></div>
-                        <span class="tracker-label">المغرب</span>
-                        <div class="tracker-toggle">
-                            <input type="checkbox" id="maghribToggle" class="toggle-checkbox">
-                            <label for="maghribToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    <div class="tracker-item" data-action="isha">
-                        <div class="tracker-icon"><i class="fas fa-moon"></i></div>
-                        <span class="tracker-label">العشاء</span>
-                        <div class="tracker-toggle">
-                            <input type="checkbox" id="ishaToggle" class="toggle-checkbox">
-                            <label for="ishaToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    <div class="tracker-item" data-action="taraweeh">
-                        <div class="tracker-icon"><i class="fas fa-star-and-crescent"></i></div>
-                        <span class="tracker-label">تراويح</span>
-                        <div class="tracker-toggle">
-                            <input type="checkbox" id="taraweehToggle" class="toggle-checkbox">
-                            <label for="taraweehToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    <div class="tracker-item" data-action="quran">
-                        <div class="tracker-icon"><i class="fas fa-book-quran"></i></div>
-                        <span class="tracker-label">قرآن</span>
-                        <div class="tracker-toggle">
-                            <input type="checkbox" id="quranToggle" class="toggle-checkbox">
-                            <label for="quranToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    <div class="tracker-item" data-action="tahajjud">
-                        <div class="tracker-icon"><i class="fas fa-pray"></i></div>
-                        <span class="tracker-label">تهجد</span>
-                        <div class="tracker-toggle">
-                            <input type="checkbox" id="tahajjudToggle" class="toggle-checkbox">
-                            <label for="tahajjudToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- تتبع القرآن -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">تقدم القرآن</h2>
-                    <button id="quranDetailsBtn" class="text-btn">تفاصيل</button>
-                </div>
-                <div class="quran-progress">
-                    <div class="quran-stats">
-                        <div class="quran-stat">
-                            <span class="quran-stat-value" id="juzCompleted">12</span>
-                            <span class="quran-stat-label">جزء</span>
-                        </div>
-                        <div class="quran-stat">
-                            <span class="quran-stat-value" id="pagesCompleted">180</span>
-                            <span class="quran-stat-label">صفحة</span>
-                        </div>
-                        <div class="quran-stat">
-                            <span class="quran-stat-value" id="khatmaProgress">0.4</span>
-                            <span class="quran-stat-label">ختمة</span>
-                        </div>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar">
-                            <div id="quranProgressBar" class="progress-bar-fill" style="width: 40%"></div>
-                        </div>
-                        <div class="progress-bar-labels">
-                            <span>البداية</span>
-                            <span>الهدف: <span id="quranTarget">1</span> ختمة</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- التحدي اليومي -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">التحدي اليومي</h2>
-                    <span class="challenge-icon"><i class="fas fa-trophy"></i></span>
-                </div>
-                <div class="challenge-content">
-                    <p id="dailyChallenge">تصدق على شخص محتاج اليوم، ولو بمبلغ بسيط.</p>
-                </div>
-            </div>
-
-            <!-- خريطة الأثر -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">خريطة الأثر</h2>
-                    <span class="impact-count" id="impactCount">24/30</span>
-                </div>
-                <div class="impact-grid" id="impactGrid">
-                    <!-- سيتم إنشاء النجوم ديناميكيًا -->
-                </div>
-            </div>
-
-            <!-- الإهداء -->
-            <div class="dedication-container">
-                <div class="dedication-content" id="dedicationText">
-                    <i class="fas fa-heart"></i>
-                    <span>إلى روح أمي، التي علمتني معنى الصبر والإيمان.</span>
-                </div>
-                <button id="editDedicationBtn" class="text-btn small-text-btn">تعديل</button>
-            </div>
-        </main>
-
-        <!-- زر العائمة للمسبحة -->
-        <button id="tasbihBtn" class="fab">
-            <i class="fas fa-hands-praying"></i>
-            <span class="fab-counter" id="tasbihCount">0</span>
-        </button>
-    </div>
-
-    <!-- Modal المسبحة -->
-    <div id="tasbihModal" class="modal">
-        <div class="modal-content compact-modal">
-            <div class="modal-header">
-                <h2 class="modal-title">المسبحة الإلكترونية</h2>
-                <button class="modal-close" id="tasbihClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="tasbih-display">
-                    <div class="tasbih-count" id="modalTasbihCount">0</div>
-                    <div class="tasbih-type" id="tasbihType">سبحان الله</div>
-                </div>
-                <div class="tasbih-controls">
-                    <button id="tasbihAdd" class="btn-primary tasbih-btn">+1</button>
-                    <button id="tasbihReset" class="btn-secondary">إعادة تعيين</button>
-                    <button id="tasbihChange" class="btn-secondary">تغيير الذكر</button>
-                </div>
-                <div class="tasbih-presets">
-                    <button class="preset-btn" data-dhikr="سبحان الله">سبحان الله (33)</button>
-                    <button class="preset-btn" data-dhikr="الحمد لله">الحمد لله (33)</button>
-                    <button class="preset-btn" data-dhikr="الله أكبر">الله أكبر (34)</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal تتبع القرآن -->
-    <div id="quranModal" class="modal">
-        <div class="modal-content compact-modal">
-            <div class="modal-header">
-                <h2 class="modal-title">تتبع تقدم القرآن</h2>
-                <button class="modal-close" id="quranClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="input-group">
-                    <label for="khatmaTarget">عدد الختمات المستهدف:</label>
-                    <div class="input-with-button">
-                        <input type="number" id="khatmaTarget" min="1" max="10" value="1">
-                        <button id="updateKhatmaTarget" class="btn-primary">تحديث</button>
-                    </div>
-                </div>
-                <div class="input-group">
-                    <label>إضافة تقدم:</label>
-                    <div class="quran-inputs">
-                        <div class="input-with-label">
-                            <input type="number" id="addJuz" min="0" max="30" value="0">
-                            <span>أجزاء</span>
-                        </div>
-                        <div class="input-with-label">
-                            <input type="number" id="addPages" min="0" max="20" value="0">
-                            <span>صفحات</span>
-                        </div>
-                        <button id="addQuranProgress" class="btn-primary">إضافة</button>
-                    </div>
-                </div>
-                <div class="stats-summary">
-                    <h3>الإحصاءات</h3>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <span class="stat-value" id="totalJuz">12</span>
-                            <span class="stat-label">الأجزاء</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value" id="totalPages">180</span>
-                            <span class="stat-label">الصفحات</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value" id="totalKhatmat">0.4</span>
-                            <span class="stat-label">الختمات</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal الإهداء -->
-    <div id="dedicationModal" class="modal">
-        <div class="modal-content compact-modal">
-            <div class="modal-header">
-                <h2 class="modal-title">إهداء العبادة</h2>
-                <button class="modal-close" id="dedicationClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="input-group">
-                    <label for="dedicationTo">إلى:</label>
-                    <input type="text" id="dedicationTo" placeholder="اسم الشخص أو الجهة">
-                </div>
-                <div class="input-group">
-                    <label for="dedicationMessage">الرسالة:</label>
-                    <textarea id="dedicationMessage" rows="3" placeholder="رسالة مختصرة عن سبب الإهداء..."></textarea>
-                </div>
-                <button id="saveDedication" class="btn-primary">حفظ الإهداء</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal جدول الصلوات -->
-    <div id="prayerModal" class="modal">
-        <div class="modal-content compact-modal">
-            <div class="modal-header">
-                <h2 class="modal-title">أوقات الصلاة</h2>
-                <button class="modal-close" id="prayerClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="prayer-table">
-                    <div class="prayer-row">
-                        <span class="prayer-name">الفجر</span>
-                        <span class="prayer-time">04:45</span>
-                        <span class="prayer-status completed"><i class="fas fa-check"></i></span>
-                    </div>
-                    <div class="prayer-row">
-                        <span class="prayer-name">الظهر</span>
-                        <span class="prayer-time">12:30</span>
-                        <span class="prayer-status pending"><i class="far fa-clock"></i></span>
-                    </div>
-                    <div class="prayer-row">
-                        <span class="prayer-name">العصر</span>
-                        <span class="prayer-time">15:45</span>
-                        <span class="prayer-status pending"><i class="far fa-clock"></i></span>
-                    </div>
-                    <div class="prayer-row">
-                        <span class="prayer-name">المغرب</span>
-                        <span class="prayer-time">19:23</span>
-                        <span class="prayer-status upcoming"><i class="fas fa-bell"></i></span>
-                    </div>
-                    <div class="prayer-row">
-                        <span class="prayer-name">العشاء</span>
-                        <span class="prayer-time">20:45</span>
-                        <span class="prayer-status pending"><i class="far fa-clock"></i></span>
-                    </div>
-                    <div class="prayer-row">
-                        <span class="prayer-name">التراويح</span>
-                        <span class="prayer-time">21:30</span>
-                        <span class="prayer-status pending"><i class="far fa-clock"></i></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal الإعدادات -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content compact-modal">
-            <div class="modal-header">
-                <h2 class="modal-title">الإعدادات</h2>
-                <button class="modal-close" id="settingsClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="settings-group">
-                    <h3>عام</h3>
-                    <div class="setting-item">
-                        <span>وضع السكينة (تلقائي من الفجر للشروق)</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="serenityMode" checked>
-                            <label for="serenityMode" class="toggle-label"></label>
-                        </div>
-                    </div>
-                    <div class="setting-item">
-                        <span>التنبيهات</span>
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="notificationsToggle" checked>
-                            <label for="notificationsToggle" class="toggle-label"></label>
-                        </div>
-                    </div>
-                </div>
-                <div class="settings-group">
-                    <h3>البيانات</h3>
-                    <div class="setting-item">
-                        <span>تصدير البيانات</span>
-                        <button id="exportDataBtn" class="btn-secondary">تصدير PDF</button>
-                    </div>
-                    <div class="setting-item">
-                        <span>مسح البيانات</span>
-                        <button id="clearDataBtn" class="btn-danger">مسح الكل</button>
-                    </div>
-                </div>
-                <div class="settings-group">
-                    <h3>حول التطبيق</h3>
-                    <div class="about-info">
-                        <p><strong>مفكرة رمضان</strong></p>
-                        <p>تطبيق محلي بالكامل، لا يحتاج اتصال إنترنت</p>
-                        <p>الإصدار 1.0.0</p>
-                        <p>تطوير: صدام أحمد</p>
-                        <div class="contact-links">
-                            <a href="#" class="contact-link"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="contact-link"><i class="fab fa-github"></i></a>
-                            <a href="#" class="contact-link"><i class="fas fa-envelope"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- تهنئة العيد -->
-    <div id="eidCelebration" class="eid-overlay hidden">
-        <div class="eid-content">
-            <h2 class="eid-title">كل عام وأنتم بخير</h2>
-            <p class="eid-message">تهانينا بمناسبة عيد الفطر المبارك!</p>
-            <p class="eid-submessage">تم إكمال 30 يومًا من الصيام والعبادة بنجاح.</p>
-            <div class="eid-stats">
-                <div class="eid-stat">
-                    <span class="eid-stat-value">100%</span>
-                    <span class="eid-stat-label">إنجاز رمضان</span>
-                </div>
-                <div class="eid-stat">
-                    <span class="eid-stat-value">1.2</span>
-                    <span class="eid-stat-label">ختمات قرآن</span>
-                </div>
-                <div class="eid-stat">
-                    <span class="eid-stat-value">150</span>
-                    <span class="eid-stat-label">مرات ذكر</span>
-                </div>
-            </div>
-            <button id="shareEid" class="btn-primary">مشاركة الإنجاز</button>
-            <div class="eid-signature">
-                <p>مفكرة رمضان</p>
-                <p>تطوير: صدام أحمد</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- JavaScript -->
-    <script src="app.js"></script>
-</body>
-</html>
