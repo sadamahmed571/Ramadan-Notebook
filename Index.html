@@ -113,6 +113,35 @@
             );
         };
 
+        // 6. Impact Map Component
+        const ImpactMap = ({ allDaysProgress }) => {
+            return (
+                <div class="mt-8 mb-4">
+                    <h3 class="text-[10px] font-bold text-gray-400 mb-3 text-center uppercase tracking-[0.2em]">ثواب مُهدى</h3>
+                    <div class="flex flex-wrap justify-center gap-1.5 max-w-[180px] mx-auto">
+                        {Array.from({ length: 30 }).map((_, i) => {
+                            const day = i + 1;
+                            const progress = allDaysProgress[day] || 0;
+
+                            let intensity = "bg-gray-100 dark:bg-slate-800";
+                            if (progress > 85) intensity = "bg-gold shadow-[0_0_8px_rgba(251,191,36,0.4)]";
+                            else if (progress > 50) intensity = "bg-gold/60";
+                            else if (progress > 20) intensity = "bg-gold/30";
+                            else if (progress > 0) intensity = "bg-gold/10";
+
+                            return (
+                                <div
+                                    key={day}
+                                    className={`w-2.5 h-2.5 rounded-[2px] ${intensity} transition-all duration-500`}
+                                    title={`اليوم ${day}: ${Math.round(progress)}%`}
+                                ></div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
         // Spiritual Sprout Component
         const SpiritualSprout = ({ progress }) => {
             let icon = "circle-dot";
@@ -236,10 +265,71 @@
             );
         };
 
+        // 5. Dhikr Capsule Component
+        const DhikrCapsule = () => {
+            const dhikrs = [
+                "سبحان الله وبحمده",
+                "سبحان الله العظيم",
+                "لا إله إلا الله",
+                "أستغفر الله وأتوب إليه",
+                "اللهم صلِّ وسلم على نبينا محمد",
+                "لا حول ولا قوة إلا بالله",
+                "الحمد لله حمداً كثيراً",
+                "الله أكبر كبيراً",
+                "لا إله إلا الله وحده لا شريك له",
+                "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر",
+                "حسبي الله ونعم الوكيل",
+                "سبحان الملك القدوس"
+            ];
+            const [currentDhikr, setCurrentDhikr] = useState("");
+            const [copied, setCopied] = useState(false);
+
+            useEffect(() => {
+                const hour = new Date().getHours();
+                setCurrentDhikr(dhikrs[hour % dhikrs.length]);
+            }, []);
+
+            useEffect(() => {
+                if (window.lucide) window.lucide.createIcons();
+            }, [currentDhikr, copied]);
+
+            const handleAction = () => {
+                navigator.clipboard.writeText(currentDhikr);
+                if (navigator.vibrate) navigator.vibrate(50);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            return (
+                <div
+                    onClick={handleAction}
+                    class="bg-navy text-gold p-3 rounded-xl flex items-center justify-between cursor-pointer active:scale-95 transition-all mb-4 border-2 border-gold/20 shadow-lg group"
+                >
+                    <div class="flex items-center gap-3">
+                        <div class="bg-gold/10 p-2 rounded-lg group-hover:bg-gold/20 transition-colors">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </div>
+                        <div class="flex flex-col text-right">
+                            <span class="text-[10px] text-gold/60 font-bold uppercase tracking-wider">ذكر الساعة</span>
+                            <span class="text-sm font-bold">{currentDhikr}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        {copied ? (
+                            <i data-lucide="check" class="w-4 h-4 text-green-400"></i>
+                        ) : (
+                            <i data-lucide="copy" class="w-4 h-4 opacity-40 group-hover:opacity-100 transition-opacity"></i>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
         // --- Main App ---
         function App() {
             const [mounted, setMounted] = useState(false);
             const [ramadanDay, setRamadanDay] = useState(1); // Default to 1st Ramadan
+            const [allDaysProgress, setAllDaysProgress] = useState({});
             const [serenityMode, setSerenityMode] = useState(false);
             const [tasbihCount, setTasbihCount] = useState(0);
             const [dedication, setDedication] = useState('');
@@ -259,11 +349,14 @@
                 const initDB = async () => {
                     try {
                         const savedDay = await db.appState.get('ramadanDay');
-                        if (savedDay) setRamadanDay(savedDay.value);
+                        const day = savedDay ? savedDay.value : 1;
+                        if (savedDay) setRamadanDay(day);
 
                         const savedTasbih = await db.appState.get('tasbihCount');
                         const savedDedication = await db.appState.get('dedication');
-                        const savedTracker = await db.appState.get('trackerItems');
+
+                        // Load current day tracker
+                        const savedTracker = await db.appState.get(`tracker_day_${day}`);
 
                         if (savedTasbih) setTasbihCount(savedTasbih.value);
                         if (savedDedication) {
@@ -272,13 +365,25 @@
                         } else {
                             setShowDedicationModal(true);
                         }
+
                         if (savedTracker) {
-                            // We need to merge completion status back to the items with icons
                             setTrackerItems(prev => prev.map(item => ({
                                 ...item,
                                 completed: savedTracker.value.find(s => s.id === item.id)?.completed || false
                             })));
                         }
+
+                        // Load all days progress for the map
+                        const allProgress = {};
+                        const itemCount = trackerItems.length;
+                        for (let i = 1; i <= 30; i++) {
+                            const data = await db.appState.get(`tracker_day_${i}`);
+                            if (data) {
+                                const completed = data.value.filter(v => v.completed).length;
+                                allProgress[i] = (completed / itemCount) * 100;
+                            }
+                        }
+                        setAllDaysProgress(allProgress);
                     } catch (err) {
                         console.error("Dexie Load Error:", err);
                     } finally {
@@ -298,6 +403,20 @@
             useEffect(() => {
                 if (mounted) {
                     db.appState.put({ key: 'ramadanDay', value: ramadanDay });
+
+                    // Reload tracker items for the new day
+                    const loadDayData = async () => {
+                        const savedTracker = await db.appState.get(`tracker_day_${ramadanDay}`);
+                        if (savedTracker) {
+                            setTrackerItems(prev => prev.map(item => ({
+                                ...item,
+                                completed: savedTracker.value.find(s => s.id === item.id)?.completed || false
+                            })));
+                        } else {
+                            setTrackerItems(prev => prev.map(item => ({ ...item, completed: false })));
+                        }
+                    };
+                    loadDayData();
                 }
             }, [ramadanDay, mounted]);
 
@@ -310,12 +429,17 @@
             useEffect(() => {
                 if (mounted) {
                     db.appState.put({
-                        key: 'trackerItems',
+                        key: `tracker_day_${ramadanDay}`,
                         value: trackerItems.map(({id, completed}) => ({id, completed}))
                     });
+
+                    // Update allDaysProgress for the map
+                    const completedCount = trackerItems.filter(i => i.completed).length;
+                    const pct = (completedCount / trackerItems.length) * 100;
+                    setAllDaysProgress(prev => ({ ...prev, [ramadanDay]: pct }));
                 }
-                lucide.createIcons();
-            }, [trackerItems, mounted]);
+                if (window.lucide) window.lucide.createIcons();
+            }, [trackerItems, mounted, ramadanDay]);
 
             // Handlers
             const handleTrack = (id) => {
@@ -379,6 +503,9 @@
                         nextPrayer={{ name: 'المغرب', time: '02:45:10' }} 
                     />
 
+                    {/* Dhikr Capsule */}
+                    <DhikrCapsule />
+
                     {/* Daily Challenge */}
                     <div class="bg-navy rounded-lg p-3 flex items-center gap-3 text-white mb-4 shadow-lg">
                         <div class="bg-gold p-1 rounded text-navy"><i data-lucide="zap" class="w-4 h-4"></i></div>
@@ -402,6 +529,9 @@
                         </div>
                          <button class="bg-navy text-white px-4 py-2 rounded-lg text-xs font-bold">+ تسجيل</button>
                     </div>
+
+                    {/* Impact Map */}
+                    <ImpactMap allDaysProgress={allDaysProgress} />
 
                     {/* Dedication Area */}
                     <div class="mt-auto pt-6 text-center opacity-80">
