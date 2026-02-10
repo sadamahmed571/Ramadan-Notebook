@@ -2,9 +2,6 @@
 // Local-First PWA بدون اتصال خلفي
 
 document.addEventListener('DOMContentLoaded', function() {
-    // تهيئة التطبيق
-    initializeApp();
-    
     // إدارة الحالة
     const state = {
         tasbihCount: 0,
@@ -723,5 +720,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+
+    // تهيئة التطبيق
+    initializeApp();
 });
 
