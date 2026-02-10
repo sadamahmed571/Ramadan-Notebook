@@ -14,6 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 
     <script>
         tailwind.config = {
@@ -68,7 +69,63 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
+        // --- Database ---
+        const db = new Dexie('RamadanPlannerDB');
+        db.version(1).stores({
+            appState: 'key'
+        });
+
         // --- Components ---
+
+        // Moon Phase Component
+        const MoonPhase = ({ day }) => {
+            const isLastTen = day >= 21;
+
+            const getMoonPath = (d) => {
+                const r = 45;
+                const c = 50;
+                let rx, sweep;
+                if (d <= 15) {
+                    rx = Math.abs(r - (d / 7.5) * r);
+                    sweep = d <= 7.5 ? 0 : 1;
+                    return `M ${c} ${c-r} A ${r} ${r} 0 0 1 ${c} ${c+r} A ${rx} ${r} 0 0 ${sweep} ${c} ${c-r}`;
+                } else {
+                    const d2 = d - 15;
+                    rx = Math.abs(r - (d2 / 7.5) * r);
+                    sweep = d2 <= 7.5 ? 1 : 0;
+                    return `M ${c} ${c-r} A ${r} ${r} 0 0 0 ${c} ${c+r} A ${rx} ${r} 0 0 ${sweep} ${c} ${c-r}`;
+                }
+            };
+
+            return (
+                <div className="relative flex items-center justify-center w-10 h-10">
+                    {isLastTen && (
+                        <div className="absolute inset-0 bg-gold/30 blur-lg rounded-full animate-pulse"></div>
+                    )}
+                    <svg viewBox="0 0 100 100" className="w-8 h-8 drop-shadow-md relative z-10">
+                        <circle cx="50" cy="50" r="45" className="fill-slate-200 dark:fill-slate-700" />
+                        <path
+                            d={getMoonPath(day)}
+                            className="fill-gold transition-all duration-700 ease-in-out"
+                        />
+                    </svg>
+                </div>
+            );
+        };
+
+        // Spiritual Sprout Component
+        const SpiritualSprout = ({ progress }) => {
+            let icon = "circle-dot";
+            if (progress > 75) icon = "flower";
+            else if (progress > 50) icon = "leaf";
+            else if (progress > 25) icon = "sprout";
+
+            return (
+                <div key={icon} className="transition-all duration-500 transform hover:scale-110">
+                    <i data-lucide={icon} className="w-5 h-5 text-green-600 dark:text-green-400"></i>
+                </div>
+            );
+        };
 
         // 1. Progress Widget (Circular)
         const ProgressWidget = ({ progress, nextPrayer }) => {
@@ -79,7 +136,10 @@
             const strokeDashoffset = circumference - (progress / 100) * circumference;
 
             return (
-                <div class="flex items-center justify-between p-4 glass-card rounded-2xl mb-3">
+                <div class="flex items-center justify-between p-4 glass-card rounded-2xl mb-3 relative">
+                    <div class="absolute top-3 right-3">
+                        <SpiritualSprout progress={progress} />
+                    </div>
                     <div class="relative w-24 h-24 flex items-center justify-center">
                         <svg height={radius * 2} width={radius * 2} class="rotate-[-90deg]">
                             <circle
@@ -178,14 +238,12 @@
 
         // --- Main App ---
         function App() {
-            // Local Storage Logic (Simulating No Backend)
             const [mounted, setMounted] = useState(false);
+            const [ramadanDay, setRamadanDay] = useState(1); // Default to 1st Ramadan
             const [serenityMode, setSerenityMode] = useState(false);
-            const [tasbihCount, setTasbihCount] = useState(() => parseInt(localStorage.getItem('tasbih')) || 0);
-            const [dedication, setDedication] = useState(() => localStorage.getItem('dedication') || '');
-            const [showDedicationModal, setShowDedicationModal] = useState(!localStorage.getItem('dedication'));
-            
-            // Dummy Data for Logic
+            const [tasbihCount, setTasbihCount] = useState(0);
+            const [dedication, setDedication] = useState('');
+            const [showDedicationModal, setShowDedicationModal] = useState(false);
             const [trackerItems, setTrackerItems] = useState([
                 { id: 'fajr', label: 'الفجر', completed: false, icon: <i data-lucide="sunrise" class="w-5 h-5"/> },
                 { id: 'dhuhr', label: 'الظهر', completed: false, icon: <i data-lucide="sun" class="w-5 h-5"/> },
@@ -196,19 +254,68 @@
                 { id: 'quran', label: 'ورد', completed: false, icon: <i data-lucide="book-open" class="w-5 h-5"/> },
             ]);
 
-            // Effects
+            // Load from Dexie
             useEffect(() => {
+                const initDB = async () => {
+                    try {
+                        const savedDay = await db.appState.get('ramadanDay');
+                        if (savedDay) setRamadanDay(savedDay.value);
+
+                        const savedTasbih = await db.appState.get('tasbihCount');
+                        const savedDedication = await db.appState.get('dedication');
+                        const savedTracker = await db.appState.get('trackerItems');
+
+                        if (savedTasbih) setTasbihCount(savedTasbih.value);
+                        if (savedDedication) {
+                            setDedication(savedDedication.value);
+                            setShowDedicationModal(false);
+                        } else {
+                            setShowDedicationModal(true);
+                        }
+                        if (savedTracker) {
+                            // We need to merge completion status back to the items with icons
+                            setTrackerItems(prev => prev.map(item => ({
+                                ...item,
+                                completed: savedTracker.value.find(s => s.id === item.id)?.completed || false
+                            })));
+                        }
+                    } catch (err) {
+                        console.error("Dexie Load Error:", err);
+                    } finally {
+                        setMounted(true);
+                    }
+                };
+                initDB();
+            }, []);
+
+            // Effects for persistence
+            useEffect(() => {
+                if (mounted) {
+                    db.appState.put({ key: 'tasbihCount', value: tasbihCount });
+                }
+            }, [tasbihCount, mounted]);
+
+            useEffect(() => {
+                if (mounted) {
+                    db.appState.put({ key: 'ramadanDay', value: ramadanDay });
+                }
+            }, [ramadanDay, mounted]);
+
+            useEffect(() => {
+                if (mounted && dedication) {
+                    db.appState.put({ key: 'dedication', value: dedication });
+                }
+            }, [dedication, mounted]);
+
+            useEffect(() => {
+                if (mounted) {
+                    db.appState.put({
+                        key: 'trackerItems',
+                        value: trackerItems.map(({id, completed}) => ({id, completed}))
+                    });
+                }
                 lucide.createIcons();
-                setMounted(true);
-            }, [trackerItems]);
-
-            useEffect(() => {
-                localStorage.setItem('tasbih', tasbihCount);
-            }, [tasbihCount]);
-
-            useEffect(() => {
-                if(dedication) localStorage.setItem('dedication', dedication);
-            }, [dedication]);
+            }, [trackerItems, mounted]);
 
             // Handlers
             const handleTrack = (id) => {
@@ -241,9 +348,14 @@
                     
                     {/* Header */}
                     <div class="flex justify-between items-center mb-6">
-                        <div class="flex flex-col">
-                            <span class="text-xs text-gray-500 font-bold">1 رمضان | 1447</span>
-                            <h1 class="text-xl font-bold text-navy">مفكرة رمضان</h1>
+                        <div class="flex items-center gap-3">
+                            <div onClick={() => setRamadanDay(prev => prev % 30 + 1)} class="cursor-pointer">
+                                <MoonPhase day={ramadanDay} />
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-500 font-bold">{ramadanDay} رمضان | 1447</span>
+                                <h1 class="text-xl font-bold text-navy">مفكرة رمضان</h1>
+                            </div>
                         </div>
                         <div class="flex gap-2">
                              <button 
