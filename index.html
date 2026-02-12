@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>خُطىْ V3.0 | مفكرة رمضانية</title>
-    
+
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -13,7 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -59,7 +59,7 @@
         .dark body { background-color: #121212; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
+
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
@@ -229,25 +229,51 @@
         };
 
         // -------------------- 🕋 الهيدر المتطور + جدول الصلاة (تمييز القادم) --------------------
-        const SmartLunarHeader = ({ isFasting, hijriDay = 12 }) => {
+        const SmartLunarHeader = ({ hijriDay = 12 }) => {
             const [nextPrayer, setNextPrayer] = useState(null);
-            
+            const [timeLeft, setTimeLeft] = useState("00:00:00");
+            const [isFasting, setIsFasting] = useState(true);
+
             useEffect(() => {
+                const updateTimer = () => {
+                    const now = new Date();
+                    const currentTotal = now.getHours() * 60 + now.getMinutes();
+                    const currentSecs = now.getSeconds();
+
+                    const prayerMins = PRAYER_TIMES.map(p => {
+                        const [h, m] = p.time.split(':').map(Number);
+                        return { ...p, total: h * 60 + m };
+                    }).sort((a,b) => a.total - b.total);
+
+                    let next = prayerMins.find(p => p.total > currentTotal);
+                    if (!next) next = prayerMins[0];
+                    setNextPrayer(next.id);
+
+                    // صيام: من الفجر حتى المغرب
+                    const fajrTotal = prayerMins.find(p => p.id === 'fajr').total;
+                    const maghribTotal = prayerMins.find(p => p.id === 'maghrib').total;
+                    const fasting = (currentTotal >= fajrTotal && currentTotal < maghribTotal);
+                    setIsFasting(fasting);
+
+                    // الهدف: المغرب إذا صائم، الفجر إذا مفطر
+                    let targetTotal;
+                    if (fasting) {
+                        targetTotal = maghribTotal;
+                    } else {
+                        targetTotal = currentTotal >= maghribTotal ? fajrTotal + 1440 : fajrTotal;
+                    }
+
+                    let diffSecs = (targetTotal * 60) - (currentTotal * 60 + currentSecs);
+                    const h = Math.floor(diffSecs / 3600);
+                    const m = Math.floor((diffSecs % 3600) / 60);
+                    const s = diffSecs % 60;
+                    setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+                };
+
+                updateTimer();
+                const interval = setInterval(updateTimer, 1000);
                 lucide.createIcons();
-                // تحديد الصلاة القادمة
-                const now = new Date();
-                const currentHour = now.getHours();
-                const currentMin = now.getMinutes();
-                const currentTotal = currentHour * 60 + currentMin;
-                
-                const prayerMins = PRAYER_TIMES.map(p => {
-                    const [h, m] = p.time.split(':').map(Number);
-                    return { ...p, total: h * 60 + m };
-                }).sort((a,b) => a.total - b.total);
-                
-                let next = prayerMins.find(p => p.total > currentTotal);
-                if (!next) next = prayerMins[0]; // next day fajr
-                setNextPrayer(next.id);
+                return () => clearInterval(interval);
             }, []);
 
             return (
@@ -258,7 +284,7 @@
                                 <i data-lucide={isFasting ? "sunset" : "moon"} class="w-4 h-4 text-white/80"></i>
                                 <span class="text-xs font-medium opacity-90">{isFasting ? "المتبقي للإفطار" : "المتبقي للإمساك"}</span>
                             </div>
-                            <h2 class="text-3xl font-bold tracking-tight">04:23:10</h2>
+                            <h2 class="text-3xl font-bold tracking-tight">{timeLeft}</h2>
                             <span class="text-[10px] block opacity-80 mt-1">{hijriDay} رمضان 1447</span>
                         </div>
                         <div class="text-center bg-white/10 p-2 rounded-xl backdrop-blur-sm">
@@ -266,7 +292,7 @@
                             <span class="text-[10px] block mt-1">رمضان</span>
                         </div>
                     </div>
-                    
+
                     {/* 🕌 جدول الصلاة المصغر */}
                     <div class="mt-3 grid grid-cols-5 gap-1 text-[10px] bg-black/20 rounded-xl p-2 backdrop-blur-sm">
                         {PRAYER_TIMES.map((prayer) => (
@@ -287,6 +313,8 @@
         const DailyTrackerV3 = ({ items, onItemToggle, onAddHabit, onRemoveHabit, isLongPressMode, longPressActive }) => {
             const timerRef = useRef(null);
             const [localLongPress, setLocalLongPress] = useState(false);
+
+            useEffect(() => { lucide.createIcons(); });
 
             const startPress = () => {
                 timerRef.current = setTimeout(() => {
@@ -322,22 +350,24 @@
                                     class={`relative flex flex-col items-center justify-center w-14 h-16 rounded-xl transition-all duration-200 active:scale-95 ${
                                         isLongPressMode ? 'animate-shake cursor-pointer' : ''
                                     } ${
-                                        item.completed 
-                                        ? 'bg-navy dark:bg-emerald text-white shadow-md' 
+                                        item.completed
+                                        ? 'bg-navy dark:bg-emerald text-white shadow-md'
                                         : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-gray-500'
                                     }`}
                                 >
                                     {isLongPressMode && item.isAdditional && (
                                         <div onClick={(e) => { e.stopPropagation(); onRemoveHabit(item.id); }} class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] z-10 shadow-lg">✕</div>
                                     )}
-                                    <div class="mb-1">{item.icon}</div>
+                                    <div class="mb-1">
+                                        {typeof item.icon === 'string' ? <i data-lucide={item.icon} class="w-5 h-5"></i> : item.icon}
+                                    </div>
                                     <span class="text-[9px] font-medium">{item.label}</span>
                                 </button>
                             ))}
-                            
+
                             {/* زر إضافة عبادات إضافية */}
                             <div class="relative group">
-                                <button 
+                                <button
                                     onClick={onAddHabit}
                                     class="flex flex-col items-center justify-center w-14 h-16 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 text-gray-400 hover:text-gold transition"
                                 >
@@ -363,7 +393,7 @@
                     <div class="glass-card p-4 rounded-xl mb-3 text-center">
                         <i data-lucide="quran" class="w-8 h-8 mx-auto text-navy dark:text-gold mb-2"></i>
                         <p class="text-sm font-bold text-navy dark:text-white mb-2">خطة الورد القرآني</p>
-                        <button 
+                        <button
                             onClick={() => setShowModal(true)}
                             class="bg-navy hover:bg-navy/90 text-white px-6 py-2 rounded-lg text-xs font-bold transition"
                         >
@@ -395,7 +425,7 @@
                     </div>
                     <div class="flex justify-between items-center mt-2">
                         <span class="text-[10px] text-gray-500">إجمالي الخطة: {plan.totalPages} صفحة</span>
-                        <button 
+                        <button
                             onClick={() => {
                                 triggerHaptic('success');
                                 // تبديل حالة الإنجاز لليوم
@@ -479,12 +509,16 @@
                 return (
                     <div class="glass-card p-4 rounded-xl flex flex-col items-center">
                         <i data-lucide="trophy" class="w-8 h-8 text-gold mb-2"></i>
-                        <p class="text-xs font-bold text-center">حركاتك 😉 لقد أجبت بشكل صحيح على جميع أسئلة اليوم!</p>
+                        {allCorrectToday ? (
+                            <p class="text-xs font-bold text-center">حركاتك 😉 لقد أجبت بشكل صحيح على جميع أسئلة اليوم!</p>
+                        ) : (
+                            <p class="text-xs font-bold text-center">أحسنت! أكملت أسئلة اليوم. حاول غداً لتحقيق الدرجة الكاملة! 🌟</p>
+                        )}
                     </div>
                 );
             }
-            if (!quizState.currentQuestion) return null;
-            const q = quizState.currentQuestion;
+            const q = QUIZ_DATABASE[quizState.currentIndex];
+            if (!q) return null;
             return (
                 <div class="glass-card p-3 rounded-xl">
                     <div class="flex justify-between items-center mb-2">
@@ -494,8 +528,8 @@
                     <p class="text-xs font-bold text-navy dark:text-white mb-3">{q.question}</p>
                     <div class="space-y-1.5">
                         {q.options.map((opt, idx) => (
-                            <button 
-                                key={idx} 
+                            <button
+                                key={idx}
                                 onClick={() => onAnswer(opt === q.correct)}
                                 disabled={quizState.feedbackGiven}
                                 class="w-full text-[10px] py-2 bg-gray-50 dark:bg-white/5 rounded text-gray-600 dark:text-gray-300 hover:bg-gray-100 text-right px-3"
@@ -518,23 +552,17 @@
         const HydrationTrackerV3 = () => {
             const [cups, setCups] = useState(0);
             const totalCups = 8;
-            const [isAllowed, setIsAllowed] = useState(true);
-            
-            useEffect(() => {
-                // تحديد وقت الإفطار والإمساك (تجريبي)
-                const maghribTime = PRAYER_TIMES.find(p => p.id === 'maghrib').time; // 18:30
-                const fajrTime = PRAYER_TIMES.find(p => p.id === 'fajr').time;     // 05:00
+
+            const checkIsAllowed = () => {
                 const now = new Date();
                 const currentMin = now.getHours() * 60 + now.getMinutes();
-                const maghribMin = 18 * 60 + 30;
-                const fajrMin = 5 * 60;
-                // مسموح: بعد المغرب أو قبل الفجر
-                const allowed = (currentMin >= maghribMin) || (currentMin < fajrMin);
-                setIsAllowed(allowed);
-            }, []);
+                const maghribMin = 18 * 60 + 30; // 18:30
+                const fajrMin = 5 * 60;        // 05:00
+                return (currentMin >= maghribMin) || (currentMin < fajrMin);
+            };
 
             const handleCupClick = (index) => {
-                if (!isAllowed) {
+                if (!checkIsAllowed()) {
                     alert("الفاطر فطروا بطنه 😂.. الماء بعد الفطور");
                     triggerHaptic('medium');
                     return;
@@ -555,12 +583,12 @@
                     </div>
                     <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 justify-items-center">
                         {[...Array(totalCups)].map((_, i) => (
-                            <button 
+                            <button
                                 key={i}
                                 onClick={() => handleCupClick(i)}
                                 class={`relative w-8 h-10 rounded-b-lg border-2 border-t-0 overflow-hidden transition-all duration-300 ${
-                                    i < cups 
-                                    ? 'border-serenity bg-serenity/10' 
+                                    i < cups
+                                    ? 'border-serenity bg-serenity/10'
                                     : 'border-gray-300 dark:border-gray-600'
                                 }`}
                             >
@@ -570,7 +598,7 @@
                             </button>
                         ))}
                     </div>
-                    {!isAllowed && <p class="text-[9px] text-red-400 mt-2 text-center">⏳ متاح فقط من المغرب للفجر</p>}
+                    {!checkIsAllowed() && <p class="text-[9px] text-red-400 mt-2 text-center">⏳ متاح فقط من المغرب للفجر</p>}
                 </div>
             );
         };
@@ -598,7 +626,7 @@
             const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true' || false);
             const [mounted, setMounted] = useState(false);
             const [tasbihCount, setTasbihCount] = useState(() => parseInt(localStorage.getItem('tasbih')) || 0);
-            
+
             // Onboarding
             const [onboardingSeen, setOnboardingSeen] = useState(() => localStorage.getItem('onboardingV3') === 'true');
             const [showOnboarding, setShowOnboarding] = useState(!onboardingSeen);
@@ -620,9 +648,25 @@
             // حالة الأسئلة
             const [quizState, setQuizState] = useState(() => {
                 const saved = localStorage.getItem('quizStateV3');
-                if (saved) return JSON.parse(saved);
+                const today = new Date().toDateString();
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.date !== today) {
+                        return {
+                            date: today,
+                            answeredToday: 0,
+                            correctToday: 0,
+                            currentIndex: Math.floor(Math.random() * QUIZ_DATABASE.length),
+                            feedbackGiven: false,
+                            lastAnswerCorrect: null,
+                            dailyComplete: false,
+                            allCorrectToday: false
+                        };
+                    }
+                    return parsed;
+                }
                 return {
-                    date: new Date().toDateString(),
+                    date: today,
                     answeredToday: 0,
                     correctToday: 0,
                     currentIndex: Math.floor(Math.random() * QUIZ_DATABASE.length),
@@ -636,11 +680,11 @@
             // تحديث trackerItems حسب additionalHabits + الصلوات الخمس
             useEffect(() => {
                 const base = [
-                    { id: 'fajr', label: 'الفجر', completed: false, icon: <i data-lucide="sunrise" class="w-5 h-5"/>, isAdditional: false },
-                    { id: 'dhuhr', label: 'الظهر', completed: false, icon: <i data-lucide="sun" class="w-5 h-5"/>, isAdditional: false },
-                    { id: 'asr', label: 'العصر', completed: false, icon: <i data-lucide="cloud-sun" class="w-5 h-5"/>, isAdditional: false },
-                    { id: 'maghrib', label: 'المغرب', completed: false, icon: <i data-lucide="sunset" class="w-5 h-5"/>, isAdditional: false },
-                    { id: 'isha', label: 'العشاء', completed: false, icon: <i data-lucide="moon" class="w-5 h-5"/>, isAdditional: false }
+                    { id: 'fajr', label: 'الفجر', completed: false, icon: 'sunrise', isAdditional: false },
+                    { id: 'dhuhr', label: 'الظهر', completed: false, icon: 'sun', isAdditional: false },
+                    { id: 'asr', label: 'العصر', completed: false, icon: 'cloud-sun', isAdditional: false },
+                    { id: 'maghrib', label: 'المغرب', completed: false, icon: 'sunset', isAdditional: false },
+                    { id: 'isha', label: 'العشاء', completed: false, icon: 'moon', isAdditional: false }
                 ];
                 const extra = additionalHabits.map(h => ({ ...h, completed: false, isAdditional: true }));
                 setTrackerItems([...base, ...extra]);
@@ -673,9 +717,9 @@
                 triggerHaptic('light');
                 const newHabits = [...additionalHabits];
                 if (!additionalHabits.find(h => h.id === 'taraweeh')) {
-                    newHabits.push({ id: 'taraweeh', label: 'تراويح', icon: <i data-lucide="star" class="w-5 h-5"/> });
+                    newHabits.push({ id: 'taraweeh', label: 'تراويح', icon: 'star' });
                 } else if (!additionalHabits.find(h => h.id === 'tahajjud')) {
-                    newHabits.push({ id: 'tahajjud', label: 'تهجد', icon: <i data-lucide="moon-star" class="w-5 h-5"/> });
+                    newHabits.push({ id: 'tahajjud', label: 'تهجد', icon: 'moon-star' });
                 } else {
                     alert('تم إضافة جميع العبادات المتاحة');
                     return;
@@ -689,7 +733,7 @@
             };
 
             const handleToggleItem = (id) => {
-                setTrackerItems(prev => prev.map(item => 
+                setTrackerItems(prev => prev.map(item =>
                     item.id === id ? { ...item, completed: !item.completed } : item
                 ));
             };
@@ -706,8 +750,9 @@
             const handleNextQuestion = () => {
                 let newAnswered = quizState.answeredToday + 1;
                 let newComplete = newAnswered >= 5;
-                let newAllCorrect = (quizState.correctToday + (quizState.lastAnswerCorrect ? 1 : 0)) >= 5;
-                
+                let sessionCorrect = quizState.correctToday + (quizState.lastAnswerCorrect ? 1 : 0);
+                let newAllCorrect = sessionCorrect >= 5;
+
                 if (newComplete && newAllCorrect) {
                     triggerConfetti(true);
                 }
@@ -715,7 +760,7 @@
                 setQuizState({
                     date: new Date().toDateString(),
                     answeredToday: newComplete ? 0 : newAnswered, // إذا أكمل، نعيد غداً
-                    correctToday: newComplete ? 0 : (quizState.lastAnswerCorrect ? quizState.correctToday + 1 : quizState.correctToday),
+                    correctToday: newComplete ? 0 : sessionCorrect,
                     currentIndex: Math.floor(Math.random() * QUIZ_DATABASE.length),
                     feedbackGiven: false,
                     lastAnswerCorrect: null,
@@ -729,7 +774,7 @@
             return (
                 <div class="min-h-screen px-4 py-6 font-sans flex flex-col relative overflow-hidden">
                     {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
-                    
+
                     {/* الهوية البصرية - خُطىْ */}
                     <div class="flex justify-between items-center mb-2">
                         <div class="flex items-center gap-3">
@@ -750,12 +795,12 @@
                     <WisdomWidget />
 
                     {/* الهيدر + الصلاة */}
-                    <SmartLunarHeader isFasting={true} hijriDay={12} />
+                    <SmartLunarHeader hijriDay={12} />
 
                     {/* المتتبع اليومي */}
-                    <DailyTrackerV3 
-                        items={trackerItems} 
-                        onItemToggle={handleToggleItem} 
+                    <DailyTrackerV3
+                        items={trackerItems}
+                        onItemToggle={handleToggleItem}
                         onAddHabit={handleAddHabit}
                         onRemoveHabit={handleRemoveHabit}
                         isLongPressMode={isLongPressGlobal}
@@ -769,9 +814,9 @@
                     <DailyIdea />
 
                     {/* المسابقة الذكية */}
-                    <SmartQuiz 
-                        quizState={quizState} 
-                        onAnswer={handleQuizAnswer} 
+                    <SmartQuiz
+                        quizState={quizState}
+                        onAnswer={handleQuizAnswer}
                         onNext={handleNextQuestion}
                         isDailyComplete={quizState.dailyComplete}
                         allCorrectToday={quizState.allCorrectToday}
@@ -798,7 +843,7 @@
                     <FooterCredit />
 
                     {/* سبحة عائمة */}
-                    <button 
+                    <button
                         onClick={() => { setTasbihCount(p => p+1); triggerHaptic('light'); }}
                         class="fixed bottom-6 left-6 w-16 h-16 bg-navy dark:bg-gold rounded-full shadow-2xl flex items-center justify-center z-50 active:scale-90 transition-transform border-4 border-white/20 dark:border-navy/20 animate-pulse-gold"
                     >
