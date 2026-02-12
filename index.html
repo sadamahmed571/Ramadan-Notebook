@@ -7,6 +7,7 @@
 
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -92,6 +93,13 @@
     <script type="text/babel">
         // ---------- Ramadaan V3.0 - "خُطىْ" | Smart Planner with Privacy First ----------
         const { useState, useEffect, useMemo, useRef } = React;
+
+        // -------------------- 🗄️ DATABASE INITIALIZATION --------------------
+        const db = new Dexie("RamadanPlannerDB");
+        db.version(1).stores({
+            appState: "id, value",
+            dailyProgress: "day, data"
+        });
 
         // -------------------- 💾 HELPER FUNCTIONS --------------------
         const triggerConfetti = (fullScreen = false) => {
@@ -230,9 +238,35 @@
 
         // -------------------- 🕋 الهيدر المتطور + جدول الصلاة (تمييز القادم) --------------------
         const SmartLunarHeader = ({ hijriDay = 12 }) => {
+            const [prayers, setPrayers] = useState(PRAYER_TIMES);
             const [nextPrayer, setNextPrayer] = useState(null);
             const [timeLeft, setTimeLeft] = useState("00:00:00");
             const [isFasting, setIsFasting] = useState(true);
+
+            useEffect(() => {
+                // Fetch dynamic prayer times
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const { latitude, longitude } = position.coords;
+                        fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=4`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.code === 200) {
+                                    const t = data.data.timings;
+                                    const dynamic = [
+                                        { id: 'fajr', name: 'الفجر', time: t.Fajr, timeEn: t.Fajr },
+                                        { id: 'dhuhr', name: 'الظهر', time: t.Dhuhr, timeEn: t.Dhuhr },
+                                        { id: 'asr', name: 'العصر', time: t.Asr, timeEn: t.Asr },
+                                        { id: 'maghrib', name: 'المغرب', time: t.Maghrib, timeEn: t.Maghrib },
+                                        { id: 'isha', name: 'العشاء', time: t.Isha, timeEn: t.Isha }
+                                    ];
+                                    setPrayers(dynamic);
+                                }
+                            })
+                            .catch(err => console.error("Prayer API Error:", err));
+                    });
+                }
+            }, []);
 
             useEffect(() => {
                 const updateTimer = () => {
@@ -240,7 +274,7 @@
                     const currentTotal = now.getHours() * 60 + now.getMinutes();
                     const currentSecs = now.getSeconds();
 
-                    const prayerMins = PRAYER_TIMES.map(p => {
+                    const prayerMins = prayers.map(p => {
                         const [h, m] = p.time.split(':').map(Number);
                         return { ...p, total: h * 60 + m };
                     }).sort((a,b) => a.total - b.total);
@@ -295,7 +329,7 @@
 
                     {/* 🕌 جدول الصلاة المصغر */}
                     <div class="mt-3 grid grid-cols-5 gap-1 text-[10px] bg-black/20 rounded-xl p-2 backdrop-blur-sm">
-                        {PRAYER_TIMES.map((prayer) => (
+                        {prayers.map((prayer) => (
                             <div key={prayer.id} class={`text-center rounded-lg p-1 transition ${nextPrayer === prayer.id ? 'bg-gold/30 text-white shadow-[0_0_10px_rgba(251,191,36,0.7)] scale-105' : ''}`}>
                                 <span class="block font-bold">{prayer.name}</span>
                                 <span class="block text-[9px] opacity-90">{prayer.time}</span>
@@ -503,6 +537,43 @@
         };
 
         // -------------------- 🧠 مسابقة اختبر معلوماتك (150 سؤال، 5 يومياً) --------------------
+        const ImpactMap = ({ history, onShare }) => {
+            useEffect(() => { lucide.createIcons(); }, []);
+            const days = Array.from({ length: 30 }, (_, i) => i + 1);
+
+            return (
+                <div class="glass-card p-3 rounded-xl mb-3">
+                    <div class="flex justify-between items-center mb-2 px-1">
+                        <h3 class="text-[11px] font-bold text-navy dark:text-gold flex items-center gap-1">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                            خارطة الأثر (30 يوماً)
+                        </h3>
+                        <button onClick={onShare} class="text-navy dark:text-gold opacity-70 hover:opacity-100 transition">
+                            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-10 gap-1.5">
+                        {days.map(day => {
+                            const progress = history[day] || 0;
+                            const opacity = 0.2 + (progress * 0.8);
+                            return (
+                                <div
+                                    key={day}
+                                    title={`اليوم ${day}: ${Math.round(progress * 100)}%`}
+                                    class="aspect-square rounded-[4px] transition-all duration-500 shadow-sm"
+                                    style={{
+                                        backgroundColor: progress > 0 ? '#fbbf24' : 'rgba(156, 163, 175, 0.1)',
+                                        opacity: progress > 0 ? opacity : 1,
+                                        border: day === 12 ? '1px solid #fbbf24' : 'none'
+                                    }}
+                                ></div>
+                            );
+                        })}
+                    </div>
+                </div>
+            );
+        };
+
         const SmartQuiz = ({ quizState, onAnswer, onNext, isDailyComplete, allCorrectToday }) => {
             useEffect(() => { lucide.createIcons(); });
             if (isDailyComplete) {
@@ -625,7 +696,7 @@
         function App() {
             const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true' || false);
             const [mounted, setMounted] = useState(false);
-            const [tasbihCount, setTasbihCount] = useState(() => parseInt(localStorage.getItem('tasbih')) || 0);
+            const [tasbihCount, setTasbihCount] = useState(0);
 
             // Onboarding
             const [onboardingSeen, setOnboardingSeen] = useState(() => localStorage.getItem('onboardingV3') === 'true');
@@ -646,6 +717,8 @@
             const [isLongPressGlobal, setIsLongPressGlobal] = useState(false);
 
             // حالة الأسئلة
+            const [allDaysProgress, setAllDaysProgress] = useState({});
+
             const [quizState, setQuizState] = useState(() => {
                 const saved = localStorage.getItem('quizStateV3');
                 const today = new Date().toDateString();
@@ -690,12 +763,39 @@
                 setTrackerItems([...base, ...extra]);
             }, [additionalHabits]);
 
-            // حفظ الحالات
+            // استرجاع البيانات من Dexie
+            useEffect(() => {
+                const loadData = async () => {
+                    const tasbih = await db.appState.get("tasbih");
+                    if (tasbih) setTasbihCount(tasbih.value);
+
+                    const progress = await db.appState.get("allDaysProgress");
+                    if (progress) setAllDaysProgress(progress.value);
+
+                    const habits = await db.appState.get("additionalHabits");
+                    if (habits) setAdditionalHabits(habits.value);
+
+                    const quran = await db.appState.get("quranPlan");
+                    if (quran) setQuranPlan(quran.value);
+                };
+                loadData();
+            }, []);
+
+            // حفظ الحالات إلى Dexie
             useEffect(() => { localStorage.setItem('darkMode', darkMode); }, [darkMode]);
-            useEffect(() => { localStorage.setItem('tasbih', tasbihCount); }, [tasbihCount]);
-            useEffect(() => { localStorage.setItem('quranPlanV3', JSON.stringify(quranPlan)); }, [quranPlan]);
-            useEffect(() => { localStorage.setItem('additionalHabitsV3', JSON.stringify(additionalHabits)); }, [additionalHabits]);
+            useEffect(() => { db.appState.put({ id: 'tasbih', value: tasbihCount }); }, [tasbihCount]);
+            useEffect(() => { db.appState.put({ id: 'allDaysProgress', value: allDaysProgress }); }, [allDaysProgress]);
+            useEffect(() => { db.appState.put({ id: 'additionalHabits', value: additionalHabits }); }, [additionalHabits]);
+            useEffect(() => { db.appState.put({ id: 'quranPlan', value: quranPlan }); }, [quranPlan]);
             useEffect(() => { localStorage.setItem('quizStateV3', JSON.stringify(quizState)); }, [quizState]);
+
+            // تحديث خارطة الأثر تلقائياً
+            useEffect(() => {
+                const completedCount = trackerItems.filter(i => i.completed).length;
+                const totalCount = trackerItems.length;
+                const percent = totalCount > 0 ? completedCount / totalCount : 0;
+                setAllDaysProgress(prev => ({ ...prev, [12]: percent })); // 12 هو اليوم الحالي التجريبي
+            }, [trackerItems]);
 
             useEffect(() => {
                 if (darkMode) document.documentElement.classList.add('dark');
@@ -796,6 +896,23 @@
 
                     {/* الهيدر + الصلاة */}
                     <SmartLunarHeader hijriDay={12} />
+
+                    {/* خارطة الأثر */}
+                    <ImpactMap
+                        history={allDaysProgress}
+                        onShare={() => {
+                            const percent = Math.round((allDaysProgress[12] || 0) * 100);
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: 'خُطىْ - إنجازي اليوم',
+                                    text: `أنجزت ${percent}% من أهدافي اليوم في تطبيق خُطىْ! 🌙✨`,
+                                    url: window.location.href
+                                }).catch(console.error);
+                            } else {
+                                alert(`أنجزت ${percent}% من أهدافك! (المشاركة غير مدعومة في هذا المتصفح)`);
+                            }
+                        }}
+                    />
 
                     {/* المتتبع اليومي */}
                     <DailyTrackerV3
