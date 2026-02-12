@@ -1,0 +1,818 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>خُطىْ V3.0 | مفكرة رمضانية</title>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: '#1e3a8a',
+                        gold: '#fbbf24',
+                        offwhite: '#f8fafc',
+                        emerald: '#10b981',
+                        'oled-black': '#121212', // ✅ Deep charcoal for OLED comfort
+                        'sunset-orange': '#f97316',
+                        'deep-indigo': '#312e81',
+                        serenity: '#10b981',
+                    },
+                    animation: {
+                        'shake': 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',
+                        'fill-up': 'fillUp 0.5s ease-out forwards',
+                        'pulse-glow': 'pulse-gold 1.8s infinite',
+                    },
+                    keyframes: {
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        },
+                        fillUp: {
+                            '0%': { transform: 'scaleY(0)' },
+                            '100%': { transform: 'scaleY(1)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { -webkit-tap-highlight-color: transparent; touch-action: manipulation; background-color: #f8fafc; }
+        .dark body { background-color: #121212; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .dark .glass-card {
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid rgba(251, 191, 36, 0.15);
+            box-shadow: none;
+        }
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+        .animate-pulse-gold {
+            animation: pulse-gold 1.5s infinite;
+        }
+        .cup-content { transform-origin: bottom; }
+        .modal-backdrop {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-offwhite dark:bg-oled-black text-slate-800 dark:text-gray-100 transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // ---------- Ramadaan V3.0 - "خُطىْ" | Smart Planner with Privacy First ----------
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // -------------------- 💾 HELPER FUNCTIONS --------------------
+        const triggerConfetti = (fullScreen = false) => {
+            if (fullScreen) {
+                confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24', '#1e3a8a', '#10b981'] });
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.2 }, colors: ['#f97316', '#312e81'] });
+                confetti({ particleCount: 150, spread: 80, origin: { y: 0.5, x: 0.8 }, colors: ['#10b981', '#fbbf24'] });
+            } else {
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#fbbf24', '#1e3a8a', '#10b981'] });
+            }
+        };
+        const triggerHaptic = (style = 'light') => {
+            if (navigator.vibrate) {
+                if (style === 'light') navigator.vibrate(10);
+                if (style === 'medium') navigator.vibrate(20);
+                if (style === 'heavy') navigator.vibrate([30, 50, 30]);
+                if (style === 'success') navigator.vibrate([10, 30, 10, 30]);
+            }
+        };
+
+        // -------------------- 📅 CONSTANTS & DATASETS --------------------
+        // 🕋 صلاة مواقيت (تجريبية)
+        const PRAYER_TIMES = [
+            { id: 'fajr', name: 'الفجر', time: '05:00', timeEn: '05:00' },
+            { id: 'dhuhr', name: 'الظهر', time: '12:30', timeEn: '12:30' },
+            { id: 'asr', name: 'العصر', time: '15:45', timeEn: '15:45' },
+            { id: 'maghrib', name: 'المغرب', time: '18:30', timeEn: '18:30' },
+            { id: 'isha', name: 'العشاء', time: '20:00', timeEn: '20:00' }
+        ];
+
+        // 💡 حكم اليوم (مجموعة راقية)
+        const WISDOM_ARRAY = [
+            "خير الناس أنفعهم للناس",
+            "تفطروا فإنه من فطر صائماً كان له مثل أجره",
+            "اللهم بارك لنا في رجب وشعبان وبلغنا رمضان",
+            "من قام ليلة القدر إيماناً واحتساباً غفر له ما تقدم من ذنبه",
+            "الصيام جنة من النار",
+            "أحب الأعمال إلى الله أدومها وإن قل",
+            "من لم يدع قول الزور والعمل به فليس لله حاجة في أن يدع طعامه وشرابه",
+            "عمرة في رمضان تعدل حجة"
+        ];
+
+        // 💧 أفكار يومية (أنشطة إيمانية)
+        const DAILY_IDEA_ARRAY = [
+            "إطعام مسكين أو المشاركة في وجبة",
+            "صلة رحم: اتصل بأحد أقاربك",
+            "التسبيح بعد الصلاة: سبحان الله 33 مرة",
+            "قراءة تفسير آية واحدة",
+            "التصدق بصدقة ولو بسيطة",
+            "زيارة مريض أو الدعاء له",
+            "كفالة يتيم ولو بدعوة",
+            "ذكر الله في السوق",
+            "مساعدة والديك في أعمال المنزل",
+            "الاستغفار 100 مرة"
+        ];
+
+        // 🧠 بنك الأسئلة: 150 سؤالاً (نموذج موسع)
+        const generateQuizDB = () => {
+            let db = [];
+            for (let i = 1; i <= 150; i++) {
+                let base = i % 5;
+                let q, opts, correct;
+                if (base === 0) {
+                    q = "ما هي السورة التي تسمى قلب القرآن؟";
+                    opts = ["يس", "الرحمن", "الدخان", "الملك"];
+                    correct = "يس";
+                } else if (base === 1) {
+                    q = "كم أجزاء القرآن؟";
+                    opts = ["30", "29", "31", "28"];
+                    correct = "30";
+                } else if (base === 2) {
+                    q = "أطول آية في القرآن هي آية ...";
+                    opts = ["الدين", "الكرسي", "المداينة", "الربا"];
+                    correct = "الدين";
+                } else if (base === 3) {
+                    q = "السورة التي تبدأ بالتسبيح وتنتهي بالتسبيح؟";
+                    opts = ["الحديد", "الحشر", "الصف", "الجمعة"];
+                    correct = "الحديد";
+                } else {
+                    q = "كم مرة ذكرت كلمة 'رمضان' في القرآن؟";
+                    opts = ["مرة", "مرتين", "ثلاث", "أربع"];
+                    correct = "مرة";
+                }
+                db.push({ id: i, question: q, options: opts, correct: correct });
+            }
+            return db;
+        };
+        const QUIZ_DATABASE = generateQuizDB();
+
+        // -------------------- 🧩 ONBOARDING MODAL (الترحيب والخصوصية) --------------------
+        const OnboardingModal = ({ onClose }) => {
+            useEffect(() => { lucide.createIcons(); });
+            return (
+                <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+                    <div class="glass-card rounded-2xl max-w-sm w-full p-6 text-right animate-fade-in">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-8 h-8 bg-gold/20 rounded-full flex items-center justify-center">
+                                    <i data-lucide="heart-handshake" class="w-5 h-5 text-gold"></i>
+                                </div>
+                                <h2 class="text-lg font-bold text-navy dark:text-gold">أهلاً بك في خُطىْ</h2>
+                            </div>
+                            <button onClick={onClose} class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                            رفيقك لتنظيم وقتك في رمضان. نود تنبيهك أن بياناتك محفوظة محلياً بالكامل على جهازك (Local Storage) لضمان خصوصيتك القصوى، ولا يتم رفعها لأي خادم.
+                        </p>
+                        <button onClick={onClose} class="w-full bg-navy hover:bg-navy/90 text-white py-2 rounded-lg text-sm font-bold transition">
+                            فهمت، لنبدأ
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // -------------------- 🕌 ويدجت الحكمة والهوية --------------------
+        const WisdomWidget = () => {
+            const [wisdom, setWisdom] = useState('');
+            useEffect(() => {
+                setWisdom(WISDOM_ARRAY[Math.floor(Math.random() * WISDOM_ARRAY.length)]);
+                lucide.createIcons();
+            }, []);
+            return (
+                <div class="glass-card rounded-xl p-3 mb-4 flex items-center gap-3 border-r-4 border-r-gold">
+                    <div class="w-10 h-10 bg-navy/10 dark:bg-gold/20 rounded-full flex items-center justify-center shrink-0">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-navy dark:text-gold"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed">
+                        {wisdom}
+                    </p>
+                </div>
+            );
+        };
+
+        // -------------------- 🕋 الهيدر المتطور + جدول الصلاة (تمييز القادم) --------------------
+        const SmartLunarHeader = ({ isFasting, hijriDay = 12 }) => {
+            const [nextPrayer, setNextPrayer] = useState(null);
+            
+            useEffect(() => {
+                lucide.createIcons();
+                // تحديد الصلاة القادمة
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentMin = now.getMinutes();
+                const currentTotal = currentHour * 60 + currentMin;
+                
+                const prayerMins = PRAYER_TIMES.map(p => {
+                    const [h, m] = p.time.split(':').map(Number);
+                    return { ...p, total: h * 60 + m };
+                }).sort((a,b) => a.total - b.total);
+                
+                let next = prayerMins.find(p => p.total > currentTotal);
+                if (!next) next = prayerMins[0]; // next day fajr
+                setNextPrayer(next.id);
+            }, []);
+
+            return (
+                <div class={`relative rounded-2xl p-4 mb-3 overflow-hidden text-white shadow-lg transition-all duration-500 ${isFasting ? 'bg-gradient-to-r from-sunset-orange to-red-600' : 'bg-gradient-to-r from-deep-indigo to-navy'}`}>
+                    <div class="flex justify-between items-start relative z-10">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide={isFasting ? "sunset" : "moon"} class="w-4 h-4 text-white/80"></i>
+                                <span class="text-xs font-medium opacity-90">{isFasting ? "المتبقي للإفطار" : "المتبقي للإمساك"}</span>
+                            </div>
+                            <h2 class="text-3xl font-bold tracking-tight">04:23:10</h2>
+                            <span class="text-[10px] block opacity-80 mt-1">{hijriDay} رمضان 1447</span>
+                        </div>
+                        <div class="text-center bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                            <i data-lucide="moon-star" class="w-7 h-7 mx-auto"></i>
+                            <span class="text-[10px] block mt-1">رمضان</span>
+                        </div>
+                    </div>
+                    
+                    {/* 🕌 جدول الصلاة المصغر */}
+                    <div class="mt-3 grid grid-cols-5 gap-1 text-[10px] bg-black/20 rounded-xl p-2 backdrop-blur-sm">
+                        {PRAYER_TIMES.map((prayer) => (
+                            <div key={prayer.id} class={`text-center rounded-lg p-1 transition ${nextPrayer === prayer.id ? 'bg-gold/30 text-white shadow-[0_0_10px_rgba(251,191,36,0.7)] scale-105' : ''}`}>
+                                <span class="block font-bold">{prayer.name}</span>
+                                <span class="block text-[9px] opacity-90">{prayer.time}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div class="absolute -top-6 -left-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                    <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-gold/20 rounded-full blur-xl"></div>
+                </div>
+            );
+        };
+
+        // -------------------- 🏋️ المتتبع اليومي (صلوات + إضافة تراويح وتهجد) --------------------
+        const DailyTrackerV3 = ({ items, onItemToggle, onAddHabit, onRemoveHabit, isLongPressMode, longPressActive }) => {
+            const timerRef = useRef(null);
+            const [localLongPress, setLocalLongPress] = useState(false);
+
+            const startPress = () => {
+                timerRef.current = setTimeout(() => {
+                    setLocalLongPress(true);
+                    longPressActive(true);
+                    triggerHaptic('heavy');
+                }, 800);
+            };
+            const endPress = () => {
+                clearTimeout(timerRef.current);
+                if(localLongPress) setLocalLongPress(false);
+            };
+
+            return (
+                <div class="mb-3">
+                    <div class="flex justify-between items-end mb-2 px-1">
+                        <h3 class="font-bold text-navy dark:text-gold text-sm flex items-center gap-1">
+                            <i data-lucide="check-check" class="w-4 h-4"></i>
+                            متتبع يومي
+                        </h3>
+                        {isLongPressMode && <span class="text-[10px] text-red-500 animate-pulse">مسّ العلامة الحمراء للحذف</span>}
+                    </div>
+                    <div class="glass-card rounded-xl p-3 overflow-x-auto no-scrollbar">
+                        <div class="flex gap-3 min-w-max px-1 items-center">
+                            {items.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onTouchStart={startPress}
+                                    onTouchEnd={endPress}
+                                    onMouseDown={startPress}
+                                    onMouseUp={endPress}
+                                    onClick={() => !isLongPressMode && onItemToggle(item.id)}
+                                    class={`relative flex flex-col items-center justify-center w-14 h-16 rounded-xl transition-all duration-200 active:scale-95 ${
+                                        isLongPressMode ? 'animate-shake cursor-pointer' : ''
+                                    } ${
+                                        item.completed 
+                                        ? 'bg-navy dark:bg-emerald text-white shadow-md' 
+                                        : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-gray-500'
+                                    }`}
+                                >
+                                    {isLongPressMode && item.isAdditional && (
+                                        <div onClick={(e) => { e.stopPropagation(); onRemoveHabit(item.id); }} class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-[10px] z-10 shadow-lg">✕</div>
+                                    )}
+                                    <div class="mb-1">{item.icon}</div>
+                                    <span class="text-[9px] font-medium">{item.label}</span>
+                                </button>
+                            ))}
+                            
+                            {/* زر إضافة عبادات إضافية */}
+                            <div class="relative group">
+                                <button 
+                                    onClick={onAddHabit}
+                                    class="flex flex-col items-center justify-center w-14 h-16 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 text-gray-400 hover:text-gold transition"
+                                >
+                                    <i data-lucide="plus" class="w-5 h-5"></i>
+                                    <span class="text-[9px] mt-1">إضافة</span>
+                                </button>
+                                {/* قائمة سريعة (تظهر عند الضغط) - تم تبسيطها عبر زر واحد يضيف تراويح/تهجد بالتناوب، لكن سنضيف منطق منفذ */}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // -------------------- 📖 نظام الورد القرآني الذكي --------------------
+        const QuranAdvanced = ({ plan, onSetup }) => {
+            const [showModal, setShowModal] = useState(false);
+            const [dailyRead, setDailyRead] = useState(false); // حالة إنجاز اليوم
+            useEffect(() => { lucide.createIcons(); });
+
+            if (!plan) {
+                return (
+                    <div class="glass-card p-4 rounded-xl mb-3 text-center">
+                        <i data-lucide="quran" class="w-8 h-8 mx-auto text-navy dark:text-gold mb-2"></i>
+                        <p class="text-sm font-bold text-navy dark:text-white mb-2">خطة الورد القرآني</p>
+                        <button 
+                            onClick={() => setShowModal(true)}
+                            class="bg-navy hover:bg-navy/90 text-white px-6 py-2 rounded-lg text-xs font-bold transition"
+                        >
+                            إعداد خطة الورد القرآني
+                        </button>
+                        {showModal && <QuranSetupModal onClose={(p) => { setShowModal(false); onSetup(p); }} />}
+                    </div>
+                );
+            }
+
+            // إذا الخطة موجودة
+            const progressPercent = (plan.completedDays?.length || 0) / 28 * 100;
+            const todayCompleted = plan.completedDays?.includes(plan.currentDay) || false;
+
+            return (
+                <div class="glass-card p-4 rounded-xl mb-3 border-r-4 border-r-emerald">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-navy dark:text-emerald text-sm flex items-center gap-2">
+                            <i data-lucide="book-open" class="w-4 h-4"></i>
+                            وردي اليومي: {plan.dailyPages} صفحة
+                        </h3>
+                        <span class="text-[10px] bg-emerald/20 px-2 py-1 rounded-full text-emerald-dark dark:text-emerald-light">
+                            {plan.completedDays?.length || 0}/28 يوم
+                        </span>
+                    </div>
+                    <div class="relative h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mt-3">
+                        <div class="absolute top-0 right-0 h-full bg-emerald shadow-[0_0_10px_rgba(16,185,129,0.5)] transition-all duration-700"
+                             style={{ width: `${progressPercent}%` }}></div>
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-[10px] text-gray-500">إجمالي الخطة: {plan.totalPages} صفحة</span>
+                        <button 
+                            onClick={() => {
+                                triggerHaptic('success');
+                                // تبديل حالة الإنجاز لليوم
+                                onSetup({ ...plan, completedDays: todayCompleted ? plan.completedDays.filter(d => d !== plan.currentDay) : [...(plan.completedDays||[]), plan.currentDay] });
+                                if (!todayCompleted) triggerConfetti(false);
+                            }}
+                            class={`text-xs px-3 py-1.5 rounded-lg transition font-medium flex items-center gap-1 ${
+                                todayCompleted ? 'bg-emerald text-white' : 'bg-navy/10 dark:bg-white/10 text-navy dark:text-white'
+                            }`}
+                        >
+                            <i data-lucide="check" class="w-3 h-3"></i>
+                            {todayCompleted ? 'تم اليوم ✓' : 'تم قراءة الورد'}
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // نافذة إعداد الخطة
+        const QuranSetupModal = ({ onClose }) => {
+            const [qurans, setQurans] = useState(1);
+            const [custom, setCustom] = useState(false);
+            const submit = () => {
+                const totalPages = qurans * 604;
+                const dailyPages = Math.ceil(totalPages / 28);
+                const plan = {
+                    totalQurans: qurans,
+                    totalPages,
+                    dailyPages,
+                    currentDay: 12, // تجريبي
+                    completedDays: []
+                };
+                onClose(plan);
+            };
+            return (
+                <div class="fixed inset-0 z-40 flex items-center justify-center p-4 modal-backdrop">
+                    <div class="glass-card rounded-2xl max-w-xs w-full p-5">
+                        <h3 class="text-md font-bold text-navy dark:text-gold mb-3">كم مصحفاً تنوي ختمه؟</h3>
+                        <div class="grid grid-cols-4 gap-2 mb-4">
+                            {[1,2,3].map(n => (
+                                <button key={n} onClick={() => { setQurans(n); setCustom(false); }} class={`py-2 rounded-lg border ${qurans === n && !custom ? 'bg-navy text-white border-navy' : 'bg-gray-100 dark:bg-gray-800'}`}>{n}</button>
+                            ))}
+                            <button onClick={() => setCustom(true)} class={`py-2 rounded-lg border ${custom ? 'bg-navy text-white' : 'bg-gray-100 dark:bg-gray-800'}`}>مخصص</button>
+                        </div>
+                        {custom && (
+                            <div class="mb-4">
+                                <label class="text-xs block mb-1">عدد المصاحف:</label>
+                                <input type="number" min="1" value={qurans} onChange={(e) => setQurans(parseInt(e.target.value) || 1)} class="w-full p-2 bg-white dark:bg-gray-900 border rounded-lg text-sm" />
+                            </div>
+                        )}
+                        <div class="flex gap-2">
+                            <button onClick={submit} class="flex-1 bg-navy text-white py-2 rounded-lg text-sm">حفظ الخطة</button>
+                            <button onClick={() => onClose(null)} class="flex-1 bg-gray-200 dark:bg-gray-700 py-2 rounded-lg text-sm">إلغاء</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // -------------------- 💡 أفكار يومية --------------------
+        const DailyIdea = () => {
+            const [idea, setIdea] = useState('');
+            useEffect(() => {
+                setIdea(DAILY_IDEA_ARRAY[Math.floor(Math.random() * DAILY_IDEA_ARRAY.length)]);
+                lucide.createIcons();
+            }, []);
+            return (
+                <div class="glass-card p-3 rounded-xl mb-3 flex items-center gap-3 bg-gradient-to-l from-amber-50/80 to-white dark:from-gray-800 dark:to-gray-900">
+                    <div class="w-8 h-8 bg-gold/20 rounded-full flex items-center justify-center">
+                        <i data-lucide="lightbulb" class="w-4 h-4 text-gold"></i>
+                    </div>
+                    <p class="text-xs font-medium text-gray-700 dark:text-gray-200">{idea}</p>
+                </div>
+            );
+        };
+
+        // -------------------- 🧠 مسابقة اختبر معلوماتك (150 سؤال، 5 يومياً) --------------------
+        const SmartQuiz = ({ quizState, onAnswer, onNext, isDailyComplete, allCorrectToday }) => {
+            useEffect(() => { lucide.createIcons(); });
+            if (isDailyComplete) {
+                return (
+                    <div class="glass-card p-4 rounded-xl flex flex-col items-center">
+                        <i data-lucide="trophy" class="w-8 h-8 text-gold mb-2"></i>
+                        <p class="text-xs font-bold text-center">حركاتك 😉 لقد أجبت بشكل صحيح على جميع أسئلة اليوم!</p>
+                    </div>
+                );
+            }
+            if (!quizState.currentQuestion) return null;
+            const q = quizState.currentQuestion;
+            return (
+                <div class="glass-card p-3 rounded-xl">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] bg-gold/20 px-2 py-1 rounded-full">سؤال {quizState.answeredToday + 1}/5</span>
+                        <i data-lucide="brain" class="w-4 h-4 text-gray-400"></i>
+                    </div>
+                    <p class="text-xs font-bold text-navy dark:text-white mb-3">{q.question}</p>
+                    <div class="space-y-1.5">
+                        {q.options.map((opt, idx) => (
+                            <button 
+                                key={idx} 
+                                onClick={() => onAnswer(opt === q.correct)}
+                                disabled={quizState.feedbackGiven}
+                                class="w-full text-[10px] py-2 bg-gray-50 dark:bg-white/5 rounded text-gray-600 dark:text-gray-300 hover:bg-gray-100 text-right px-3"
+                            >{opt}</button>
+                        ))}
+                    </div>
+                    {quizState.feedbackGiven && (
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class={`text-[10px] ${quizState.lastAnswerCorrect ? 'text-emerald' : 'text-red-500'}`}>
+                                {quizState.lastAnswerCorrect ? '✓ إجابة صحيحة' : '✗ إجابة خاطئة'}
+                            </span>
+                            <button onClick={onNext} class="text-[10px] bg-navy text-white px-4 py-1 rounded">التالي</button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // -------------------- 💧 متتبع الماء الذكي (قفل وقت الصيام) --------------------
+        const HydrationTrackerV3 = () => {
+            const [cups, setCups] = useState(0);
+            const totalCups = 8;
+            const [isAllowed, setIsAllowed] = useState(true);
+            
+            useEffect(() => {
+                // تحديد وقت الإفطار والإمساك (تجريبي)
+                const maghribTime = PRAYER_TIMES.find(p => p.id === 'maghrib').time; // 18:30
+                const fajrTime = PRAYER_TIMES.find(p => p.id === 'fajr').time;     // 05:00
+                const now = new Date();
+                const currentMin = now.getHours() * 60 + now.getMinutes();
+                const maghribMin = 18 * 60 + 30;
+                const fajrMin = 5 * 60;
+                // مسموح: بعد المغرب أو قبل الفجر
+                const allowed = (currentMin >= maghribMin) || (currentMin < fajrMin);
+                setIsAllowed(allowed);
+            }, []);
+
+            const handleCupClick = (index) => {
+                if (!isAllowed) {
+                    alert("الفاطر فطروا بطنه 😂.. الماء بعد الفطور");
+                    triggerHaptic('medium');
+                    return;
+                }
+                triggerHaptic('medium');
+                if (index + 1 === totalCups && cups !== totalCups) triggerConfetti(false);
+                setCups(index + 1);
+            };
+
+            return (
+                <div class="glass-card p-3 rounded-xl mb-3">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-xs text-navy dark:text-serenity flex items-center gap-2">
+                            <i data-lucide="droplets" class="w-4 h-4"></i>
+                            حافظ على رطوبة جسدك خلال فترة الإفطار
+                        </h3>
+                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400">{cups}/{totalCups}</span>
+                    </div>
+                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-2 justify-items-center">
+                        {[...Array(totalCups)].map((_, i) => (
+                            <button 
+                                key={i}
+                                onClick={() => handleCupClick(i)}
+                                class={`relative w-8 h-10 rounded-b-lg border-2 border-t-0 overflow-hidden transition-all duration-300 ${
+                                    i < cups 
+                                    ? 'border-serenity bg-serenity/10' 
+                                    : 'border-gray-300 dark:border-gray-600'
+                                }`}
+                            >
+                                <div class={`absolute bottom-0 left-0 w-full bg-serenity transition-all duration-500 cup-content ${
+                                    i < cups ? 'h-full opacity-100' : 'h-0 opacity-0'
+                                }`}></div>
+                            </button>
+                        ))}
+                    </div>
+                    {!isAllowed && <p class="text-[9px] text-red-400 mt-2 text-center">⏳ متاح فقط من المغرب للفجر</p>}
+                </div>
+            );
+        };
+
+        // -------------------- 📜 التذييل والإهداء --------------------
+        const FooterCredit = () => {
+            useEffect(() => { lucide.createIcons(); });
+            return (
+                <div class="mt-6 mb-20 pt-4 border-t border-gray-200 dark:border-gray-800 text-center">
+                    <p class="text-[11px] text-gray-500 dark:text-gray-400 flex items-center justify-center gap-2 flex-wrap">
+                        <span>مقدم الإهداء: صدام أحمد</span>
+                        <a href="https://wa.me/967777967272?text=السلام%20عليكم%20،%20تطبيق%20خطىٰ%20رائع!" target="_blank" class="inline-flex items-center gap-1 text-emerald hover:underline">
+                            <i data-lucide="message-circle" class="w-3 h-3"></i> واتساب
+                        </a>
+                        <a href="https://facebook.com/share/1FyLQYp6ne/?mibextid=wwXIfr" target="_blank" class="inline-flex items-center gap-1 text-navy dark:text-gold hover:underline">
+                            <i data-lucide="facebook" class="w-3 h-3"></i> فيسبوك
+                        </a>
+                    </p>
+                </div>
+            );
+        };
+
+        // -------------------- 🚀 MAIN APP V3.0 --------------------
+        function App() {
+            const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true' || false);
+            const [mounted, setMounted] = useState(false);
+            const [tasbihCount, setTasbihCount] = useState(() => parseInt(localStorage.getItem('tasbih')) || 0);
+            
+            // Onboarding
+            const [onboardingSeen, setOnboardingSeen] = useState(() => localStorage.getItem('onboardingV3') === 'true');
+            const [showOnboarding, setShowOnboarding] = useState(!onboardingSeen);
+
+            // خطة القرآن
+            const [quranPlan, setQuranPlan] = useState(() => {
+                const saved = localStorage.getItem('quranPlanV3');
+                return saved ? JSON.parse(saved) : null;
+            });
+
+            // المتتبع اليومي
+            const [additionalHabits, setAdditionalHabits] = useState(() => {
+                const saved = localStorage.getItem('additionalHabitsV3');
+                return saved ? JSON.parse(saved) : []; // {id, label, icon}
+            });
+            const [trackerItems, setTrackerItems] = useState([]);
+            const [isLongPressGlobal, setIsLongPressGlobal] = useState(false);
+
+            // حالة الأسئلة
+            const [quizState, setQuizState] = useState(() => {
+                const saved = localStorage.getItem('quizStateV3');
+                if (saved) return JSON.parse(saved);
+                return {
+                    date: new Date().toDateString(),
+                    answeredToday: 0,
+                    correctToday: 0,
+                    currentIndex: Math.floor(Math.random() * QUIZ_DATABASE.length),
+                    feedbackGiven: false,
+                    lastAnswerCorrect: null,
+                    dailyComplete: false,
+                    allCorrectToday: false
+                };
+            });
+
+            // تحديث trackerItems حسب additionalHabits + الصلوات الخمس
+            useEffect(() => {
+                const base = [
+                    { id: 'fajr', label: 'الفجر', completed: false, icon: <i data-lucide="sunrise" class="w-5 h-5"/>, isAdditional: false },
+                    { id: 'dhuhr', label: 'الظهر', completed: false, icon: <i data-lucide="sun" class="w-5 h-5"/>, isAdditional: false },
+                    { id: 'asr', label: 'العصر', completed: false, icon: <i data-lucide="cloud-sun" class="w-5 h-5"/>, isAdditional: false },
+                    { id: 'maghrib', label: 'المغرب', completed: false, icon: <i data-lucide="sunset" class="w-5 h-5"/>, isAdditional: false },
+                    { id: 'isha', label: 'العشاء', completed: false, icon: <i data-lucide="moon" class="w-5 h-5"/>, isAdditional: false }
+                ];
+                const extra = additionalHabits.map(h => ({ ...h, completed: false, isAdditional: true }));
+                setTrackerItems([...base, ...extra]);
+            }, [additionalHabits]);
+
+            // حفظ الحالات
+            useEffect(() => { localStorage.setItem('darkMode', darkMode); }, [darkMode]);
+            useEffect(() => { localStorage.setItem('tasbih', tasbihCount); }, [tasbihCount]);
+            useEffect(() => { localStorage.setItem('quranPlanV3', JSON.stringify(quranPlan)); }, [quranPlan]);
+            useEffect(() => { localStorage.setItem('additionalHabitsV3', JSON.stringify(additionalHabits)); }, [additionalHabits]);
+            useEffect(() => { localStorage.setItem('quizStateV3', JSON.stringify(quizState)); }, [quizState]);
+
+            useEffect(() => {
+                if (darkMode) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+                lucide.createIcons();
+                setMounted(true);
+            }, [darkMode]);
+
+            // Onboarding close
+            useEffect(() => {
+                if (!showOnboarding && !onboardingSeen) {
+                    setOnboardingSeen(true);
+                    localStorage.setItem('onboardingV3', 'true');
+                }
+            }, [showOnboarding]);
+
+            // معالجة إضافة عادة جديدة
+            const handleAddHabit = () => {
+                triggerHaptic('light');
+                const newHabits = [...additionalHabits];
+                if (!additionalHabits.find(h => h.id === 'taraweeh')) {
+                    newHabits.push({ id: 'taraweeh', label: 'تراويح', icon: <i data-lucide="star" class="w-5 h-5"/> });
+                } else if (!additionalHabits.find(h => h.id === 'tahajjud')) {
+                    newHabits.push({ id: 'tahajjud', label: 'تهجد', icon: <i data-lucide="moon-star" class="w-5 h-5"/> });
+                } else {
+                    alert('تم إضافة جميع العبادات المتاحة');
+                    return;
+                }
+                setAdditionalHabits(newHabits);
+            };
+
+            const handleRemoveHabit = (id) => {
+                setAdditionalHabits(prev => prev.filter(h => h.id !== id));
+                triggerHaptic('medium');
+            };
+
+            const handleToggleItem = (id) => {
+                setTrackerItems(prev => prev.map(item => 
+                    item.id === id ? { ...item, completed: !item.completed } : item
+                ));
+            };
+
+            // 🧠 منطق المسابقة
+            const handleQuizAnswer = (isCorrect) => {
+                if (quizState.feedbackGiven) return;
+                const newState = { ...quizState, feedbackGiven: true, lastAnswerCorrect: isCorrect };
+                if (isCorrect) newState.correctToday = quizState.correctToday + 1;
+                setQuizState(newState);
+                triggerHaptic(isCorrect ? 'success' : 'medium');
+            };
+
+            const handleNextQuestion = () => {
+                let newAnswered = quizState.answeredToday + 1;
+                let newComplete = newAnswered >= 5;
+                let newAllCorrect = (quizState.correctToday + (quizState.lastAnswerCorrect ? 1 : 0)) >= 5;
+                
+                if (newComplete && newAllCorrect) {
+                    triggerConfetti(true);
+                }
+
+                setQuizState({
+                    date: new Date().toDateString(),
+                    answeredToday: newComplete ? 0 : newAnswered, // إذا أكمل، نعيد غداً
+                    correctToday: newComplete ? 0 : (quizState.lastAnswerCorrect ? quizState.correctToday + 1 : quizState.correctToday),
+                    currentIndex: Math.floor(Math.random() * QUIZ_DATABASE.length),
+                    feedbackGiven: false,
+                    lastAnswerCorrect: null,
+                    dailyComplete: newComplete,
+                    allCorrectToday: newAllCorrect
+                });
+            };
+
+            if (!mounted) return null;
+
+            return (
+                <div class="min-h-screen px-4 py-6 font-sans flex flex-col relative overflow-hidden">
+                    {showOnboarding && <OnboardingModal onClose={() => setShowOnboarding(false)} />}
+                    
+                    {/* الهوية البصرية - خُطىْ */}
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-navy to-gold rounded-full flex items-center justify-center shadow-lg border-2 border-white/30">
+                                <span class="text-white font-extrabold text-xl">خُطىْ</span>
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-black text-navy dark:text-white leading-tight">خُطىْ</h1>
+                                <p class="text-[10px] text-gray-500 dark:text-gray-400 -mt-1">مفكرة رمضانية</p>
+                            </div>
+                        </div>
+                        <button onClick={() => setDarkMode(!darkMode)} class="p-2 rounded-full bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-gold">
+                            <i data-lucide={darkMode ? "sun" : "moon"} class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    {/* ويدجت الحكمة */}
+                    <WisdomWidget />
+
+                    {/* الهيدر + الصلاة */}
+                    <SmartLunarHeader isFasting={true} hijriDay={12} />
+
+                    {/* المتتبع اليومي */}
+                    <DailyTrackerV3 
+                        items={trackerItems} 
+                        onItemToggle={handleToggleItem} 
+                        onAddHabit={handleAddHabit}
+                        onRemoveHabit={handleRemoveHabit}
+                        isLongPressMode={isLongPressGlobal}
+                        longPressActive={setIsLongPressGlobal}
+                    />
+
+                    {/* الورد القرآني المتقدم */}
+                    <QuranAdvanced plan={quranPlan} onSetup={(plan) => setQuranPlan(plan)} />
+
+                    {/* أفكار يومية */}
+                    <DailyIdea />
+
+                    {/* المسابقة الذكية */}
+                    <SmartQuiz 
+                        quizState={quizState} 
+                        onAnswer={handleQuizAnswer} 
+                        onNext={handleNextQuestion}
+                        isDailyComplete={quizState.dailyComplete}
+                        allCorrectToday={quizState.allCorrectToday}
+                    />
+
+                    {/* دعاء اليوم (محتفظ به من الأصلي) */}
+                    <div class="glass-card p-3 rounded-xl mb-3">
+                        <div class="flex justify-between items-start mb-1">
+                            <span class="text-[10px] font-bold text-gold uppercase tracking-wider">دعاء اليوم</span>
+                            <i data-lucide="heart" class="w-4 h-4 text-gray-400"></i>
+                        </div>
+                        <p class="text-[11px] text-navy dark:text-gray-200 leading-relaxed font-serif italic">
+                            "اللهم إنك عفو تحب العفو فاعف عني"
+                        </p>
+                        <button onClick={() => { navigator.clipboard?.writeText("اللهم إنك عفو تحب العفو فاعف عني"); alert('تم النسخ'); }} class="mt-2 flex items-center justify-center gap-1 w-full py-1.5 bg-navy text-white rounded text-[10px]">
+                            <i data-lucide="copy" class="w-3 h-3"></i> نسخ ومشاركة
+                        </button>
+                    </div>
+
+                    {/* متتبع الماء (بعد المسابقة) */}
+                    <HydrationTrackerV3 />
+
+                    {/* التذييل والإهداء */}
+                    <FooterCredit />
+
+                    {/* سبحة عائمة */}
+                    <button 
+                        onClick={() => { setTasbihCount(p => p+1); triggerHaptic('light'); }}
+                        class="fixed bottom-6 left-6 w-16 h-16 bg-navy dark:bg-gold rounded-full shadow-2xl flex items-center justify-center z-50 active:scale-90 transition-transform border-4 border-white/20 dark:border-navy/20 animate-pulse-gold"
+                    >
+                        <div class="text-center">
+                            <span class="block text-[10px] text-white/70 dark:text-navy/70">سبّح</span>
+                            <span class="block text-lg font-bold text-gold dark:text-navy">{tasbihCount}</span>
+                        </div>
+                    </button>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
