@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>المصحف الإلكتروني | خُطىْ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --navy: #1e3a8a;
@@ -54,7 +57,11 @@
             --verse-number: #059669;
             --highlight-gold: #047857;
         }
-        * { box-sizing: border-box; }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             font-family: 'Noto Naskh Arabic', 'Tajawal', serif;
@@ -65,16 +72,20 @@
             -webkit-tap-highlight-color: transparent;
             touch-action: pan-y;
         }
+
         body::before {
             content: "";
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: -1;
             opacity: 0.35;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
-        /* الفوتر - شريط سفلي رسمي بسيط */
+        /* الفوتر - شريط سفلي مقسم */
         .app-footer {
             position: fixed;
             bottom: 0;
@@ -82,11 +93,12 @@
             right: 0;
             z-index: 100;
             padding: 0.35rem 0.5rem;
-            background: rgba(250,248,243,0.95);
+            background: rgba(250, 248, 243, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(196,181,154,0.3);
+            border-top: 1px solid rgba(196, 181, 154, 0.3);
         }
+
         .footer-inner {
             max-width: 768px;
             margin: 0 auto;
@@ -94,61 +106,141 @@
             align-items: center;
             justify-content: space-between;
             gap: 0.35rem;
+            padding: 0 0.5rem;
         }
-        .back-link {
-            display: inline-flex;
+
+        .footer-left {
+            display: flex;
             align-items: center;
-            padding: 0.25rem 0.4rem;
-            color: var(--navy);
-            text-decoration: none;
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 700;
-            font-size: 0.7rem;
-            border-radius: 0.4rem;
-            background: rgba(30,58,138,0.08);
+            gap: 0.5rem;
+            order: 2;
         }
-        .footer-meta {
+
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            order: 1;
+        }
+
+        .footer-info {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.05rem;
+            margin-right: 0.5rem;
+            padding-left: 0.5rem;
         }
+
         .page-indicator {
             font-family: 'Tajawal', sans-serif;
             font-size: 0.75rem;
             font-weight: 700;
             color: var(--navy);
         }
+
         .sura-juz {
             font-family: 'Tajawal', sans-serif;
             font-size: 0.7rem;
             color: var(--navy);
             opacity: 0.8;
         }
+
         .footer-nav {
             display: flex;
             align-items: center;
             gap: 0.25rem;
         }
-        .nav-btn {
+
+        .footer-nav .theme-btn,
+        .footer-nav .favorites-btn,
+        .footer-nav .performance-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gold);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .footer-nav .theme-btn:hover,
+        .footer-nav .favorites-btn:hover,
+        .footer-nav .performance-btn:hover {
+            background: var(--navy);
+            transform: scale(1.05);
+        }
+
+        .footer-nav .theme-btn svg,
+        .footer-nav .favorites-btn svg,
+        .footer-nav .performance-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .footer-nav .nav-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--navy);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .footer-nav .nav-btn:hover {
+            background: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .footer-nav .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .footer-nav .nav-btn:disabled:hover {
+            background: var(--navy);
+            transform: none;
+        }
+
+        .footer-nav .nav-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .back-btn {
             width: 32px;
             height: 32px;
             border-radius: 50%;
             border: none;
             background: var(--navy);
-            color: #fff;
+            color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s, opacity 0.2s;
+            transition: all 0.2s;
+            text-decoration: none;
         }
-        .nav-btn:active { transform: scale(0.92); }
-        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-        .nav-btn svg { width: 16px; height: 16px; }
-        .nav-btn.next svg { transform: scaleX(-1); }
 
-        /* زر تغيير الثيم */
+        .back-btn:hover {
+            background: var(--gold);
+            transform: scale(1.05);
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
         .theme-btn {
             width: 32px;
             height: 32px;
@@ -163,8 +255,15 @@
             transition: transform 0.2s, opacity 0.2s;
             position: relative;
         }
-        .theme-btn:active { transform: scale(0.92); }
-        .theme-btn svg { width: 16px; height: 16px; }
+
+        .theme-btn:active {
+            transform: scale(0.92);
+        }
+
+        .theme-btn svg {
+            width: 16px;
+            height: 16px;
+        }
 
         /* منطقة القراءة - كامل الشاشة بدون مشتتات */
         .reading-area {
@@ -172,12 +271,13 @@
             top: 0;
             left: 0;
             right: 0;
-            bottom: 42px;
+            bottom: 48px;
             display: flex;
             align-items: stretch;
             justify-content: stretch;
             padding: 0;
         }
+
         .page-view {
             position: relative;
             width: 100%;
@@ -189,6 +289,7 @@
             display: flex;
             flex-direction: column;
         }
+
         /* نقوش إسلامية مصحفية - يمين ويسار */
         .page-view::before,
         .page-view::after {
@@ -202,14 +303,17 @@
             background-repeat: repeat-y;
             background-size: 24px 32px;
         }
+
         .page-view::before {
             right: 0;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32'%3E%3Cpath fill='none' stroke='%23c4b59a' stroke-width='0.5' d='M12 0v6M12 26v6M4 16h6M14 16h6M7 7l3.5 3.5M13.5 12.5l3.5 3.5M7 25l3.5-3.5M13.5 19.5l3.5-3.5M17 7l-3.5 3.5M3.5 12.5L0 16M17 25l-3.5-3.5M3.5 19.5L0 16'/%3E%3Ccircle cx='12' cy='16' r='3' fill='none' stroke='%23c4b59a' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23c9a227' stroke-width='0.4' opacity='0.8' d='M12 10 Q16 16 12 22 Q8 16 12 10'/%3E%3C/svg%3E");
         }
+
         .page-view::after {
             left: 0;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32'%3E%3Cpath fill='none' stroke='%23c4b59a' stroke-width='0.5' d='M12 0v6M12 26v6M4 16h6M14 16h6M7 7l3.5 3.5M13.5 12.5l3.5 3.5M7 25l3.5-3.5M13.5 19.5l3.5-3.5M17 7l-3.5 3.5M3.5 12.5L0 16M17 25l-3.5-3.5M3.5 19.5L0 16'/%3E%3Ccircle cx='12' cy='16' r='3' fill='none' stroke='%23c4b59a' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23c9a227' stroke-width='0.4' opacity='0.8' d='M12 10 Q16 16 12 22 Q8 16 12 10'/%3E%3C/svg%3E");
         }
+
         .ornament.ornament-top,
         .ornament.ornament-bottom {
             position: absolute;
@@ -222,8 +326,15 @@
             background-size: 32px 24px;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='24' viewBox='0 0 32 24'%3E%3Cpath fill='none' stroke='%23c4b59a' stroke-width='0.5' d='M16 0v6M16 24v6M10 12h6M22 12h6M12 5l3.5 3.5M16.5 9.5l3.5 3.5M12 19l3.5-3.5M16.5 14.5l3.5-3.5M22 5l-3.5 3.5M5.5 9.5L2 12M22 19l-3.5-3.5M5.5 14.5L2 12'/%3E%3Ccircle cx='16' cy='12' r='3' fill='none' stroke='%23c4b59a' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23c9a227' stroke-width='0.4' opacity='0.8' d='M16 8 Q20 12 16 16 Q12 12 16 8'/%3E%3C/svg%3E");
         }
-        .ornament.ornament-top { top: 0; }
-        .ornament.ornament-bottom { bottom: 0; }
+
+        .ornament.ornament-top {
+            top: 0;
+        }
+
+        .ornament.ornament-bottom {
+            bottom: 0;
+        }
+
         .page-view-inner {
             position: relative;
             z-index: 1;
@@ -233,14 +344,17 @@
             padding: 32px 0;
             overflow: hidden;
         }
+
         .page-view-inner .page-content {
             padding: 0 26px;
         }
+
         .page-view .basmala,
         .page-view .page-content {
             position: relative;
             z-index: 1;
         }
+
         .page-view .basmala {
             text-align: center;
             font-size: clamp(0.85rem, 2.3vh, 1.05rem);
@@ -249,6 +363,7 @@
             margin-bottom: 0.25rem;
             flex-shrink: 0;
         }
+
         .page-content {
             flex: 1;
             font-size: clamp(0.85rem, 2.3vh, 1.15rem);
@@ -257,12 +372,15 @@
             color: var(--ink);
             overflow: hidden;
         }
+
         .page-content .aya-wrap {
             display: inline;
         }
+
         .page-content .aya-wrap::after {
             content: "\00A0";
         }
+
         .aya-num {
             display: inline-flex;
             align-items: center;
@@ -281,8 +399,8 @@
             margin-left: 0.35rem;
             margin-right: 0.35rem;
             vertical-align: middle;
-            box-shadow: 0 0 0 1.5px rgba(196,181,154,0.75),
-                        0 0 0 3px rgba(196,181,154,0.35);
+            box-shadow: 0 0 0 1.5px rgba(196, 181, 154, 0.75),
+                0 0 0 3px rgba(196, 181, 154, 0.35);
         }
 
         /* تمييز لفظ الجلالة */
@@ -296,34 +414,37 @@
             transform: translateY(100%);
             transition: transform 0.3s ease;
         }
+
         .app-footer.auto-show {
             transform: translateY(0);
             transition: transform 0.3s ease;
         }
 
-        
+
         /* شريط التقدم اليومي */
         .daily-progress-bar {
             position: fixed;
             top: auto;
-            bottom: 42px;
+            bottom: 48px;
             left: 0;
             right: 0;
-            height: 6px;
-            background: rgba(196,181,154,0.2);
-            z-index: 99;
+            height: 4px;
+            background: rgba(196, 181, 154, 0.2);
+            z-index: 101;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             padding: 0 1rem;
         }
+
         .daily-progress-fill {
             height: 100%;
             background: var(--gold);
             transition: width 0.5s ease;
-            border-radius: 0 3px 3px 0;
+            border-radius: 0 2px 2px 0;
             flex: 1;
         }
+
         .daily-progress-label {
             position: absolute;
             right: 1rem;
@@ -334,10 +455,24 @@
             font-weight: 600;
             color: var(--navy);
             background: var(--paper);
-            padding: 0.2rem 0.5rem;
+            padding: 0.3rem 0.6rem;
             border-radius: 0.3rem;
-            z-index: 1;
+            z-index: 102;
             white-space: nowrap;
+            margin-bottom: 0.5rem;
+        }
+
+        [data-theme="dark"] .daily-progress-bar {
+            background: rgba(96, 165, 250, 0.2);
+        }
+
+        [data-theme="dark"] .daily-progress-label {
+            color: var(--verse-number);
+            background: var(--paper);
+        }
+
+        [data-theme="green"] .daily-progress-bar {
+            background: rgba(5, 150, 105, 0.2);
         }
 
         /* انتقال الصفحات السلس */
@@ -346,17 +481,312 @@
             transform: translateX(0);
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
+
         .page-view.page-transition-out {
             opacity: 0;
             transform: translateX(-20px);
         }
+
         .page-view.page-transition-in {
             opacity: 0;
             transform: translateX(20px);
         }
+
         .page-view.page-transition-in.active {
             opacity: 1;
             transform: translateX(0);
+        }
+
+        /* قائمة المفضلة المنبثقة */
+        .favorites-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--paper);
+            border-top: 1px solid var(--border-tan);
+            border-radius: 1rem 1rem 0 0;
+            max-height: 65vh;
+            z-index: 1004;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .favorites-panel.show {
+            transform: translateY(0);
+        }
+
+        .panel-header {
+            padding: 1rem 0.75rem 0.75rem;
+            border-bottom: 1px solid var(--border-tan);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .panel-close {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: var(--border-tan);
+            color: var(--ink);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .panel-close:hover {
+            background: var(--gold);
+            color: white;
+        }
+
+        .panel-content {
+            padding: 0.75rem;
+            max-height: 45vh;
+            overflow-y: auto;
+        }
+
+        .favorites-list {
+            display: grid;
+            gap: 0.6rem;
+        }
+
+        .favorite-item {
+            background: var(--cream);
+            border: 1px solid var(--border-tan);
+            border-radius: 0.4rem;
+            padding: 0.75rem;
+            transition: transform 0.2s;
+        }
+
+        .favorite-item:hover {
+            transform: translateX(3px);
+        }
+
+        .favorite-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.4rem;
+        }
+
+        .favorite-sura {
+            font-weight: 700;
+            color: var(--navy);
+            font-size: 0.85rem;
+        }
+
+        .favorite-meta {
+            font-size: 0.7rem;
+            color: var(--ink);
+            opacity: 0.6;
+        }
+
+        .favorite-verse {
+            font-family: 'Noto Naskh Arabic', serif;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--ink);
+            margin-bottom: 0.4rem;
+        }
+
+        .favorite-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .favorite-action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: var(--navy);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            padding: 0;
+        }
+
+        .favorite-action-btn:hover {
+            background: var(--gold);
+            transform: scale(1.1);
+        }
+
+        .favorite-action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .favorite-action-btn.danger {
+            background: var(--border-tan);
+            color: var(--ink);
+        }
+
+        .favorite-action-btn.danger:hover {
+            background: #dc2626;
+            color: white;
+        }
+
+        .empty-favorites {
+            text-align: center;
+            padding: 2.5rem 0.75rem;
+            color: var(--ink);
+            opacity: 0.6;
+        }
+
+        .empty-favorites-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* قائمة تفاصيل الورد المنبثقة */
+        .performance-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--paper);
+            border-top: 1px solid var(--border-tan);
+            border-radius: 1rem 1rem 0 0;
+            max-height: 65vh;
+            z-index: 1004;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .performance-panel.show {
+            transform: translateY(0);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            padding: 0.75rem;
+        }
+
+        .stat-card {
+            background: var(--cream);
+            border: 1px solid var(--border-tan);
+            border-radius: 0.4rem;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 0.2rem;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--ink);
+            opacity: 0.7;
+        }
+
+        .streak-display {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            margin: 0.75rem;
+            border-radius: 0.6rem;
+        }
+
+        .streak-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .weekly-chart {
+            padding: 0.75rem;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 80px;
+            gap: 0.4rem;
+            margin-top: 0.75rem;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: var(--gold);
+            border-radius: 3px 3px 0 0;
+            min-height: 8px;
+            position: relative;
+        }
+
+        .chart-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.55rem;
+            color: var(--ink);
+            opacity: 0.6;
+        }
+
+        .reminder-section {
+            padding: 0.75rem;
+            border-top: 1px solid var(--border-tan);
+        }
+
+        .reminder-card {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 0.4rem;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .reminder-title {
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        .reminder-text {
+            font-size: 0.8rem;
+            color: #78350f;
+            margin-bottom: 0.4rem;
+        }
+
+        .reminder-action {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .reminder-action:hover {
+            background: #d97706;
         }
 
         /* إشعارات الأزرار */
@@ -380,10 +810,12 @@
             margin-bottom: 0.5rem;
             pointer-events: none;
         }
+
         .btn-tooltip.show {
             opacity: 1;
             visibility: visible;
         }
+
         .btn-tooltip::after {
             content: '';
             position: absolute;
@@ -393,6 +825,7 @@
             border: 4px solid transparent;
             border-top-color: var(--navy);
         }
+
         /* تظليل الآية المحددة */
         .verse-highlighted {
             background: rgba(0, 0, 0, 0.08);
@@ -400,6 +833,7 @@
             padding: 0.1rem 0.2rem;
             margin: 0 -0.2rem;
         }
+
         [data-theme="dark"] .verse-highlighted {
             background: rgba(255, 255, 255, 0.1);
         }
@@ -418,11 +852,13 @@
             gap: 0.5rem;
             z-index: 1002;
             transition: bottom 0.3s ease;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
         }
+
         .verse-action-bar.show {
             bottom: 60px;
         }
+
         .action-btn {
             width: 32px;
             height: 32px;
@@ -437,17 +873,21 @@
             transition: transform 0.2s, background 0.2s;
             font-size: 0.8rem;
         }
+
         .action-btn:hover {
             transform: scale(1.1);
             background: var(--gold);
         }
+
         .action-btn:active {
             transform: scale(0.95);
         }
+
         .action-btn svg {
             width: 14px;
             height: 14px;
         }
+
         /* نافذة التفسير المنبثقة */
         .verse-insight {
             position: fixed;
@@ -462,15 +902,18 @@
             overflow-y: auto;
             z-index: 1001;
             transition: bottom 0.3s ease;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
         }
+
         [data-theme="dark"] .verse-insight {
             background: #1f2937;
             border-top-color: #6b7280;
         }
+
         .verse-insight.show {
             bottom: 0;
         }
+
         .insight-header {
             display: flex;
             justify-content: space-between;
@@ -479,15 +922,18 @@
             padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--border-tan);
         }
+
         [data-theme="dark"] .insight-header {
             border-bottom-color: #6b7280;
         }
+
         .insight-title {
             font-family: 'Tajawal', sans-serif;
             font-weight: 700;
             color: var(--navy);
             font-size: 0.9rem;
         }
+
         .insight-close {
             background: none;
             border: none;
@@ -503,26 +949,31 @@
             border-radius: 50%;
             transition: background 0.2s;
         }
+
         .insight-close:hover {
-            background: rgba(196,181,154,0.2);
+            background: rgba(196, 181, 154, 0.2);
         }
+
         .insight-content {
             font-family: 'Noto Naskh Arabic', serif;
             line-height: 1.8;
             color: var(--ink);
             font-size: 0.9rem;
         }
+
         .insight-verse {
             color: var(--navy);
             font-weight: 600;
             margin-bottom: 0.5rem;
             padding: 0.5rem;
-            background: rgba(196,181,154,0.1);
+            background: rgba(196, 181, 154, 0.1);
             border-radius: 0.5rem;
         }
+
         [data-theme="dark"] .insight-verse {
-            background: rgba(107,114,128,0.2);
+            background: rgba(107, 114, 128, 0.2);
         }
+
         .insight-actions {
             display: flex;
             gap: 0.5rem;
@@ -530,9 +981,11 @@
             padding-top: 1rem;
             border-top: 1px solid var(--border-tan);
         }
+
         [data-theme="dark"] .insight-actions {
             border-top-color: #6b7280;
         }
+
         .insight-action-btn {
             flex: 1;
             padding: 0.5rem;
@@ -545,11 +998,13 @@
             cursor: pointer;
             transition: all 0.2s;
         }
+
         [data-theme="dark"] .insight-action-btn {
             background: #374151;
             border-color: #6b7280;
             color: #f3f4f6;
         }
+
         .insight-action-btn:hover {
             background: var(--gold);
             color: white;
@@ -565,15 +1020,22 @@
             padding: 2rem;
             text-align: center;
         }
+
         .loading-state .spinner {
             width: 44px;
             height: 44px;
-            border: 3px solid rgba(30,58,138,0.2);
+            border: 3px solid rgba(30, 58, 138, 0.2);
             border-top-color: var(--navy);
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .loading-state p {
             margin-top: 1rem;
             font-family: 'Tajawal', sans-serif;
@@ -582,6 +1044,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- شريط التقدم اليومي -->
     <div class="daily-progress-bar" id="dailyProgressBar">
@@ -621,54 +1084,165 @@
     <div class="verse-action-bar" id="verseActionBar">
         <button class="action-btn" id="copyBtn" title="نسخ">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
             </svg>
         </button>
         <button class="action-btn" id="tafseerBtn" title="تفسير">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+                <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
+                <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
             </svg>
         </button>
         <button class="action-btn" id="favoriteBtn" title="المفضلة">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                <path
+                    d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
             </svg>
         </button>
         <button class="action-btn" id="shareBtn" title="مشاركة واتساب">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.488"/>
+                <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.488" />
             </svg>
         </button>
     </div>
 
     <footer class="app-footer" id="appFooter">
         <div class="footer-inner">
-            <a href="index.html" class="back-link">← رجوع</a>
-            <div class="footer-nav">
-                <button type="button" class="theme-btn" id="themeBtn" title="تغيير الثيم">
+            <!-- القسم الأيمن -->
+            <div class="footer-right">
+                <a href="index.html" class="back-btn" title="رجوع للرئيسية">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="5"/>
-                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                        <polyline points="9 22 9 12 15 12" />
                     </svg>
-                </button>
-                <button type="button" class="nav-btn" id="btnPrev" title="السابقة">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-                </button>
-                <button type="button" class="nav-btn" id="btnNext" title="التالية">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                </button>
+                </a>
+                <div class="footer-nav">
+                    <button type="button" class="favorites-btn" id="favoritesBtn" title="المفضلة">
+                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                        </svg>
+                    </button>
+                    <button type="button" class="performance-btn" id="performanceBtn" title="تفاصيل الورد">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 20V10M12 20V4M6 20v-6" />
+                        </svg>
+                    </button>
+                    <button type="button" class="theme-btn" id="themeBtn" title="تغيير الثيم">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5" />
+                            <path
+                                d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24" />
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <div class="footer-meta">
-                <span class="page-indicator" id="pageIndicator">ص —</span>
-                <span class="sura-juz" id="suraJuz"></span>
+
+            <!-- القسم الأيسر -->
+            <div class="footer-left">
+                <div class="footer-info">
+                    <div class="page-indicator" id="pageIndicator">ص 1</div>
+                    <div class="sura-juz" id="suraJuz"></div>
+                </div>
+                <div class="footer-nav">
+                    <button type="button" class="nav-btn" id="btnPrev" title="السابق">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </button>
+                    <button type="button" class="nav-btn" id="btnNext" title="التالي">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </footer>
 
+    <!-- قائمة المفضلة المنبثقة -->
+    <div class="favorites-panel" id="favoritesPanel">
+        <div class="panel-header">
+            <h3 class="panel-title">الآيات المفضلة</h3>
+            <button class="panel-close" id="favoritesClose">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="favorites-list" id="favoritesList">
+                <div class="empty-favorites">
+                    <div class="empty-favorites-icon">❤️</div>
+                    <p>لا توجد آيات مفضلة بعد</p>
+                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">اضغط على أيقونة القلب عند قراءة الآيات</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- قائمة تفاصيل الورد المنبثقة بتصميم جديد -->
+    <div class="performance-panel" id="performancePanel">
+        <div class="panel-header">
+            <h3 class="panel-title">
+                <i data-lucide="bar-chart-2" style="width: 20px; color: var(--gold);"></i>
+                أداء الورد القرآني
+            </h3>
+            <button class="panel-close" id="performanceClose">
+                <i data-lucide="x" style="width: 18px;"></i>
+            </button>
+        </div>
+
+        <div class="streak-display" id="streakDisplay">
+            <i data-lucide="flame" class="streak-icon-bg" style="width: 80px; height: 80px;"></i>
+            <div class="streak-number" id="streakNumber">0</div>
+            <div class="streak-label">يوم متتالي من القراءة</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i data-lucide="book-open" class="stat-icon"></i>
+                <div class="stat-number" id="statPagesRead">0</div>
+                <div class="stat-label">صفحات اليوم</div>
+            </div>
+            <div class="stat-card">
+                <i data-lucide="target" class="stat-icon"></i>
+                <div class="stat-number" id="statTargetPages">20</div>
+                <div class="stat-label">الهدف اليومي</div>
+            </div>
+            <div class="stat-card">
+                <i data-lucide="check-circle" class="stat-icon"></i>
+                <div class="stat-number" id="statCompletedDays">0</div>
+                <div class="stat-label">أيام مكتملة</div>
+            </div>
+            <div class="stat-card">
+                <i data-lucide="activity" class="stat-icon"></i>
+                <div class="stat-number" id="statAvgPages">0</div>
+                <div class="stat-label">معدل الصفحات</div>
+            </div>
+        </div>
+
+        <div class="stats-chart-container">
+            <div class="chart-header">
+                <i data-lucide="trending-up" style="width: 16px; color: var(--gold);"></i>
+                نشاطك آخر 7 أيام
+            </div>
+            <div class="chart-bars" id="weeklyBars">
+                <!-- Bars generated by JS -->
+            </div>
+        </div>
+
+        <div class="reminder-section">
+            <div class="reminder-card" id="reminderCard" style="display: none;">
+                <div class="reminder-content">
+                    <div class="reminder-title">✨ تذكير بالورد</div>
+                    <div class="reminder-text" id="reminderText">همتكم عالية! لم تبدأ ورد اليوم بعد</div>
+                </div>
+                <button class="reminder-action" id="reminderAction">ابدأ</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        (function() {
+        (function () {
             const STORAGE_KEY_PAGE = 'quran_last_page';
             const STORAGE_KEY_SURA = 'quran_last_sura_name';
             const STORAGE_KEY_THEME = 'quran_theme';
@@ -682,7 +1256,14 @@
             let pagesMap = {};
             let currentPageNum = 1;
             let dailyStartPage = 1;
-            let dailyPages = 22;
+            let dailyPages = 20; // Default fallback
+            try {
+                const savedPlan = localStorage.getItem('quranPlanV3');
+                if (savedPlan) {
+                    const plan = JSON.parse(savedPlan);
+                    if (plan.dailyPages) dailyPages = plan.dailyPages;
+                }
+            } catch (e) { console.warn("Plan load failed", e); }
             let touchStartX = 0;
 
             const loadingState = document.getElementById('loadingState');
@@ -708,6 +1289,13 @@
             const copyVerseBtn = document.getElementById('copyVerseBtn');
             const copyWithTafseerBtn = document.getElementById('copyWithTafseerBtn');
             const shareWhatsAppBtn = document.getElementById('shareWhatsAppBtn');
+            const favoritesBtn = document.getElementById('favoritesBtn');
+            const performanceBtn = document.getElementById('performanceBtn');
+            const favoritesPanel = document.getElementById('favoritesPanel');
+            const performancePanel = document.getElementById('performancePanel');
+            const favoritesClose = document.getElementById('favoritesClose');
+            const performanceClose = document.getElementById('performanceClose');
+            const favoritesList = document.getElementById('favoritesList');
 
             // متغيرات وضع التركيز العميق
             let lastScrollTop = 0;
@@ -722,6 +1310,288 @@
             let currentTafseer = '';
             let currentSuraName = '';
 
+            // نظام المفضلة
+            const FAVORITES_KEY = 'quran_favorites';
+            let favorites = [];
+
+            function loadFavorites() {
+                try {
+                    const saved = localStorage.getItem(FAVORITES_KEY);
+                    favorites = saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    favorites = [];
+                }
+            }
+
+            function saveFavorites() {
+                localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+            }
+
+            function addToFavorites(suraName, verseNumber, verseText, pageNumber) {
+                const favorite = {
+                    id: Date.now(),
+                    suraName: suraName,
+                    verseNumber: verseNumber,
+                    verseText: verseText,
+                    pageNumber: pageNumber,
+                    dateAdded: new Date().toISOString()
+                };
+
+                // التحقق من وجود الآية في المفضلة
+                const exists = favorites.some(fav =>
+                    fav.suraName === suraName && fav.verseNumber === verseNumber
+                );
+
+                if (exists) {
+                    showNotification('موجودة بالفعل', favoriteBtn);
+                    return false;
+                }
+
+                favorites.unshift(favorite); // إضافة في البداية
+                saveFavorites();
+                return true;
+            }
+
+            function removeFromFavorites(id) {
+                favorites = favorites.filter(fav => fav.id !== id);
+                saveFavorites();
+            }
+
+            function getFavorites() {
+                return favorites.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+            }
+
+            function isFavorite(suraName, verseNumber) {
+                return favorites.some(fav =>
+                    fav.suraName === suraName && fav.verseNumber === verseNumber
+                );
+            }
+
+            // نظام الأداء
+            const PERFORMANCE_KEY = 'quran_performance';
+            let performanceData = [];
+
+            function loadPerformance() {
+                try {
+                    const saved = localStorage.getItem(PERFORMANCE_KEY);
+                    performanceData = saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    performanceData = [];
+                }
+            }
+
+            function savePerformance() {
+                localStorage.setItem(PERFORMANCE_KEY, JSON.stringify(performanceData));
+            }
+
+            function recordDailyPerformance(date, pagesRead, targetPages, completed) {
+                const existingIndex = performanceData.findIndex(p => p.date === date);
+
+                const performance = {
+                    date: date,
+                    pagesRead: pagesRead,
+                    targetPages: targetPages,
+                    completed: completed,
+                    timestamp: new Date().toISOString()
+                };
+
+                if (existingIndex >= 0) {
+                    performanceData[existingIndex] = performance;
+                } else {
+                    performanceData.push(performance);
+                }
+
+                savePerformance();
+            }
+
+            function getTodayPerformance() {
+                const today = new Date().toDateString();
+                const todayData = performanceData.find(p => p.date === today);
+                return todayData || { date: today, pagesRead: 0, targetPages: dailyPages, completed: false };
+            }
+
+            function getWeeklyPerformance() {
+                const today = new Date();
+                const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+                return performanceData.filter(p => {
+                    const perfDate = new Date(p.date);
+                    return perfDate >= weekAgo && perfDate <= today;
+                });
+            }
+
+            function calculateStreak() {
+                if (performanceData.length === 0) return 0;
+
+                let streak = 0;
+                const today = new Date();
+
+                for (let i = 0; i < 365; i++) {
+                    const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+                    const dateStr = checkDate.toDateString();
+                    const dayData = performanceData.find(p => p.date === dateStr);
+
+                    if (dayData && dayData.completed) {
+                        streak++;
+                    } else if (i > 0) {
+                        break;
+                    }
+                }
+
+                return streak;
+            }
+
+            // نظام المزامنة مع الويدجت
+            const WIDGET_SYNC_KEY = 'quran_widget_sync';
+
+            function syncWithWidget() {
+                const todayPerf = getTodayPerformance();
+                const streak = calculateStreak();
+
+                const widgetData = {
+                    currentPage: currentPageNum,
+                    todayProgress: {
+                        pagesRead: todayPerf.pagesRead,
+                        targetPages: todayPerf.targetPages,
+                        percentage: Math.round((todayPerf.pagesRead / todayPerf.targetPages) * 100),
+                        completed: todayPerf.completed
+                    },
+                    lastReadTime: new Date().toISOString(),
+                    streak: streak,
+                    favoritesCount: favorites.length,
+                    suraName: currentSuraName
+                };
+
+                localStorage.setItem(WIDGET_SYNC_KEY, JSON.stringify(widgetData));
+
+                // إرسال حدث للويدجت
+                window.dispatchEvent(new CustomEvent('quranProgressUpdate', {
+                    detail: widgetData
+                }));
+            }
+
+            // وظائف القوائم المنبثقة
+            function showFavoritesPanel() {
+                renderFavorites();
+                favoritesPanel.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function hideFavoritesPanel() {
+                favoritesPanel.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+
+            function showPerformancePanel() {
+                renderPerformanceStats();
+                performancePanel.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function hidePerformancePanel() {
+                performancePanel.classList.remove('show');
+                document.body.style.overflow = '';
+            }
+
+            function renderFavorites() {
+                const favList = getFavorites();
+
+                if (favList.length === 0) {
+                    favoritesList.innerHTML = `
+                        <div class="empty-favorites">
+                            <div class="empty-favorites-icon">❤️</div>
+                            <p>لا توجد آيات مفضلة بعد</p>
+                            <p style="font-size: 0.8rem; margin-top: 0.5rem;">اضغط على أيقونة القلب عند قراءة الآيات</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                favoritesList.innerHTML = favList.map(fav => `
+                    <div class="favorite-item">
+                        <div class="favorite-header">
+                            <div class="favorite-info">
+                                <div class="favorite-sura">${fav.suraName}</div>
+                                <div class="favorite-meta">الآية ${fav.verseNumber} · صفحة ${fav.pageNumber}</div>
+                            </div>
+                            <div class="favorite-actions">
+                                <button class="favorite-action-btn" onclick="copyFavoriteVerse('${fav.suraName} - الآية ${fav.verseNumber}: ${fav.verseText}')" title="نسخ">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                                <button class="favorite-action-btn" onclick="shareFavoriteVerse('${fav.suraName} - الآية ${fav.verseNumber}: ${fav.verseText}')" title="مشاركة">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="18" cy="5" r="3"/>
+                                        <circle cx="6" cy="12" r="3"/>
+                                        <circle cx="18" cy="19" r="3"/>
+                                        <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>
+                                    </svg>
+                                </button>
+                                <button class="favorite-action-btn danger" onclick="removeFromFavorites(${fav.id}); renderFavorites();" title="حذف">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="favorite-verse">${fav.verseText}</div>
+                    </div>
+                `).join('');
+            }
+
+            function renderPerformanceStats() {
+                const streak = calculateStreak();
+                const todayPerf = getTodayPerformance();
+                const weekData = getWeeklyPerformance();
+
+                // تحديث السلسلة
+                document.getElementById('streakNumber').textContent = streak;
+
+                // تحديث الإحصائيات
+                document.getElementById('statPagesRead').textContent = todayPerf.pagesRead;
+                document.getElementById('statTargetPages').textContent = todayPerf.targetPages;
+
+                const completedDays = performanceData.filter(d => d.completed).length;
+                document.getElementById('statCompletedDays').textContent = completedDays;
+
+                const avgPages = performanceData.length > 0 ?
+                    Math.round(performanceData.reduce((sum, d) => sum + d.pagesRead, 0) / performanceData.length) : 0;
+                document.getElementById('statAvgPages').textContent = avgPages;
+
+                // تحديث الرسم البياني الأسبوعي
+                const weeklyBars = document.getElementById('weeklyBars');
+                const days = ['أ', 'ث', 'أ', 'خ', 'ج', 'ج', 'س']; // أول حرف من كل يوم
+                const maxPages = Math.max(...weekData.map(d => d.targetPages), 22);
+
+                weeklyBars.innerHTML = weekData.map((day, index) => {
+                    const height = (day.pagesRead / maxPages) * 100;
+                    const isCompleted = day.completed;
+
+                    return `
+                        <div class="chart-bar" style="height: ${height}%; background: ${isCompleted ? 'var(--success)' : 'var(--gold)'}">
+                            <div class="chart-label">${days[index]}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                // إظهار التذكير إذا لم يبدأ الورد
+                const reminderCard = document.getElementById('reminderCard');
+                const reminderText = document.getElementById('reminderText');
+
+                if (todayPerf.pagesRead === 0) {
+                    reminderCard.style.display = 'block';
+                    reminderText.textContent = 'لم تبدأ وردك اليوم بعد';
+                } else if (!todayPerf.completed) {
+                    reminderCard.style.display = 'block';
+                    reminderText.textContent = `أكملت ${todayPerf.pagesRead} من ${todayPerf.targetPages} صفحة`;
+                } else {
+                    reminderCard.style.display = 'none';
+                }
+            }
+
             // وظيفة الإشعارات
             function showNotification(message, buttonElement) {
                 // إزالة أي إشعارات سابقة
@@ -729,21 +1599,21 @@
                 if (existingTooltip) {
                     existingTooltip.remove();
                 }
-                
+
                 // إنشاء الإشعار فوق الزر
                 const tooltip = document.createElement('div');
                 tooltip.className = 'btn-tooltip';
                 tooltip.textContent = message;
-                
+
                 // إضافة الإشعار فوق الزر
                 buttonElement.style.position = 'relative';
                 buttonElement.appendChild(tooltip);
-                
+
                 // إظهار الإشعار
                 setTimeout(() => {
                     tooltip.classList.add('show');
                 }, 50);
-                
+
                 // إخفاء الإشعار بعد ثانية
                 setTimeout(() => {
                     tooltip.classList.remove('show');
@@ -772,7 +1642,7 @@
             function saveTheme() {
                 try {
                     localStorage.setItem(STORAGE_KEY_THEME, THEMES[currentThemeIndex]);
-                } catch (_) {}
+                } catch (_) { }
             }
 
             function applyTheme() {
@@ -787,9 +1657,9 @@
 
             // وضع التركيز العميق
             function initDeepFocusMode() {
-                pageView.addEventListener('scroll', function() {
+                pageView.addEventListener('scroll', function () {
                     const currentScrollTop = pageView.scrollTop;
-                    
+
                     if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
                         // التمرير لأسفل - إخفاء الفوتر
                         if (isFooterVisible) {
@@ -805,14 +1675,14 @@
                             isFooterVisible = true;
                         }
                     }
-                    
+
                     lastScrollTop = currentScrollTop;
-                    
+
                     // إلغاء التايمر السابق
                     clearTimeout(scrollTimeout);
-                    
+
                     // إخفاء الفوتر بعد التوقف عن التمرير
-                    scrollTimeout = setTimeout(function() {
+                    scrollTimeout = setTimeout(function () {
                         if (currentScrollTop > 50) {
                             appFooter.classList.add('auto-hide');
                             appFooter.classList.remove('auto-show');
@@ -822,24 +1692,24 @@
                 });
             }
 
-            
+
             // تحديث شريط التقدم اليومي
             function updateDailyProgress() {
                 const todayEnd = Math.min(dailyStartPage + dailyPages - 1, TOTAL_PAGES);
                 const totalInPlan = todayEnd - dailyStartPage + 1;
                 let done = 0;
-                
+
                 if (currentPageNum >= dailyStartPage && currentPageNum <= todayEnd) {
                     done = currentPageNum - dailyStartPage + 1;
                 } else if (currentPageNum > todayEnd) {
                     done = totalInPlan;
                 }
-                
+
                 const ratio = totalInPlan > 0 ? done / totalInPlan : 0;
                 const percentage = ratio * 100;
-                
+
                 dailyProgressFill.style.width = percentage + '%';
-                
+
                 // اهتزاز عند إكمال الورد
                 if (done === totalInPlan && navigator.vibrate) {
                     navigator.vibrate([200, 100, 200]);
@@ -850,7 +1720,7 @@
             function showVerseInsight(verseText, verseNumber) {
                 currentVerseText = verseText;
                 currentVerseNumber = verseNumber;
-                
+
                 // محاكاة التفسير (يمكن استبداله ببيانات حقيقية)
                 const tafseerTexts = [
                     "هذه الآية تتحدث عن أهمية الإيمان والعمل الصالح.",
@@ -859,10 +1729,10 @@
                     "في هذه الآية دعوة للتأمل في آيات الله في الطبيعة.",
                     "هذه الآية ترشد إلى الصراط المستقيم وطرق الهداية."
                 ];
-                
+
                 currentTafseer = tafseerTexts[Math.floor(Math.random() * tafseerTexts.length)];
                 insightText.textContent = currentTafseer;
-                
+
                 verseInsight.classList.add('show');
             }
 
@@ -887,6 +1757,12 @@
                 });
             }
 
+            function copyFavoriteVerse(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('تم النسخ', event.target.closest('.favorite-action-btn'));
+                });
+            }
+
             function copyWithTafseer() {
                 const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}\n\nالتفسير: ${currentTafseer}`;
                 navigator.clipboard.writeText(fullText).then(() => {
@@ -899,6 +1775,12 @@
                 const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
                 window.open(whatsappUrl, '_blank');
                 showNotification('تم المشاركة', shareBtn);
+            }
+
+            function shareFavoriteVerse(text) {
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                window.open(whatsappUrl, '_blank');
+                showNotification('تم المشاركة', event.target.closest('.favorite-action-btn'));
             }
 
             function shareWhatsAppWithTafseer() {
@@ -917,7 +1799,7 @@
                         const day = plan.currentDay || 1;
                         dailyStartPage = 1 + (day - 1) * dailyPages;
                     }
-                } catch (_) {}
+                } catch (_) { }
             }
 
             function savePosition(pageNum) {
@@ -937,13 +1819,13 @@
 
             function buildPagesMap(data) {
                 const byPage = {};
-                data.forEach(function(aya) {
+                data.forEach(function (aya) {
                     const p = aya.page;
                     if (!byPage[p]) byPage[p] = [];
                     byPage[p].push(aya);
                 });
-                Object.keys(byPage).forEach(function(p) {
-                    byPage[p].sort(function(a, b) {
+                Object.keys(byPage).forEach(function (p) {
+                    byPage[p].sort(function (a, b) {
                         return (a.line_start - b.line_start) || (a.aya_no - b.aya_no);
                     });
                 });
@@ -986,7 +1868,7 @@
 
                 const first = verses[0];
                 const showBasmala = first.aya_no === 1 && first.sura_no > 1;
-                
+
                 // تخزين اسم السورة الحالي
                 currentSuraName = first.sura_name_ar ? first.sura_name_ar.trim() : '';
 
@@ -995,56 +1877,56 @@
                     html += '<p class="basmala">' + highlightAllah(escapeHtml(BASMALA)) + '</p>';
                 }
                 html += '<div class="page-content">';
-                verses.forEach(function(v, index) {
+                verses.forEach(function (v, index) {
                     const cleanText = cleanAyaText(v.aya_text);
                     const verseId = `verse-${currentPageNum}-${index}`;
-                    html += '<span class="aya-wrap" id="' + verseId + '" data-verse="' + v.aya_no + '" data-text="' + escapeHtml(cleanText.substring(0, 100)) + '">' + 
-                            highlightAllah(escapeHtml(cleanText)) + 
-                            '<span class="aya-num">' + v.aya_no + '</span></span>';
+                    html += '<span class="aya-wrap" id="' + verseId + '" data-verse="' + v.aya_no + '" data-full-text="' + escapeHtml(cleanText) + '">' +
+                        highlightAllah(escapeHtml(cleanText)) +
+                        '<span class="aya-num">' + v.aya_no + '</span></span>';
                 });
                 html += '</div>';
 
                 // إضافة تأثير الانتقال
                 pageView.classList.add('page-transition-out');
-                
-                setTimeout(function() {
+
+                setTimeout(function () {
                     pageViewInner.innerHTML = html;
                     pageView.classList.remove('page-transition-out');
                     pageView.classList.add('page-transition-in');
-                    
-                    setTimeout(function() {
+
+                    setTimeout(function () {
                         pageView.classList.add('active');
                     }, 50);
-                    
-                    setTimeout(function() {
+
+                    setTimeout(function () {
                         pageView.classList.remove('page-transition-in', 'active');
                     }, 350);
                 }, 300);
 
                 // إضافة مستمع النقر المفرد للتفسير فقط
-                setTimeout(function() {
+                setTimeout(function () {
                     const verseElements = pageViewInner.querySelectorAll('.aya-wrap');
-                    verseElements.forEach(function(verse) {
-                        verse.addEventListener('click', function(e) {
+                    verseElements.forEach(function (verse) {
+                        verse.addEventListener('click', function (e) {
                             // نقر مفيد
                             e.preventDefault();
                             const verseNumber = this.getAttribute('data-verse');
-                            const verseText = this.getAttribute('data-text');
-                            
+                            const verseText = this.getAttribute('data-full-text');
+
                             // تظليل الآية
                             if (tappedVerse && tappedVerse !== this) {
                                 tappedVerse.classList.remove('verse-highlighted');
                             }
                             this.classList.add('verse-highlighted');
                             tappedVerse = this;
-                            
+
                             // تخزين بيانات الآية الحالية
                             currentVerseText = verseText;
                             currentVerseNumber = verseNumber;
-                            
+
                             // إظهار شريط الأزرار فقط
                             showActionBar();
-                            
+
                             // إخفاء نافذة التفسير إذا كانت ظاهرة
                             hideVerseInsight();
                         });
@@ -1062,15 +1944,35 @@
                     var first = verses[0];
                     var suraName = first.sura_name_ar ? first.sura_name_ar.trim() : '';
                     var juz = first.jozz || first.juzz || '';
+                    currentSuraName = suraName; // تحديث اسم السورة الحالي
                     suraJuzEl.textContent = (suraName ? suraName + ' · ' : '') + (juz ? 'جزء ' + juz : '');
                 } else {
                     suraJuzEl.textContent = '';
+                    currentSuraName = '';
                 }
 
                 // تحديث شريط التقدم اليومي
                 updateDailyProgress();
 
+                // تسجيل الأداء اليومي
+                const todayPerf = getTodayPerformance();
                 const todayEnd = Math.min(dailyStartPage + dailyPages - 1, TOTAL_PAGES);
+                const totalInPlan = todayEnd - dailyStartPage + 1;
+                let done = 0;
+
+                if (currentPageNum >= dailyStartPage && currentPageNum <= todayEnd) {
+                    done = currentPageNum - dailyStartPage + 1;
+                } else if (currentPageNum > todayEnd) {
+                    done = totalInPlan;
+                }
+
+                const completed = done >= totalInPlan;
+                recordDailyPerformance(new Date().toDateString(), done, dailyPages, completed);
+
+                // مزامنة مع الويدجت
+                syncWithWidget();
+
+                // اهتزاز عند إكمال الورد
                 if (currentPageNum === todayEnd + 1 && navigator.vibrate) {
                     navigator.vibrate([20, 50, 20]);
                 }
@@ -1097,29 +1999,43 @@
                 else if (deltaX < -SWIPE_THRESHOLD) goNext();
             }
 
-            pageView.addEventListener('touchstart', function(e) {
+            pageView.addEventListener('touchstart', function (e) {
                 touchStartX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
             }, { passive: true });
-            pageView.addEventListener('touchend', function(e) {
+            pageView.addEventListener('touchend', function (e) {
                 const x = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : e.clientX;
                 onSwipe(x - touchStartX);
             }, { passive: true });
 
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function (e) {
                 if (e.key === 'ArrowRight') goPrev();
                 else if (e.key === 'ArrowLeft') goNext();
             });
 
             fetch('assets/quran.json')
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
                     loadPlan();
                     loadTheme();
+                    loadFavorites(); // تحميل المفضلة
+                    loadPerformance(); // تحميل بيانات الأداء
                     pagesMap = buildPagesMap(data);
                     loadingState.style.display = 'none';
                     pageView.style.display = 'block';
 
-                    currentPageNum = getLastPage();
+                    // التحقق من وجود معلمة الصفحة في الرابط
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const pageParam = urlParams.get('page');
+                    let startPage = getLastPage();
+
+                    if (pageParam) {
+                        const p = parseInt(pageParam, 10);
+                        if (p >= 1 && p <= TOTAL_PAGES) {
+                            startPage = p;
+                        }
+                    }
+
+                    currentPageNum = startPage;
                     renderCurrentPage();
                     updateUI();
 
@@ -1131,32 +2047,57 @@
                     btnNext.addEventListener('click', goNext);
                     themeBtn.addEventListener('click', switchTheme);
                     insightClose.addEventListener('click', hideVerseInsight);
-                    
+
                     // أزرار شريط الأدوات
                     copyBtn.addEventListener('click', copyVerse);
-                    tafseerBtn.addEventListener('click', function() {
+                    tafseerBtn.addEventListener('click', function () {
                         hideActionBar(); // إخفاء شريط الأزرار
                         showVerseInsight(currentVerseText, currentVerseNumber); // إظهار نافذة التفسير
                     });
-                    favoriteBtn.addEventListener('click', function() {
-                        showNotification('تمت الإضافة', favoriteBtn);
+                    favoriteBtn.addEventListener('click', function () {
+                        const added = addToFavorites(currentSuraName, currentVerseNumber, currentVerseText, currentPageNum);
+                        if (added) {
+                            showNotification('تمت الإضافة', favoriteBtn);
+                            syncWithWidget(); // مزامنة مع الويدجت
+                        }
                     });
                     shareBtn.addEventListener('click', shareWhatsApp);
-                    
+
                     // أزرار نافذة التفسير
                     copyVerseBtn.addEventListener('click', copyVerse);
                     copyWithTafseerBtn.addEventListener('click', copyWithTafseer);
                     shareWhatsAppBtn.addEventListener('click', shareWhatsAppWithTafseer);
-                    
+
                     // إغلاق التفسير عند النقر خارج النافذة
-                    verseInsight.addEventListener('click', function(e) {
+                    verseInsight.addEventListener('click', function (e) {
                         if (e.target === verseInsight) {
                             hideVerseInsight();
                         }
                     });
-                    
-                    // إغلاق شريط الأزرار عند النقر في أي مكان آخر
-                    document.addEventListener('click', function(e) {
+
+                    // أزرار القوائم المنبثقة
+                    favoritesBtn.addEventListener('click', showFavoritesPanel);
+                    performanceBtn.addEventListener('click', showPerformancePanel);
+                    favoritesClose.addEventListener('click', hideFavoritesPanel);
+                    performanceClose.addEventListener('click', hidePerformancePanel);
+
+                    // زر التذكير
+                    document.getElementById('reminderAction').addEventListener('click', function () {
+                        hidePerformancePanel();
+                        // التركيز على منطقة القراءة
+                        pageViewInner.focus();
+                    });
+
+                    // إغلاق القوائم عند النقر خارجها
+                    document.addEventListener('click', function (e) {
+                        if (!favoritesPanel.contains(e.target) && !favoritesBtn.contains(e.target)) {
+                            hideFavoritesPanel();
+                        }
+                        if (!performancePanel.contains(e.target) && !performanceBtn.contains(e.target)) {
+                            hidePerformancePanel();
+                        }
+                    });
+                    document.addEventListener('click', function (e) {
                         if (!verseActionBar.contains(e.target) && !e.target.closest('.aya-wrap') && !verseInsight.contains(e.target)) {
                             hideActionBar();
                             // إزالة التظليل عند إغلاق شريط الأزرار
@@ -1167,11 +2108,34 @@
                         }
                     });
                 })
-                .catch(function(err) {
-                    loadingState.innerHTML = '<p style="color:#b91c1c;">فشل تحميل المصحف. تأكد من وجود ملف assets/quran.json</p>';
+                .catch(function (err) {
+                    loadingState.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; direction: rtl; font-family: 'Tajawal', sans-serif;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem; animation: bounce 2s infinite;">😕</div>
+                            <h3 style="color: var(--navy); margin-bottom: 1rem; font-weight: 800; font-size: 1.2rem;">عذراً، تعذر تحميل المصحف</h3>
+                            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6;">يبدو أن هناك مشكلة في تحميل ملفات المصحف.<br>يمكنك المحاولة مرة أخرى أو استخدام تطبيق "آيات" الموثوق:</p>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 0.8rem; max-width: 280px; margin: 0 auto;">
+                                <button onclick="location.reload()" style="background: var(--navy); color: white; padding: 1rem; border-radius: 0.8rem; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2); transition: transform 0.2s;" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'">
+                                    <span>🔄</span> إعادة المحاولة
+                                </button>
+                                
+                                <a href="https://play.google.com/store/apps/details?id=sa.edu.ksu.Ayat" target="_blank" style="background: #e8f5e9; color: #15803d; padding: 0.9rem; border-radius: 0.8rem; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid #bbf7d0;">
+                                    <span>🤖</span> تحميل للأندرويد (Ayat)
+                                </a>
+                                
+                                <a href="https://apps.apple.com/us/app/ayat-al-quran-%D8%A7%D9%84%D9%82%D8%B1%D8%A2%D9%86-%D8%A7%D9%84%D9%83%D8%B1%D9%8A%D9%85/id634325420" target="_blank" style="background: #f8fafc; color: #334155; padding: 0.9rem; border-radius: 0.8rem; text-decoration: none; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid #e2e8f0;">
+                                    <span>🍎</span> تحميل للآيفون (Ayat)
+                                </a>
+                                
+                                <a href="index.html" style="margin-top: 1rem; color: #94a3b8; font-size: 0.8rem; text-decoration: none; font-weight: medium;">العودة للرئيسية</a>
+                            </div>
+                        </div>
+                    `;
                     console.error(err);
                 });
         })();
     </script>
 </body>
+
 </html>
