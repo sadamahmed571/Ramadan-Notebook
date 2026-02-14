@@ -654,36 +654,30 @@
         }
 
         /* تحسينات النافذة المنبثقة - Emerald Design Premium */
-        .performance-panel,
         .favorites-panel {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.95);
+            transform: translate(-50%, -50%) scale(0.9);
             width: 90%;
-            max-width: 360px;
-            background: linear-gradient(to left, rgba(16, 185, 129, 0.05), #ffffff);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-            z-index: 2000;
-            padding: 1.5rem;
+            max-width: 400px;
+            max-height: 65vh;
+            background: var(--paper);
+            border-radius: 1rem;
+            border-right: 4px solid var(--gold);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-right: 4px solid var(--gold);
-            /* سيتغير برمجيًا ليصبح أخضر في الثيم الجديد */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1004;
+            overflow-y: auto;
         }
 
         /* تخصيص الثيم الزمردي */
-        .performance-panel {
-            border-right-color: #10b981;
-            /* Emerald */
+        .favorites-panel {
+            border-right-color: var(--gold);
         }
 
-        .performance-panel.show,
         .favorites-panel.show {
             opacity: 1;
             visibility: visible;
@@ -691,24 +685,20 @@
         }
 
         /* Overlay */
-        .performance-panel::before,
         .favorites-panel::before {
             content: '';
             position: fixed;
-            top: -100vh;
-            left: -100vw;
-            width: 300vw;
-            height: 300vh;
-            background: rgba(6, 78, 59, 0.3);
-            /* Dark Emerald tint */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(4px);
-            z-index: -1;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s ease;
             pointer-events: none;
         }
 
-        .performance-panel.show::before,
         .favorites-panel.show::before {
             opacity: 1;
             pointer-events: all;
@@ -972,22 +962,6 @@
 
         .performance-panel.show {
             transform: translateY(0);
-        }
-
-        .performance-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px);
-            z-index: 1999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-
-        .performance-overlay.show {
-            opacity: 1;
-            visibility: visible;
         }
 
         .panel-header-v2 {
@@ -1659,91 +1633,6 @@
         </div>
     </footer>
 
-    <!-- الطبقة الشفافة خلف نافذة الأداء -->
-    <div class="performance-overlay" id="perfOverlay"></div>
-
-    <!-- لوحة تحليل الأداء المطورة (بتصميم خطىْ) -->
-    <div class="performance-panel" id="performancePanel">
-        <div class="panel-header-v2">
-            <h3 class="panel-title-v2">
-                <i data-lucide="bar-chart-2" style="width: 24px; color: #10b981;"></i>
-                تحليل أدائك القرآني
-            </h3>
-            <button class="close-btn-v2" id="performanceClose">
-                <i data-lucide="x" style="width: 20px;"></i>
-            </button>
-        </div>
-
-        <!-- بطاقة الإنجاز الرئيسية (تشبه الصفحة الرئيسية) -->
-        <div class="analytics-main-card">
-            <div class="card-header-flex">
-                <div class="card-title-sm">
-                    <i data-lucide="award" style="width: 18px; color: #10b981;"></i>
-                    برنامج الختمة الحالي
-                </div>
-                <span class="progress-label-v2" id="v2PlanProgressText">0/30 يوم</span>
-            </div>
-
-            <div class="progress-container-v2">
-                <div class="progress-fill-v2" id="v2PlanProgressBar" style="width: 0%"></div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
-                <span id="v2NextMilestone" style="font-size: 0.75rem; font-weight: 700; color: var(--navy);">المحطة
-                    التالية: صفحة 1</span>
-                <span id="v2ProjectedEnd" style="font-size: 0.7rem; color: #64748b;">ختمة واحدة</span>
-            </div>
-        </div>
-
-        <!-- بطاقة تنبيه الورد الفائت (تظهر عند الحاجة) -->
-        <div class="missed-alert-card hidden" id="v2MissedAlert">
-            <div class="missed-content">
-                <div class="missed-title">⚠️ لديك ورد فاتك!</div>
-                <div class="missed-desc" id="v2MissedText">متأخر بـ 0 صفحات عن جدولك</div>
-            </div>
-            <button class="catchup-btn" id="v2CatchupBtn">تعويض الآن</button>
-        </div>
-
-        <!-- شبكة الإحصائيات السريعة -->
-        <div class="stats-grid-v2">
-            <div class="stat-item-v2">
-                <i data-lucide="flame" class="stat-icon-v2"></i>
-                <div class="stat-value-v2" id="v2StatStreak">0</div>
-                <div class="stat-label-v2">أطول سلسلة</div>
-            </div>
-            <div class="stat-item-v2">
-                <i data-lucide="check-circle" class="stat-icon-v2"></i>
-                <div class="stat-value-v2" id="v2StatDonePages">0</div>
-                <div class="stat-label-v2">صفحات منجزة</div>
-            </div>
-            <div class="stat-item-v2">
-                <i data-lucide="target" class="stat-icon-v2"></i>
-                <div class="stat-value-v2" id="v2StatDailyGoal">22</div>
-                <div class="stat-label-v2">هدفك اليومي</div>
-            </div>
-            <div class="stat-item-v2">
-                <i data-lucide="zap" class="stat-icon-v2"></i>
-                <div class="stat-value-v2" id="v2StatAvg">0</div>
-                <div class="stat-label-v2">معدل الإنجاز</div>
-            </div>
-        </div>
-
-        <!-- مخطط النشاط الأسبوعي -->
-        <div class="activity-chart-v2">
-            <div class="chart-header-v2">
-                <i data-lucide="trending-up" style="width: 18px; color: #10b981;"></i>
-                نشاطك آخر 7 أيام
-            </div>
-            <div class="bars-container-v2" id="v2WeeklyBars">
-                <!-- Bars via JS -->
-            </div>
-        </div>
-
-        <div style="text-align: center; margin-top: 1rem; padding-bottom: 2rem;">
-            <p style="font-size: 0.75rem; color: #94a3b8;">"إن أحب الأعمال إلى الله أدومها وإن قل"</p>
-        </div>
-    </div>
-
     <script>
         (function () {
             const STORAGE_KEY_PAGE = 'quran_last_page';
@@ -1985,20 +1874,6 @@
                 document.body.style.overflow = '';
             }
 
-            function showPerformancePanel() {
-                renderPerformanceStatsV2();
-                performancePanel.classList.add('show');
-                document.getElementById('perfOverlay').classList.add('show');
-                document.body.style.overflow = 'hidden';
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-            }
-
-            function hidePerformancePanel() {
-                performancePanel.classList.remove('show');
-                document.getElementById('perfOverlay').classList.remove('show');
-                document.body.style.overflow = '';
-            }
-
             function renderPerformanceStatsV2() {
                 const streak = calculateStreak();
                 const todayPerf = getTodayPerformance();
@@ -2027,8 +1902,9 @@
                 document.getElementById('v2StatDailyGoal').textContent = dailyPages;
 
                 const avg = performanceData.length > 0 ?
+
                     Math.round(performanceData.reduce((sum, d) => sum + d.pagesRead, 0) / performanceData.length) : 0;
-                document.getElementById('v2StatZap') ? null : (document.getElementById('v2StatAvg').textContent = avg);
+                document.getElementById('v2StatAvg').textContent = avg;
 
                 // 3. منطق الورد الفائت
                 const expectedTotal = Math.max(0, (planDay - 1) * dailyPages);
@@ -2594,24 +2470,12 @@
                     });
                     shareBtn.addEventListener('click', shareWhatsApp);
 
-                    // أزرار نافذة التفسير
-                    copyVerseBtn.addEventListener('click', copyVerse);
-                    copyWithTafseerBtn.addEventListener('click', copyWithTafseer);
-                    shareWhatsAppBtn.addEventListener('click', shareWhatsAppWithTafseer);
-
                     // أزرار القوائم المنبثقة
                     favoritesBtn.addEventListener('click', showFavoritesPanel);
-                    performanceBtn.addEventListener('click', showPerformancePanel);
-                    favoritesClose.addEventListener('click', hideFavoritesPanel);
-                    performanceClose.addEventListener('click', hidePerformancePanel);
-                    document.getElementById('perfOverlay').addEventListener('click', hidePerformancePanel);
-
-                    // زر التعويض في لوحة الأداء
-                    document.getElementById('v2CatchupBtn').addEventListener('click', function () {
-                        hidePerformancePanel();
-                        // يمكن توجيه المستخدم لصفحة معينة أو إعطاء رسالة تشجيع
-                        showNotification('انطلق! الله يبارك في همتك', this);
+                    performanceBtn.addEventListener('click', function() {
+                        showNotification('قيد التطوير', performanceBtn);
                     });
+                    favoritesClose.addEventListener('click', hideFavoritesPanel);
 
                     // إغلاق القوائم عند النقر خارجها
                     document.addEventListener('click', function (e) {

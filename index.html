@@ -227,9 +227,10 @@
             );
         };
 
-        // -------------------- 🕌 ويدجت الحكمة والهوية --------------------
         const WisdomWidget = ({ hijriDay = 12 }) => {
             const [wisdom, setWisdom] = useState({ text: '', author: '' });
+            const [showToast, setShowToast] = useState(false);
+
             useEffect(() => {
                 // عرض حكمة واحدة محددة لكل يوم من أيام رمضان
                 const index = (hijriDay - 1) % WISDOM_ARRAY.length;
@@ -245,32 +246,52 @@
             const copyToClipboard = () => {
                 const text = `"${wisdom.text}"${wisdom.author ? ` - ${wisdom.author}` : ''}`;
                 navigator.clipboard.writeText(text).then(() => {
-                    alert('تم نسخ الحكمة بنجاح!');
+                    setShowToast(true);
+                    triggerHaptic('success');
+                    setTimeout(() => setShowToast(false), 3000);
                 });
             };
 
             return (
-                <div class="glass-card rounded-xl p-4 mb-4 flex flex-col items-center justify-center gap-3 border-t-4 border-t-gold text-center">
-                    <div>
-                        <p class="text-sm font-bold text-gray-700 leading-relaxed">
+                <div class="relative glass-card rounded-xl p-6 mb-4 flex flex-col items-center justify-center gap-4 text-center overflow-hidden border border-white/20 shadow-lg">
+                    {/* Gradient Background */}
+                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-navy opacity-90 z-0"></div>
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10 z-0"></div>
+
+                    {/* Content */}
+                    <div class="relative z-10 flex flex-col items-center">
+                        <i data-lucide="quote" class="w-6 h-6 text-gold/80 mb-2 rotate-180"></i>
+                        <p class="text-base font-bold text-white leading-relaxed font-serif tracking-wide drop-shadow-sm">
                             "{wisdom.text}"
                         </p>
                         {wisdom.author && (
-                            <p class="text-[11px] text-gray-500 font-medium mt-1">
+                            <p class="text-xs text-blue-200/80 font-medium mt-2 flex items-center gap-1">
+                                <span class="w-4 h-0.5 bg-gold/50 rounded-full inline-block"></span>
                                 {wisdom.author}
+                                <span class="w-4 h-0.5 bg-gold/50 rounded-full inline-block"></span>
                             </p>
                         )}
                     </div>
 
-                    <div class="flex gap-3 mt-1">
-                        <button onClick={shareWhatsApp} class="flex items-center gap-1.5 px-3 py-1 bg-emerald/10 text-emerald rounded-full hover:bg-emerald/20 transition text-[10px] font-bold">
+                    <div class="relative z-10 flex gap-3 mt-1">
+                        <button onClick={shareWhatsApp} class="flex items-center gap-1.5 px-4 py-1.5 bg-white/10 text-white rounded-full hover:bg-white/20 transition text-[11px] font-bold backdrop-blur-sm border border-white/5 active:scale-95">
                             <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
 
                         </button>
-                        <button onClick={copyToClipboard} class="flex items-center gap-1.5 px-3 py-1 bg-navy/10 text-navy rounded-full hover:bg-navy/20 transition text-[10px] font-bold">
+                        <button onClick={copyToClipboard} class="flex items-center gap-1.5 px-4 py-1.5 bg-gold/20 text-gold rounded-full hover:bg-gold/30 transition text-[11px] font-bold backdrop-blur-sm border border-gold/10 active:scale-95">
                             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
 
                         </button>
+                    </div>
+
+                    {/* Custom Toast Notification */}
+                    <div class={`absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300 z-20 ${showToast ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+                        <div class={`bg-white text-navy px-4 py-2 rounded-full shadow-2xl flex items-center gap-2 transform transition-all duration-300 ${showToast ? 'scale-100 translate-y-0' : 'scale-90 translate-y-4'}`}>
+                            <div class="bg-emerald/10 p-1 rounded-full">
+                                <i data-lucide="check" class="w-3.5 h-3.5 text-emerald stroke-[3px]"></i>
+                            </div>
+                            <span class="text-xs font-bold">تم نسخ الحكمة بنجاح!</span>
+                        </div>
                     </div>
                 </div>
             );
@@ -315,6 +336,7 @@
                     const currentTotal = now.getHours() * 60 + now.getMinutes();
                     const currentSecs = now.getSeconds();
 
+
                     // Live Local Clock
                     setCurrentTime(now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit', hour12: true }));
 
@@ -354,6 +376,9 @@
                 return () => clearInterval(interval);
             }, []);
 
+            // Format Gregorian Date (e.g., 23 مارس)
+            const gregorianDate = new Intl.DateTimeFormat('ar-EG', { day: 'numeric', month: 'long' }).format(new Date());
+
             return (
                 <div class={`relative rounded-2xl p-4 mb-3 overflow-hidden text-white shadow-lg transition-all duration-500 ${isFasting ? 'bg-gradient-to-r from-sunset-orange to-red-600' : 'bg-gradient-to-r from-deep-indigo to-navy'}`}>
                     <div class="flex justify-between items-start relative z-10">
@@ -368,6 +393,7 @@
                         <div class="text-center bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm min-w-[75px]">
                             <i data-lucide="moon-star" class="w-7 h-7 mx-auto"></i>
                             <span class="text-[13px] block mt-1 font-bold">{hijriDay} رمضان</span>
+                            <span class="text-[10px] block opacity-75 font-medium border-t border-white/20 mt-1 pt-0.5">{gregorianDate}</span>
                         </div>
                     </div>
 
@@ -432,7 +458,7 @@
                                         class={`relative flex flex-col items-center justify-center w-full h-14 rounded-xl transition-all duration-300 active:scale-90 ${isLongPressMode ? 'animate-shake' : ''
                                             } ${item.completed
                                                 ? 'bg-navy dark:bg-emerald text-white shadow-lg ring-2 ring-navy/20 dark:ring-emerald/20'
-                                                : 'bg-gray-50 dark:bg-white/5 text-gray-600 dark:text-gray-500 border border-transparent'
+                                                : 'bg-gray-50 dark:bg-white/5 text-gray-600 font-medium dark:text-gray-500 border border-transparent'
                                             }`}
                                     >
                                         {item.completed && (
@@ -486,6 +512,7 @@
         // -------------------- 📖 نظام الورد القرآني الذكي --------------------
         const QuranAdvanced = ({ plan, onSetup }) => {
             const [showSetup, setShowSetup] = useState(false); // تم تغيير الاسم ليعبر عن الحالة Inline
+            const [isEditing, setIsEditing] = useState(false); // حالة التعديل على الخطة
             const [dailyRead, setDailyRead] = useState(false); // حالة إنجاز اليوم
             const [lastRead, setLastRead] = useState(null);
 
@@ -494,10 +521,11 @@
                 setLastRead(localStorage.getItem('quran_last_sura_name'));
             });
 
-            if (!plan) {
+            // وضع الإعداد (جديد أو تعديل)
+            if (!plan || isEditing) {
                 return (
-                    <div class={`glass-card p-4 rounded-xl mb-3 text-center transition-all duration-500 overflow-hidden ${showSetup ? 'max-h-[500px]' : 'max-h-[200px]'}`}>
-                        {!showSetup ? (
+                    <div class={`glass-card p-4 rounded-xl mb-3 text-center transition-all duration-500 overflow-hidden ${showSetup || isEditing ? 'max-h-[500px]' : 'max-h-[200px]'}`}>
+                        {!showSetup && !isEditing ? (
                             <div class="animate-fade-in">
                                 <i data-lucide="quran" class="w-8 h-8 mx-auto text-navy dark:text-gold mb-2"></i>
                                 <p class="text-sm font-bold text-navy dark:text-white mb-2">
@@ -512,8 +540,14 @@
                             </div>
                         ) : (
                             <QuranSetupInline
-                                onClose={() => setShowSetup(false)}
-                                onSave={(p) => { setShowSetup(false); onSetup(p); }}
+                                onClose={() => { setShowSetup(false); setIsEditing(false); }}
+                                onSave={(p) => {
+                                    setShowSetup(false);
+                                    setIsEditing(false);
+                                    // Preserve completed days if editing
+                                    const mergedPlan = isEditing ? { ...p, completedDays: plan.completedDays || [] } : p;
+                                    onSetup(mergedPlan);
+                                }}
                             />
                         )}
                     </div>
@@ -526,16 +560,21 @@
             const todayCompleted = plan.completedDays?.includes(plan.currentDay) || false;
 
             // حساب نطاق الصفحات لليوم الحالي
-            // ملاحظة: نفترض أن الخطة تبدأ من اليوم الأول = الصفحة 1
-            // إذا كان المستخدم في اليوم الخامس مثلاً: (5-1) * 20 + 1 = 81
-            // الصفحة الأولى لليوم = (اليوم الحالي - 1) * عدد الصفحات اليومي + 1
-            // لكن هنا الخطة قد تكون مخزنة وبها currentDay، سنستخدمه
             const currentDayPlan = plan.currentDay || 1;
             const startPage = 1 + (currentDayPlan - 1) * plan.dailyPages;
             const endPage = Math.min(startPage + plan.dailyPages - 1, 604);
 
             return (
-                <div class="glass-card p-4 rounded-xl mb-3 border-r-4 border-r-emerald bg-gradient-to-l from-emerald/5 to-white">
+                <div class="glass-card p-4 rounded-xl mb-3 border-r-4 border-r-emerald bg-gradient-to-l from-emerald/5 to-white relative group">
+                    {/* زر الإعدادات - يظهر عند التحويم أو دائماً بشكل خافت */}
+                    <button
+                        onClick={() => setIsEditing(true)}
+                        class="absolute top-2 left-2 p-1.5 text-gray-400 hover:text-navy hover:bg-navy/5 rounded-full transition-all"
+                        title="تعديل الخطة"
+                    >
+                        <i data-lucide="settings" class="w-4 h-4"></i>
+                    </button>
+
                     <div class="flex justify-between items-center mb-1">
                         <div class="flex flex-col">
                             <h3 class="font-bold text-navy text-sm flex items-center gap-2">
@@ -543,7 +582,7 @@
                                 {plan.dailyPages} صفحة وردك اليومي
                             </h3>
                             {plan.totalQurans && (
-                                <span class="text-[11px] text-navy    mr-6">هدفنا: {plan.totalQurans === 1 ? 'ختمة واحدة' : plan.totalQurans === 2 ? 'ختمتان' : `${plan.totalQurans} ختمات`}</span>
+                                <span class="text-[12px] text-navy mr-6">هدفنا: {plan.totalQurans === 1 ? 'ختمة واحدة' : plan.totalQurans === 2 ? 'ختمتان' : `${plan.totalQurans} ختمات`}</span>
                             )}
                         </div>
                         <span class="text-[11px]   bg-emerald text-white px-2 py-0.5 rounded-full">
@@ -566,8 +605,8 @@
                     <div class="flex flex-col gap-3 mt-4">
                         <div class="flex justify-between items-center bg-white/40 p-2 rounded-lg border border-gray-50">
                             <div class="flex flex-col">
-                                <span class="text-[11px]   text-navy">وردك لهذا اليوم</span>
-                                <span class="text-[10px] text-gray-500">من صفحة {startPage} إلى {endPage}</span>
+                                <span class="text-[13px] font-medium   text-navy">وردك لهذا اليوم</span>
+                                <span class="text-[11px] text-gray-600">من صفحة {startPage} إلى {endPage}</span>
 
                             </div>
                             <button
@@ -582,7 +621,7 @@
                                 {todayCompleted ? 'تمت القراءة' : 'أنهيت الورد'}
                             </button>
                         </div>
-                        <a href={`quran.html?page=${startPage}`} class="w-full bg-navy/5 hover:bg-navy/10 text-navy py-2 rounded-lg text-[12px]  transition flex items-center justify-center gap-2 border border-navy/5">
+                        <a href={`quran.html?page=${startPage}`} class="w-full bg-navy/5 hover:bg-navy/10 text-navy py-2 rounded-lg text-[12px] font-medium transition flex items-center justify-center gap-2 border border-navy/5">
                             <i data-lucide="book-open-check" class="w-3.5 h-3.5"></i>
                             فتح المصحف الإلكتروني
                         </a>
@@ -669,40 +708,33 @@
             );
         };
 
-        // -------------------- ✨ بصمة الخير (الفكرة 2) --------------------
-        const PersonalReflectionWidget = ({ userName }) => {
-            const [idea, setIdea] = useState('');
-            const [reflection, setReflection] = useState(() => localStorage.getItem('dailyReflectionV3') || '');
+        // -------------------- ✨ مبادرة اليوم المقترحة من خُطى --------------------
+        const PersonalReflectionWidget = ({ hijriDay }) => {
+            const [initiative, setInitiative] = useState(null);
 
             useEffect(() => {
-                setIdea(DAILY_IDEA_ARRAY[Math.floor(Math.random() * DAILY_IDEA_ARRAY.length)]);
+                // Find initiative for today or fallback
+                const todayInit = DAILY_INITIATIVES.find(i => i.day === hijriDay) || DAILY_INITIATIVES[0];
+                setInitiative(todayInit);
                 lucide.createIcons();
-            }, []);
+            }, [hijriDay]);
 
-            const handleSave = (val) => {
-                setReflection(val);
-                localStorage.setItem('dailyReflectionV3', val);
-            };
+            if (!initiative) return null;
 
             return (
                 <div class="glass-card p-4 rounded-xl mb-3 bg-gradient-to-br from-amber-50/40 to-white dark:from-gray-800 dark:to-gray-900 border border-gold/10">
-                    <div class="flex items-center gap-3 mb-3">
+                    <div class="flex items-center gap-3 mb-3 border-b border-gold/10 pb-2">
                         <div class="w-8 h-8 hide-element-on-print bg-gold/20 rounded-full flex items-center justify-center shrink-0">
-                            <i data-lucide="lightbulb" class="w-4 h-4 text-gold"></i>
+                            <i data-lucide="sparkles" class="w-4 h-4 text-navy"></i>
                         </div>
-                        <p class="text-[11px] font-bold text-navy dark:text-gold leading-tight">مقترح اليوم: <span class="font-medium text-gray-600 dark:text-gray-300">{idea}</span></p>
+                        <h3 class="text-sm font-bold text-navy dark:text-gold leading-tight">مبادرة اليوم المقترحة من خُطى</h3>
                     </div>
 
-                    <div class="relative">
-                        <textarea
-                            value={reflection}
-                            onChange={(e) => handleSave(e.target.value)}
-                            placeholder={`ما هو الأثر الطيب الذي تركته اليوم يا ${userName || 'بطل'}؟`}
-                            class="w-full p-3 bg-white/50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-lg text-xs min-h-[70px] focus:ring-1 focus:ring-gold outline-none resize-none transition-all placeholder:italic"
-                        ></textarea>
-                        <div class="absolute bottom-2 left-2 opacity-20">
-                            <i data-lucide="pen-tool" class="w-3 h-3 text-navy"></i>
-                        </div>
+                    <div class="text-right">
+                        <h4 class="text-[15px]   text-navy mb-2">{initiative.title}</h4>
+                        <p class="text-[12px] text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                            {initiative.content}
+                        </p>
                     </div>
                 </div>
             );
@@ -849,9 +881,9 @@
 
                     <div class="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-800 pb-2">
                         <div class="flex items-center gap-2">
-                            <span class="text-xs bg-gold text-navy font-bold px-3 py-1 rounded-full shadow-sm">سؤال {quizState.answeredToday + 1}/5</span>
+                            <span class="text-xs bg-gold text-navy  font-medium px-3 py-1 rounded-full shadow-sm">سؤال {quizState.answeredToday + 1}/5</span>
                             {!quizState.feedbackGiven && timerEnabled && (
-                                <span class={`text-[10px] font-black tabular-nums py-1 px-2 rounded-lg ${timeLeft <= 3 ? 'bg-red-500 text-white animate-pulse' : 'bg-navy/5 dark:bg-white/5 text-navy dark:text-gold'}`}>
+                                <span class={`text-[12px] font-black tabular-nums py-1 px-2 rounded-lg ${timeLeft <= 3 ? 'bg-red-500 text-white animate-pulse' : 'bg-navy/5 dark:bg-white/5 font-medium text-red-600 dark:text-gold'}`}>
                                     {timeLeft}ث
                                 </span>
                             )}
@@ -870,7 +902,7 @@
                         </div>
                     </div>
 
-                    <p class="text-sm md:text-base   text-navy dark:text-white mb-5 text-right leading-relaxed">{q.question}</p>
+                    <p class="text-sm md:text-base  font-medium text-navy dark:text-white mb-5 text-right leading-relaxed">{q.question}</p>
 
                     <div class="grid grid-cols-2 gap-3">
                         {q.options.map((opt, idx) => {
@@ -1022,6 +1054,7 @@
             const [countryCode, setCountryCode] = useState('+967');
             const [customSenderName, setCustomSenderName] = useState(senderName || '');
             const [copied, setCopied] = useState(false);
+            const [isExpanded, setIsExpanded] = useState(false);
 
             useEffect(() => { lucide.createIcons(); });
 
@@ -1084,82 +1117,162 @@
             };
 
             return (
-                <div class="glass-card p-5 rounded-2xl mb-3 border-2 border-gold/10 bg-gradient-to-b from-white to-gold/5 relative overflow-hidden">
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h2 class="text-l font-black text-navy dark:text-gold">لمن تحب</h2>
-                            <p class="text-[11px] text-gray-500 font-medium leading-relaxed">قدم تطبيق خطى كهدية يصل بأسم الشخص المُهدى إليه</p>
+                <div class="glass-card p-4 rounded-2xl mb-3 border-2 border-gold/10 bg-gradient-to-b from-white to-gold/5 relative overflow-hidden transition-all duration-300 hover:border-gold/20">
+                    {/* الرأس القابل للنقر */}
+                    <div
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        class="flex justify-between items-center cursor-pointer select-none"
+                    >
+                        <div class="flex-1">
+                            <h2 class="text-l font-black text-navy dark:text-gold flex items-center gap-2">
+                                لمن تحب
+                                <i
+                                    data-lucide={isExpanded ? "chevron-up" : "chevron-down"}
+                                    class="w-4 h-4 text-gold transition-transform duration-300"
+                                ></i>
+                            </h2>
+                            <p class="text-[10px] text-gray-600 font-medium leading-relaxed mt-1">
+                                قدم تطبيق خطى كهدية يصل بأسم الشخص المُهدى إليه
+                            </p>
                         </div>
-                        <div class="bg-navy/5 px-2 py-1.5 rounded-xl flex flex-col items-center justify-center min-w-[60px] border border-navy/5">
-                            <i data-lucide="gift" class="w-3.5 h-3.5 text-navy opacity-70 mb-0.5"></i>
-                            <span class="text-[17px] text-red-400 font-bold leading-none">{giftCredits}</span>
-                            <span class="text-[9px] text-navy/60 leading-tight">هدايا متبقية</span>
+
+                        {/* صندوق رصيد الهدايا */}
+                        <div class="bg-gradient-to-br from-gold/10 to-gold/5 px-3 py-2 rounded-xl flex flex-col items-center justify-center min-w-[70px] border border-gold/20 shadow-sm">
+                            <i data-lucide="gift" class="w-4 h-4 text-gold opacity-80 mb-1"></i>
+                            <span class="text-[18px] text-red-400 font-bold leading-none">{giftCredits}</span>
+                            <span class="text-[9px] text-red-400 leading-tight">هدايا متبقية</span>
                         </div>
                     </div>
 
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">اسم المهدى إليه</label>
-                            <input
-                                type="text"
-                                value={recipientName}
-                                onChange={(e) => setRecipientName(e.target.value)}
-                                placeholder="مثلاً: أحمد محمد"
-                                class="w-full p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all"
-                            />
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">رقم الهاتف (اختياري)</label>
-                            <div class="flex flex-row-reverse gap-2">
-                                <select
-                                    value={countryCode}
-                                    onChange={(e) => setCountryCode(e.target.value)}
-                                    class="bg-gray-50 border border-gray-100 rounded-xl px-2 text-[10px] outline-none focus:ring-1 focus:ring-gold"
-                                >
-                                    {COUNTRY_CODES.map(c => (
-                                        <option key={c.code} value={c.code}>{c.name} {c.code}</option>
-                                    ))}
-                                </select>
+                    {/* المحتوى القابل للطي والتوسيع */}
+                    <div class={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                        <div class="space-y-3 pt-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">اسم المهدى إليه</label>
                                 <input
-                                    type="tel"
-                                    value={recipientPhone}
-                                    onChange={(e) => setRecipientPhone(e.target.value)}
-                                    placeholder="777..."
-                                    dir="ltr"
-                                    class="flex-1 p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all text-right"
+                                    type="text"
+                                    value={recipientName}
+                                    onChange={(e) => setRecipientName(e.target.value)}
+                                    placeholder="مثلاً: أحمد محمد"
+                                    class="w-full p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all"
                                 />
+                            </div>
 
+                            <div>
+                                <label class="block text-[11px] font-bold text-gray-400 mb-1 mr-1 uppercase">رقم الهاتف (اختياري)</label>
+                                <div class="flex flex-row-reverse gap-2">
+                                    <select
+                                        value={countryCode}
+                                        onChange={(e) => setCountryCode(e.target.value)}
+                                        class="bg-gray-50 border border-gray-100 rounded-xl px-2 text-[11px] outline-none focus:ring-1 focus:ring-gold"
+                                    >
+                                        {COUNTRY_CODES.map(c => (
+                                            <option key={c.code} value={c.code}>{c.name} {c.code}</option>
+                                        ))}
+                                    </select>
+                                    <input
+                                        type="tel"
+                                        value={recipientPhone}
+                                        onChange={(e) => setRecipientPhone(e.target.value)}
+                                        placeholder="777..."
+                                        dir="ltr"
+                                        class="flex-1 p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all text-right"
+                                    />
+
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">اسم مقدم الإهداء</label>
+                                <input
+                                    type="text"
+                                    value={customSenderName}
+                                    onChange={(e) => setCustomSenderName(e.target.value)}
+                                    placeholder="اسمك الكريم"
+                                    class="w-full p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all"
+                                />
+                            </div>
+
+                            <div class="flex gap-2 pt-1">
+                                <button
+                                    onClick={handleShareWhatsApp}
+                                    class="flex-1 bg-[#25D366] text-white py-2 rounded-xl text-[10px] font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
+                                >
+                                    <i data-lucide="message-circle" class="w-3 h-3"></i>
+                                    مشاركة واتساب
+                                </button>
+                                <button
+                                    onClick={handleCopyLink}
+                                    class="flex-1 bg-navy text-white py-2 rounded-xl text-[10px] font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
+                                >
+                                    <i data-lucide={copied ? "check" : "copy"} class="w-3 h-3"></i>
+                                    {copied ? 'تم النسخ!' : 'نسخ الرسالة'}
+                                </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            );
+        };
 
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">اسم مقدم الإهداء</label>
-                            <input
-                                type="text"
-                                value={customSenderName}
-                                onChange={(e) => setCustomSenderName(e.target.value)}
-                                placeholder="اسمك الكريم"
-                                class="w-full p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all"
-                            />
+        // -------------------- 👋 رسالة الوداع (آخر يوم) --------------------
+        const FarewellModal = ({ onClose }) => {
+            useEffect(() => {
+                triggerConfetti(true);
+            }, []);
+
+            return (
+                <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-backdrop">
+                    <div class="glass-card rounded-2xl max-w-sm w-full p-6 text-center animate-fade-in shadow-[0_20px_50px_rgba(30,58,138,0.3)] border-2 border-gold/20 relative overflow-hidden bg-white/95">
+                        {/* Decorative Background */}
+                        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-navy via-gold to-navy"></div>
+
+                        <div class="mb-4 flex flex-col items-center">
+                            <div class="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mb-4 ring-4 ring-gold/5">
+                                <i data-lucide="party-popper" class="w-8 h-8 text-gold animate-bounce"></i>
+                            </div>
+                            <h2 class="text-xl font-black text-navy mb-2">عيدكم مبارك</h2>
+                            <p class="text-xs text-gold font-bold bg-navy/5 px-3 py-1 rounded-full">كل عام وأنتم بخير</p>
                         </div>
 
-                        <div class="flex gap-2 pt-1">
-                            <button
-                                onClick={handleShareWhatsApp}
-                                class="flex-1 bg-[#25D366] text-white py-2 rounded-xl text-[10px]   flex items-center justify-center gap-2 active:scale-95 transition-all"
-                            >
-                                <i data-lucide="message-circle" class="w-3 h-3"></i>
-                                مشاركة واتساب
-                            </button>
-                            <button
-                                onClick={handleCopyLink}
-                                class="flex-1 bg-navy text-white py-2 rounded-xl text-[10px]   flex items-center justify-center gap-2 active:scale-95 transition-all"
-                            >
-                                <i data-lucide={copied ? "check" : "copy"} class="w-3 h-3"></i>
-                                {copied ? 'تم النسخ!' : 'نسخ الرسالة'}
-                            </button>
+                        <div class="space-y-4 mb-6">
+                            <p class="text-[13px] text-gray-700 leading-loose font-medium">
+                                تطبيق <span class="text-navy font-bold">خُطىْ</span> حزين لمفارقتك.. لكن لنا لقاءات في تطبيقات قادمة إن شاء الله.
+                                <br />
+                                تذكر أن تدعو بدعوة لمطور التطبيق .. سيكون سعيداً بذلك.
+                                <br />
+                                نتمنى أن يكون خُطى قد حقق فارقاً ولو بسيطاً في رمضان.
+                            </p>
+
+                            <p class="text-[13px] text-navy font-bold leading-relaxed border-t border-dashed border-gray-200 pt-3">
+                                عيدك سعيد وكل عام و أنت/إنتِ بكل خير .. و عساكم من عواده بصحة وسلامه ❤️
+                            </p>
+
+                            <p class="text-[11px] text-gray-500 leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                سعداء بقراءة انطباعاتكم عن خُطى .... و أيضاً عن افكاركم لتطبيقات أخرى
+                                <br />
+                                <span class="font-bold text-navy mt-1 block">- مطور التطبيق / صدام احمد</span>
+                            </p>
                         </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <a href="https://facebook.com/share/1FyLQYp6ne/?mibextid=wwXIfr" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] py-3 rounded-xl transition-all active:scale-95">
+                                <i data-lucide="facebook" class="w-5 h-5"></i>
+                                <span class="text-[10px] font-bold">فيسبوك</span>
+                            </a>
+                            <a href="sms:+967777967272?body=شكراً%20تطبيق%20خُطى" class="flex flex-col items-center justify-center gap-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-3 rounded-xl transition-all active:scale-95">
+                                <i data-lucide="message-square" class="w-5 h-5"></i>
+                                <span class="text-[10px] font-bold">SMS</span>
+                            </a>
+                            <a href="https://wa.me/967777967272?text=عيدكم%20مبارك%20يا%20مطور%20خُطى" target="_blank" class="flex flex-col items-center justify-center gap-1 bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] py-3 rounded-xl transition-all active:scale-95">
+                                <i data-lucide="message-circle" class="w-5 h-5"></i>
+                                <span class="text-[10px] font-bold">واتساب</span>
+                            </a>
+                        </div>
+
+                        <button onClick={onClose} class="mt-4 text-[11px] text-gray-400 hover:text-navy underline underline-offset-4">
+                            إغلاق الرسالة
+                        </button>
                     </div>
                 </div>
             );
@@ -1169,7 +1282,7 @@
         const FooterCredit = () => {
             useEffect(() => { lucide.createIcons(); });
             return (
-                <div class="mt-8 mb-14 pt-6 border-t border-gray-200 dark:border-gray-800 text-center flex flex-col gap-1">
+                <div class="mt-8 mb-16 pt-6 pb-6 border-t border-gray-200 dark:border-gray-800 text-center flex flex-col gap-1">
                     <h3 class="text-[19px] font-bold text-navy dark:text-gold uppercase tracking-widest">تطبيق خُطىْ</h3>
                     <p class="text-[13px] mb-2 text-gray-500 dark:text-gray-400 font-medium">تطوير صدام أحمد</p>
                     <p class="text-[13px] text-gray-400 dark:text-gray-500 mb-2 flex items-center justify-center gap-1">
@@ -1179,7 +1292,7 @@
                         <a href="https://wa.me/967777967272?text=أنا%20من%20مستخدمي%20تطبيق%20خطىٰ%20وتقييمي%20للتطبيق%20هو%20:%20" target="_blank" class="flex items-center gap-1.5 px-4 py-1.5 bg-emerald/10 text-emerald rounded-full text-[10px] font-bold hover:bg-emerald/20 transition">
                             <i data-lucide="message-circle" class="w-3.5 h-3.5"></i> واتساب
                         </a>
-                        <a href="sms:+967777967272?body=أنا%20من%20مستخدمي%20تطبيق%20خطىٰ%20وتقييمي%20للتطبيق%20هو%20:%20" class="flex items-center gap-1.5 px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[10px] font-bold hover:bg-gray-200 transition border border-gray-200">
+                        <a href="sms:+967777967272?body=أنا%20من%20مستخدمي%20تطبيق%20خطىٰ%20وتقييمي%20للتطبيق%20هو%20:%20" class="flex items-center gap-1.5 px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[11px] font-bold hover:bg-gray-200 transition border border-gray-200">
                             <i data-lucide="message-square" class="w-3.5 h-3.5"></i> SMS
                         </a>
                         <a href="https://facebook.com/share/1FyLQYp6ne/?mibextid=wwXIfr" target="_blank" class="flex items-center gap-1.5 px-4 py-1.5 bg-navy/10 text-navy rounded-full text-[10px] font-bold hover:bg-navy/20 transition">
@@ -1307,6 +1420,23 @@
                     allCorrectToday: false
                 };
             });
+
+            // Farewell Modal Logic
+            const [showFarewell, setShowFarewell] = useState(false);
+
+            useEffect(() => {
+                if (hijriDay === 30) {
+                    const hasSeenFarewell = localStorage.getItem('farewellSeenV3');
+                    if (!hasSeenFarewell) {
+                        setTimeout(() => setShowFarewell(true), 2000); // Delay slightly for effect
+                    }
+                }
+            }, [hijriDay]);
+
+            const closeFarewell = () => {
+                setShowFarewell(false);
+                localStorage.setItem('farewellSeenV3', 'true');
+            };
 
             // تحديث trackerItems حسب additionalHabits + الصلوات الخمس
             useEffect(() => {
@@ -1461,6 +1591,7 @@
             return (
                 <div class="min-h-screen px-4 py-6 font-sans flex flex-col gap-5 relative overflow-hidden max-w-[768px] mx-auto">
                     {showOnboarding && <OnboardingModal onClose={closeOnboarding} />}
+                    {showFarewell && <FarewellModal onClose={closeFarewell} />}
 
                     {/* الهوية البصرية - خُطىْ */}
                     <div class="flex justify-between items-center mb-2">
@@ -1468,7 +1599,7 @@
                             <img src="logo.jpg" alt="خُطىْ" class="w-12 h-12 rounded-full shadow-lg border-2 border-white/30 object-cover" />
                             <div>
                                 <h1 class="text-2xl font-black text-navy leading-tight">خُطىْ</h1>
-                                <p class="text-[12px] text-gray-500">مفكرة رمضانية و مصحف </p>
+                                <p class="text-[13px] font-medium text-gray-400">مفكرة رمضانية و مصحف </p>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-1">
@@ -1496,8 +1627,7 @@
                     {/* الهيدر + الصلاة - تم نقله ليكون الأول */}
                     <SmartLunarHeader hijriDay={12} />
 
-                    {/* ويدجت الحكمة */}
-                    <WisdomWidget hijriDay={12} />
+                    {/* ويدجت الحكمة - تم نقله للأسفل */}
 
                     {/* المتتبع اليومي */}
                     <DailyTrackerV3
@@ -1513,7 +1643,7 @@
                     <QuranAdvanced plan={quranPlan} onSetup={(plan) => setQuranPlan(plan)} />
 
                     {/* بصمة الخير */}
-                    <PersonalReflectionWidget userName={userName} />
+                    <PersonalReflectionWidget hijriDay={hijriDay} />
 
                     {/* المسابقة الذكية */}
                     <SmartQuiz
@@ -1536,6 +1666,9 @@
                         setGiftCredits={setGiftCredits}
                     />
 
+
+                    {/* ويدجت الحكمة */}
+                    <WisdomWidget hijriDay={12} />
 
                     {/* التذييل والإهداء */}
                     <FooterCredit />
