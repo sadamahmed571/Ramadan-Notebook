@@ -340,6 +340,59 @@
             white-space: nowrap;
         }
 
+        /* انتقال الصفحات السلس */
+        .page-view {
+            opacity: 1;
+            transform: translateX(0);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .page-view.page-transition-out {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        .page-view.page-transition-in {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        .page-view.page-transition-in.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* إشعارات الأزرار */
+        .btn-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--navy);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1003;
+            margin-bottom: 0.5rem;
+            pointer-events: none;
+        }
+        .btn-tooltip.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .btn-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid transparent;
+            border-top-color: var(--navy);
+        }
         /* تظليل الآية المحددة */
         .verse-highlighted {
             background: rgba(0, 0, 0, 0.08);
@@ -555,7 +608,6 @@
             <button class="insight-close" id="insightClose">×</button>
         </div>
         <div class="insight-content">
-            <div class="insight-verse" id="insightVerse"></div>
             <div id="insightText">جاري تحميل التفسير...</div>
         </div>
         <div class="insight-actions">
@@ -584,12 +636,9 @@
                 <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
             </svg>
         </button>
-        <button class="action-btn" id="shareBtn" title="مشاركة">
+        <button class="action-btn" id="shareBtn" title="مشاركة واتساب">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="18" cy="5" r="3"/>
-                <circle cx="6" cy="12" r="3"/>
-                <circle cx="18" cy="19" r="3"/>
-                <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.488"/>
             </svg>
         </button>
     </div>
@@ -671,6 +720,40 @@
             let currentVerseText = '';
             let currentVerseNumber = '';
             let currentTafseer = '';
+            let currentSuraName = '';
+
+            // وظيفة الإشعارات
+            function showNotification(message, buttonElement) {
+                // إزالة أي إشعارات سابقة
+                const existingTooltip = document.querySelector('.btn-tooltip');
+                if (existingTooltip) {
+                    existingTooltip.remove();
+                }
+                
+                // إنشاء الإشعار فوق الزر
+                const tooltip = document.createElement('div');
+                tooltip.className = 'btn-tooltip';
+                tooltip.textContent = message;
+                
+                // إضافة الإشعار فوق الزر
+                buttonElement.style.position = 'relative';
+                buttonElement.appendChild(tooltip);
+                
+                // إظهار الإشعار
+                setTimeout(() => {
+                    tooltip.classList.add('show');
+                }, 50);
+                
+                // إخفاء الإشعار بعد ثانية
+                setTimeout(() => {
+                    tooltip.classList.remove('show');
+                    setTimeout(() => {
+                        if (buttonElement.contains(tooltip)) {
+                            buttonElement.removeChild(tooltip);
+                        }
+                    }, 300);
+                }, 1000);
+            }
 
             function loadTheme() {
                 try {
@@ -768,8 +851,6 @@
                 currentVerseText = verseText;
                 currentVerseNumber = verseNumber;
                 
-                insightVerse.textContent = `الآية ${verseNumber}: ${verseText.substring(0, 100)}...`;
-                
                 // محاكاة التفسير (يمكن استبداله ببيانات حقيقية)
                 const tafseerTexts = [
                     "هذه الآية تتحدث عن أهمية الإيمان والعمل الصالح.",
@@ -800,23 +881,31 @@
 
             // وظائف الأزرار
             function copyVerse() {
-                const fullText = `${currentVerseText} [${currentVerseNumber}]`;
+                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}`;
                 navigator.clipboard.writeText(fullText).then(() => {
-                    alert('تم نسخ الآية بنجاح');
+                    showNotification('تم النسخ', copyBtn);
                 });
             }
 
             function copyWithTafseer() {
-                const fullText = `${currentVerseText} [${currentVerseNumber}]\n\nالتفسير: ${currentTafseer}`;
+                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}\n\nالتفسير: ${currentTafseer}`;
                 navigator.clipboard.writeText(fullText).then(() => {
-                    alert('تم نسخ الآية مع التفسير بنجاح');
+                    showNotification('تم النسخ', copyWithTafseerBtn);
                 });
             }
 
             function shareWhatsApp() {
-                const fullText = `${currentVerseText} [${currentVerseNumber}]\n\nالتفسير: ${currentTafseer}`;
+                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}`;
                 const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
                 window.open(whatsappUrl, '_blank');
+                showNotification('تم المشاركة', shareBtn);
+            }
+
+            function shareWhatsAppWithTafseer() {
+                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}\n\nالتفسير: ${currentTafseer}`;
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
+                window.open(whatsappUrl, '_blank');
+                showNotification('تم المشاركة', shareWhatsAppBtn);
             }
 
             function loadPlan() {
@@ -897,6 +986,9 @@
 
                 const first = verses[0];
                 const showBasmala = first.aya_no === 1 && first.sura_no > 1;
+                
+                // تخزين اسم السورة الحالي
+                currentSuraName = first.sura_name_ar ? first.sura_name_ar.trim() : '';
 
                 let html = '';
                 if (showBasmala) {
@@ -912,45 +1004,52 @@
                 });
                 html += '</div>';
 
-                pageViewInner.innerHTML = html;
+                // إضافة تأثير الانتقال
+                pageView.classList.add('page-transition-out');
+                
+                setTimeout(function() {
+                    pageViewInner.innerHTML = html;
+                    pageView.classList.remove('page-transition-out');
+                    pageView.classList.add('page-transition-in');
+                    
+                    setTimeout(function() {
+                        pageView.classList.add('active');
+                    }, 50);
+                    
+                    setTimeout(function() {
+                        pageView.classList.remove('page-transition-in', 'active');
+                    }, 350);
+                }, 300);
 
-                // إضافة مستمع النقر المزدوج للتفسير فقط
+                // إضافة مستمع النقر المفرد للتفسير فقط
                 setTimeout(function() {
                     const verseElements = pageViewInner.querySelectorAll('.aya-wrap');
                     verseElements.forEach(function(verse) {
                         verse.addEventListener('click', function(e) {
-                            const currentTime = new Date().getTime();
-                            const tapLength = currentTime - lastTapTime;
+                            // نقر مفيد
+                            e.preventDefault();
+                            const verseNumber = this.getAttribute('data-verse');
+                            const verseText = this.getAttribute('data-text');
                             
-                            if (tapLength < 300 && tapLength > 0) {
-                                // نقر مزدوج
-                                e.preventDefault();
-                                const verseNumber = this.getAttribute('data-verse');
-                                const verseText = this.getAttribute('data-text');
-                                
-                                // تظليل الآية
-                                if (tappedVerse && tappedVerse !== this) {
-                                    tappedVerse.classList.remove('verse-highlighted');
-                                }
-                                this.classList.add('verse-highlighted');
-                                tappedVerse = this;
-                                
-                                // تخزين بيانات الآية الحالية
-                                currentVerseText = verseText;
-                                currentVerseNumber = verseNumber;
-                                
-                                // إظهار شريط الأزرار فقط
-                                showActionBar();
-                                
-                                // إخفاء نافذة التفسير إذا كانت ظاهرة
-                                hideVerseInsight();
+                            // تظليل الآية
+                            if (tappedVerse && tappedVerse !== this) {
+                                tappedVerse.classList.remove('verse-highlighted');
                             }
-                            
-                            lastTapTime = currentTime;
+                            this.classList.add('verse-highlighted');
                             tappedVerse = this;
+                            
+                            // تخزين بيانات الآية الحالية
+                            currentVerseText = verseText;
+                            currentVerseNumber = verseNumber;
+                            
+                            // إظهار شريط الأزرار فقط
+                            showActionBar();
+                            
+                            // إخفاء نافذة التفسير إذا كانت ظاهرة
+                            hideVerseInsight();
                         });
                     });
-                }, 100);
+                }, 400); // انتظار حتى يكتمل انتقال الصفحة
             }
 
             function updateUI() {
@@ -1040,14 +1139,14 @@
                         showVerseInsight(currentVerseText, currentVerseNumber); // إظهار نافذة التفسير
                     });
                     favoriteBtn.addEventListener('click', function() {
-                        alert('تمت إضافة الآية إلى المفضلة');
+                        showNotification('تمت الإضافة', favoriteBtn);
                     });
                     shareBtn.addEventListener('click', shareWhatsApp);
                     
                     // أزرار نافذة التفسير
                     copyVerseBtn.addEventListener('click', copyVerse);
                     copyWithTafseerBtn.addEventListener('click', copyWithTafseer);
-                    shareWhatsAppBtn.addEventListener('click', shareWhatsApp);
+                    shareWhatsAppBtn.addEventListener('click', shareWhatsAppWithTafseer);
                     
                     // إغلاق التفسير عند النقر خارج النافذة
                     verseInsight.addEventListener('click', function(e) {
