@@ -490,7 +490,7 @@
                     <div class="glass-card p-4 rounded-xl mb-3 text-center">
                         <i data-lucide="quran" class="w-8 h-8 mx-auto text-navy dark:text-gold mb-2"></i>
                         <p class="text-sm font-bold text-navy dark:text-white mb-2">
-                            <i data-lucide="book-open-check" class="w-5 h-5 mx-auto opacity-50"></i>
+                            <i data-lucide="book-open-check" class="w-6 h-6 mx-auto opacity-50"></i>
                         </p>
                         <button
                             onClick={() => setShowModal(true)}
@@ -640,6 +640,75 @@
         };
 
 
+        // -------------------- 📿 نافذة إعدادات التسبيح --------------------
+        const TasbihSettingsModal = ({ settings, onSave, onClose }) => {
+            const [selectedDhikrs, setSelectedDhikrs] = useState(settings.dhikrs || []);
+            const [limit, setLimit] = useState(settings.limit || 33);
+
+            const AVAILABLE_DHIKR = ['الحمد لله', 'سبحان الله', 'أستغفر الله', 'لا إله إلا الله', 'الله أكبر'];
+
+            const toggleDhikr = (d) => {
+                if (selectedDhikrs.includes(d)) {
+                    setSelectedDhikrs(selectedDhikrs.filter(item => item !== d));
+                } else {
+                    setSelectedDhikrs([...selectedDhikrs, d]);
+                }
+            };
+
+            useEffect(() => { lucide.createIcons(); });
+
+            return (
+                <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 modal-backdrop">
+                    <div class="glass-card rounded-2xl max-w-xs w-full p-5 text-right animate-fade-in">
+                        <h3 class="text-md font-bold text-navy mb-4">إعدادات التسبيح</h3>
+
+                        <div class="mb-4">
+                            <label class="block text-[10px] font-bold text-gray-400 mb-2 uppercase">اختر الأذكار</label>
+                            <div class="flex flex-wrap gap-2">
+                                {AVAILABLE_DHIKR.map(d => (
+                                    <button
+                                        key={d}
+                                        onClick={() => toggleDhikr(d)}
+                                        class={`px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${selectedDhikrs.includes(d)
+                                                ? 'bg-navy text-white shadow-md'
+                                                : 'bg-gray-100 text-gray-500'
+                                            }`}
+                                    >
+                                        {d}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="block text-[10px] font-bold text-gray-400 mb-2 uppercase">هدف التكرار (سقف العدد)</label>
+                            <input
+                                type="number"
+                                value={limit}
+                                onChange={(e) => setLimit(parseInt(e.target.value) || 0)}
+                                class="w-full p-2 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:ring-2 focus:ring-gold outline-none"
+                            />
+                        </div>
+
+                        <div class="flex gap-2">
+                            <button
+                                onClick={() => onSave({ dhikrs: selectedDhikrs, limit })}
+                                class="flex-1 bg-navy text-white py-2 rounded-xl text-[11px] font-bold shadow-lg shadow-navy/20"
+                            >
+                                حفظ الإعدادات
+                            </button>
+                            <button
+                                onClick={onClose}
+                                class="flex-1 bg-gray-100 text-gray-500 py-2 rounded-xl text-[11px] font-bold"
+                            >
+                                إغلاق
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const SmartQuiz = ({ quizState, quizHistory, onAnswer, onNext, isDailyComplete, allCorrectToday, hijriDay = 12 }) => {
             const [timeLeft, setTimeLeft] = useState(10);
             const [timerActive, setTimerActive] = useState(false);
@@ -721,7 +790,7 @@
 
                         {/* Timer Toggle */}
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-gray-400">{timerEnabled ? 'تحدي' : 'استرخاء'}</span>
+                            <span class="text-[11px]   text-gray-500">{timerEnabled ? 'تحدي' : 'تفعيل المؤقت'}</span>
                             <button
                                 onClick={() => { setTimerEnabled(!timerEnabled); triggerHaptic('light'); }}
                                 class={`w-8 h-4 rounded-full relative transition-colors duration-300 ${timerEnabled ? 'bg-gold' : 'bg-gray-200 dark:bg-white/10'}`}
@@ -732,12 +801,12 @@
                         </div>
                     </div>
 
-                    <p class="text-sm md:text-base font-bold text-navy dark:text-white mb-5 text-right leading-relaxed">{q.question}</p>
+                    <p class="text-sm md:text-base   text-navy dark:text-white mb-5 text-right leading-relaxed">{q.question}</p>
 
                     <div class="grid grid-cols-2 gap-3">
                         {q.options.map((opt, idx) => {
                             const isCorrect = opt === q.correct;
-                            let btnClass = "w-full text-xs py-4 rounded-xl transition-all duration-300 font-medium text-right px-4 border-2 "; // Increased padding
+                            let btnClass = "w-full text-xs py-3 rounded-xl transition-all duration-300 font-medium text-right px-4 border-2 "; // Increased padding
 
                             if (quizState.feedbackGiven) {
                                 if (isCorrect) {
@@ -877,6 +946,154 @@
             );
         };
 
+        // -------------------- 🎁 ويدجت الإهداء (Viral Growth) --------------------
+        const GiftWidget = ({ senderName, giftCredits, setGiftCredits }) => {
+            const [recipientName, setRecipientName] = useState('');
+            const [recipientPhone, setRecipientPhone] = useState('');
+            const [countryCode, setCountryCode] = useState('+967');
+            const [customSenderName, setCustomSenderName] = useState(senderName || '');
+            const [copied, setCopied] = useState(false);
+
+            useEffect(() => { lucide.createIcons(); });
+
+            const COUNTRY_CODES = [
+                { code: '+967', name: '🇾🇪' },
+                { code: '+966', name: '🇸🇦' },
+                { code: '+971', name: '🇦🇪' },
+                { code: '+965', name: '🇰🇼' },
+                { code: '+974', name: '🇶🇦' },
+                { code: '+973', name: '🇧🇭' },
+                { code: '+968', name: '🇴🇲' },
+                { code: '+962', name: '🇯🇴' },
+                { code: '+961', name: '🇱🇧' },
+                { code: '+964', name: '🇮🇶' },
+                { code: '+967', name: '🇾🇪' },
+                { code: '+20', name: '🇪🇬' },
+                { code: '+212', name: '🇲🇦' },
+                { code: '+213', name: '🇩🇿' },
+                { code: '+216', name: '🇹🇳' },
+                { code: '+249', name: '🇸🇩' },
+                { code: '+970', name: '🇵🇸' },
+            ];
+
+            const generateGiftLink = () => {
+                const baseUrl = window.location.href.split('?')[0];
+                const params = new URLSearchParams();
+                params.set('to', recipientName.trim());
+                params.set('from', customSenderName.trim());
+                params.set('gift', 'true');
+                return `${baseUrl}?${params.toString()}`;
+            };
+
+            const handleShareWhatsApp = () => {
+                if (giftCredits <= 0) return alert('نفذ رصيد الهدايا المتاح لك!');
+                if (!recipientName.trim()) return alert('يرجى إدخال اسم المهدى إليه');
+                if (!recipientPhone.trim()) return alert('يرجى إدخال رقم الهاتف للمشاركة عبر واتساب، أو استخدم "نسخ الرابط"');
+
+                const link = generateGiftLink();
+                const message = `🌙 *إهداء خاص من القلب* 🌙\n\nأهلاً بك يا ${recipientName}، لقد أهدتك ${customSenderName || 'صديق'} تطبيق "خُطى" لترافقك في دروب الخير في رمضان وبإعدادات مخصصة لك.. 🎁✨\n\nافتح هديتك من هنا:\n${link}`;
+
+                const fullPhone = `${countryCode}${recipientPhone.replace(/^0+/, '')}`;
+                window.open(`https://wa.me/${fullPhone}?text=${encodeURIComponent(message)}`, '_blank');
+
+                if (giftCredits > 0) setGiftCredits(giftCredits - 1);
+            };
+
+            const handleCopyLink = () => {
+                if (giftCredits <= 0) return alert('نفذ رصيد الهدايا المتاح لك!');
+                if (!recipientName.trim()) return alert('يرجى إدخال اسم المهدى إليه');
+
+                const link = generateGiftLink();
+                navigator.clipboard.writeText(link).then(() => {
+                    setCopied(true);
+                    triggerHaptic('success');
+                    setTimeout(() => setCopied(false), 2000);
+                    if (giftCredits > 0) setGiftCredits(giftCredits - 1);
+                });
+            };
+
+            return (
+                <div class="glass-card p-5 rounded-2xl mb-3 border-2 border-gold/10 bg-gradient-to-b from-white to-gold/5 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                           <h2 class="text-l font-black text-navy dark:text-gold">لمن تحب</h2>
+                            <p class="text-[11px] text-gray-500 font-medium leading-relaxed">قدم تطبيق خطى كهدية يصل بأسم الشخص المُهدى إليه</p>
+                        </div>
+                        <div class="bg-navy/5 px-2 py-1.5 rounded-xl flex flex-col items-center justify-center min-w-[60px] border border-navy/5">
+                            <i data-lucide="gift" class="w-3.5 h-3.5 text-navy opacity-70 mb-0.5"></i>
+                            <span class="text-[17px] text-red-400 font-bold leading-none">{giftCredits}</span>
+                            <span class="text-[9px] text-navy/60 leading-tight">هدايا متبقية</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">اسم المهدى إليه</label>
+                            <input
+                                type="text"
+                                value={recipientName}
+                                onChange={(e) => setRecipientName(e.target.value)}
+                                placeholder="مثلاً: أحمد محمد"
+                                class="w-full p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all"
+                            />
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">رقم الهاتف (اختياري)</label>
+                            <div class="flex flex-row-reverse gap-2">
+                                <select
+                                    value={countryCode}
+                                    onChange={(e) => setCountryCode(e.target.value)}
+                                    class="bg-gray-50 border border-gray-100 rounded-xl px-2 text-[10px] outline-none focus:ring-1 focus:ring-gold"
+                                >
+                                    {COUNTRY_CODES.map(c => (
+                                        <option key={c.code} value={c.code}>{c.name} {c.code}</option>
+                                    ))}
+                                </select>
+                                <input
+                                    type="tel"
+                                    value={recipientPhone}
+                                    onChange={(e) => setRecipientPhone(e.target.value)}
+                                    placeholder="777..."
+                                    dir="ltr"
+                                    class="flex-1 p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all text-right"
+                                />
+
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">اسم مقدم الإهداء</label>
+                            <input
+                                type="text"
+                                value={customSenderName}
+                                onChange={(e) => setCustomSenderName(e.target.value)}
+                                placeholder="اسمك الكريم"
+                                class="w-full p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all"
+                            />
+                        </div>
+
+                        <div class="flex gap-2 pt-1">
+                            <button
+                                onClick={handleShareWhatsApp}
+                                class="flex-1 bg-[#25D366] text-white py-2 rounded-xl text-[10px]   flex items-center justify-center gap-2 active:scale-95 transition-all"
+                            >
+                                <i data-lucide="message-circle" class="w-3 h-3"></i>
+                                مشاركة واتساب
+                            </button>
+                            <button
+                                onClick={handleCopyLink}
+                                class="flex-1 bg-navy text-white py-2 rounded-xl text-[10px]   flex items-center justify-center gap-2 active:scale-95 transition-all"
+                            >
+                                <i data-lucide={copied ? "check" : "copy"} class="w-3 h-3"></i>
+                                {copied ? 'تم النسخ!' : 'نسخ الرابط'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         // -------------------- 📜 التذييل والإهداء --------------------
         const FooterCredit = () => {
             useEffect(() => { lucide.createIcons(); });
@@ -903,8 +1120,51 @@
         function App() {
             const [mounted, setMounted] = useState(false);
             const [tasbihCount, setTasbihCount] = useState(0);
+            const [tasbihSession, setTasbihSession] = useState(0);
+            const [tasbihSettings, setTasbihSettings] = useState(() => {
+                const saved = localStorage.getItem('tasbihSettingsV3');
+                return saved ? JSON.parse(saved) : { dhikrs: ['سبحان الله'], limit: 33 };
+            });
+            const [currentDhikrIndex, setCurrentDhikrIndex] = useState(0);
+            const [showTasbihSettings, setShowTasbihSettings] = useState(false);
+            const [showFloatingDhikr, setShowFloatingDhikr] = useState(false);
+            const dhikrTimerRef = useRef(null);
+
+            useEffect(() => {
+                localStorage.setItem('tasbihSettingsV3', JSON.stringify(tasbihSettings));
+            }, [tasbihSettings]);
+
+            const handleTasbihClick = () => {
+                triggerHaptic('light');
+                setTasbihCount(p => p + 1);
+
+                // إظهار الذكر بشكل مؤقت
+                setShowFloatingDhikr(true);
+                if (dhikrTimerRef.current) clearTimeout(dhikrTimerRef.current);
+                dhikrTimerRef.current = setTimeout(() => setShowFloatingDhikr(false), 1000);
+
+                if (tasbihSettings.dhikrs.length > 0) {
+                    const newSession = tasbihSession + 1;
+                    if (newSession >= tasbihSettings.limit) {
+                        setTasbihSession(0);
+                        setCurrentDhikrIndex((prev) => (prev + 1) % tasbihSettings.dhikrs.length);
+                        triggerHaptic('success');
+                    } else {
+                        setTasbihSession(newSession);
+                    }
+                }
+            };
+
             const [streak, setStreak] = useState(() => parseInt(localStorage.getItem('habitStreakV3')) || 0);
             const [userName, setUserName] = useState(() => localStorage.getItem('userNameV3') || '');
+            const [giftCredits, setGiftCredits] = useState(() => {
+                const saved = localStorage.getItem('giftCreditsV3');
+                return saved !== null ? parseInt(saved) : 5;
+            });
+
+            useEffect(() => {
+                localStorage.setItem('giftCreditsV3', giftCredits.toString());
+            }, [giftCredits]);
 
             // Onboarding
             const [onboardingSeen, setOnboardingSeen] = useState(() => localStorage.getItem('onboardingV3') === 'true');
@@ -1116,7 +1376,7 @@
                         </div>
                         <div class="flex flex-col items-end gap-1">
                             <button onClick={handleUpdateName} class="flex items-center gap-2 bg-navy/5 px-3 py-1 rounded-full border border-navy/10 relative transition-transform active:scale-95">
-                                <i data-lucide="user" class="w-3.5 h-3.5 text-navy"></i>
+                                <i data-lucide="user" class="w-4 h-4 text-navy"></i>
                                 {userName && <span class="text-[11px] font-bold text-navy">{userName}</span>}
                                 {streak > 0 && (
                                     <div class="absolute -top-2 -right-2 bg-orange-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shadow-sm animate-pulse border border-white">
@@ -1172,27 +1432,62 @@
                     {/* متتبع الماء (بعد المسابقة) */}
                     <HydrationTrackerV3 hijriDay={hijriDay} />
 
+                    {/* ويدجت الإهداء */}
+                    <GiftWidget
+                        senderName={userName}
+                        giftCredits={giftCredits}
+                        setGiftCredits={setGiftCredits}
+                    />
+
 
                     {/* التذييل والإهداء */}
                     <FooterCredit />
 
                     {/* سبحة عائمة */}
-                    <button
-                        onClick={() => { setTasbihCount(p => p + 1); triggerHaptic('light'); }}
-                        class="fixed bottom-6 left-6 w-16 h-16 bg-navy dark:bg-gold rounded-full shadow-2xl flex items-center justify-center z-50 active:scale-90 transition-transform border-4 border-white/20 dark:border-navy/20 animate-pulse-gold"
-                    >
-                        <div class="text-center">
-                            <span class="block text-[10px] font-bold text-white/70 dark:text-navy/70">سبّح</span>
-                            <span class="block text-lg font-bold text-gold dark:text-navy">{tasbihCount}</span>
+                    <div class="fixed bottom-6 left-6 z-50">
+                        <div class="relative">
+                            {/* إشعار الذكر العلوي */}
+                            {tasbihSettings.dhikrs.length > 0 && (
+                                <div class={`absolute -top-10 left-1/2 -translate-x-1/2 transition-all duration-500 pointer-events-none whitespace-nowrap ${showFloatingDhikr ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                                    <span class="text-[14px] text-sunset-orange dark:text-gold font-medium drop-shadow-sm">
+                                        {tasbihSettings.dhikrs[currentDhikrIndex]}
+                                        <span class="text-[9px] opacity-60 mr-1.5">({tasbihSession}/{tasbihSettings.limit})</span>
+                                    </span>
+                                </div>
+                            )}
+
+                            <button
+                                onClick={handleTasbihClick}
+                                class="w-16 h-16 bg-navy dark:bg-gold rounded-full shadow-2xl flex items-center justify-center active:scale-90 transition-transform border-4 border-white/20 dark:border-navy/20 animate-pulse-gold"
+                            >
+                                <div class="text-center">
+                                    <span class="block text-[10px] font-bold text-white/70 dark:text-navy/70">سبّح</span>
+                                    <span class="block text-lg font-bold text-gold dark:text-navy">{tasbihCount}</span>
+                                </div>
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setShowTasbihSettings(true); }}
+                                class="absolute bottom-0 -left-1 w-6 h-6 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center border border-gray-100 dark:border-gray-700 active:rotate-90 transition-transform z-10"
+                            >
+                                <i data-lucide="settings" class="w-3 h-3 text-navy dark:text-gold opacity-70"></i>
+                            </button>
                         </div>
-                    </button>
+                    </div>
+
+                    {showTasbihSettings && (
+                        <TasbihSettingsModal
+                            settings={tasbihSettings}
+                            onSave={(s) => { setTasbihSettings(s); setShowTasbihSettings(false); setTasbihSession(0); setCurrentDhikrIndex(0); }}
+                            onClose={() => setShowTasbihSettings(false)}
+                        />
+                    )}
 
                     {/* زر المصحف العائم */}
                     <a
                         href="quran.html"
                         class="fixed bottom-6 right-6 w-16 h-16 bg-navy text-white rounded-full shadow-2xl flex flex-col items-center justify-center z-50 active:scale-90 transition-transform border-4 border-white/20"
                     >
-                      
+
                         <span class="text-[10px] font-bold ">المصحف</span>
                     </a>
                 </div>

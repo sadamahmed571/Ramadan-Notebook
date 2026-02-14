@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>المصحف الإلكتروني | خُطىْ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #1e3a8a;
+            --gold: #c9a227;
+            --gold-light: #e6c84c;
+            --cream: #f5f0e6;
+            --paper: #faf8f3;
+            --ink: #1a1a1a;
+            --border-tan: #c4b59a;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Noto Naskh Arabic', 'Tajawal', serif;
+            background: var(--cream);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: pan-y;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            opacity: 0.35;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* الهيدر */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 0.6rem 1rem;
+            background: linear-gradient(to bottom, rgba(250,248,243,0.98), rgba(250,248,243,0.95));
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(196,181,154,0.3);
+        }
+        .header-inner {
+            max-width: 768px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.6rem;
+            color: var(--navy);
+            text-decoration: none;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 0.5rem;
+            background: rgba(30,58,138,0.08);
+        }
+        .page-indicator {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .progress-ring-wrap {
+            width: 40px;
+            height: 40px;
+        }
+        .progress-ring-wrap svg { transform: rotate(-90deg); }
+        .progress-ring-bg { stroke: rgba(30,58,138,0.15); }
+        .progress-ring-fill { stroke: var(--gold); transition: stroke-dashoffset 0.3s ease; }
+
+        /* منطقة الصفحة الواحدة - بدون هوامش جانبية */
+        .reading-area {
+            position: fixed;
+            top: 52px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: stretch;
+            justify-content: stretch;
+            padding: 0;
+        }
+        .page-view {
+            width: 100%;
+            height: 100%;
+            background: var(--paper);
+            border-right: 2px solid var(--border-tan);
+            padding: 0.5rem 0.4rem 0.5rem 0.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .page-view .basmala {
+            text-align: center;
+            font-size: clamp(0.85rem, 2.8vw, 1rem);
+            line-height: 1.6;
+            color: var(--ink);
+            margin-bottom: 0.3rem;
+            flex-shrink: 0;
+        }
+        .page-view .page-number-label {
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.6rem;
+            color: var(--navy);
+            opacity: 0.75;
+            margin-bottom: 0.25rem;
+            flex-shrink: 0;
+        }
+        .page-content {
+            flex: 1;
+            font-size: clamp(0.9rem, 2.8vw, 1.1rem);
+            line-height: 1.85;
+            text-align: justify;
+            color: var(--ink);
+            overflow: hidden;
+        }
+        .page-content .aya-wrap {
+            display: inline;
+        }
+        .page-content .aya-wrap::after {
+            content: "\00A0";
+        }
+        .aya-num {
+            display: inline-block;
+            min-width: 1.35em;
+            height: 1.35em;
+            line-height: 1.35em;
+            text-align: center;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.6em;
+            font-weight: 700;
+            color: var(--ink);
+            background: var(--gold-light);
+            border: 1px solid rgba(201,162,39,0.4);
+            border-radius: 50%;
+            margin-left: 0.25rem;
+            vertical-align: middle;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        /* أزرار التنقل الدائرية على الجانبين */
+        .nav-circle {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: none;
+            background: var(--navy);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.35);
+            transition: transform 0.2s, background 0.2s;
+        }
+        .nav-circle:active { transform: translateY(-50%) scale(0.92); }
+        .nav-circle:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .nav-circle.prev { right: 4px; }
+        .nav-circle.next { left: 4px; }
+        .nav-circle svg { width: 22px; height: 22px; }
+        .nav-circle.next svg { transform: scaleX(-1); }
+
+        /* التحميل */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            padding: 2rem;
+            text-align: center;
+        }
+        .loading-state .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(30,58,138,0.2);
+            border-top-color: var(--navy);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-state p {
+            margin-top: 1rem;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 600;
+            color: var(--navy);
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header" id="appHeader">
+        <div class="header-inner">
+            <a href="index.html" class="back-link">← رجوع</a>
+            <span class="page-indicator" id="pageIndicator">صفحة —</span>
+            <div class="progress-ring-wrap" id="progressRingWrap" title="ورد اليوم">
+                <svg width="40" height="40" viewBox="0 0 40 40">
+                    <circle class="progress-ring-bg" cx="20" cy="20" r="16" fill="none" stroke-width="2.5"/>
+                    <circle class="progress-ring-fill" id="progressRingFill" cx="20" cy="20" r="16" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="100.5"/>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <main class="reading-area" id="readingArea">
+        <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p>جاري تحميل المصحف...</p>
+        </div>
+        <div class="page-view" id="pageView" style="display: none;"></div>
+    </main>
+
+    <button type="button" class="nav-circle prev" id="btnPrev" title="الصفحة السابقة" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="nav-circle next" id="btnNext" title="الصفحة التالية" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+
+    <script>
+        (function() {
+            const STORAGE_KEY_PAGE = 'quran_last_page';
+            const STORAGE_KEY_SURA = 'quran_last_sura_name';
+            const TOTAL_PAGES = 604;
+            const C = 2 * Math.PI * 16;
+            const BASMALA = 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ';
+            const SWIPE_THRESHOLD = 60;
+
+            let pagesMap = {};
+            let currentPageNum = 1;
+            let dailyStartPage = 1;
+            let dailyPages = 22;
+            let touchStartX = 0;
+
+            const loadingState = document.getElementById('loadingState');
+            const pageView = document.getElementById('pageView');
+            const pageIndicator = document.getElementById('pageIndicator');
+            const progressRingFill = document.getElementById('progressRingFill');
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+
+            function loadPlan() {
+                try {
+                    const saved = localStorage.getItem('quranPlanV3');
+                    if (saved) {
+                        const plan = JSON.parse(saved);
+                        dailyPages = plan.dailyPages || 22;
+                        const day = plan.currentDay || 1;
+                        dailyStartPage = 1 + (day - 1) * dailyPages;
+                    }
+                } catch (_) {}
+            }
+
+            function savePosition(pageNum) {
+                if (pageNum < 1 || pageNum > TOTAL_PAGES) return;
+                localStorage.setItem(STORAGE_KEY_PAGE, String(pageNum));
+                const verses = pagesMap[pageNum];
+                if (verses && verses.length > 0) {
+                    const name = verses[0].sura_name_ar ? verses[0].sura_name_ar.trim() : '';
+                    if (name) localStorage.setItem(STORAGE_KEY_SURA, name);
+                }
+            }
+
+            function getLastPage() {
+                const p = parseInt(localStorage.getItem(STORAGE_KEY_PAGE), 10);
+                return (p >= 1 && p <= TOTAL_PAGES) ? p : 1;
+            }
+
+            function buildPagesMap(data) {
+                const byPage = {};
+                data.forEach(function(aya) {
+                    const p = aya.page;
+                    if (!byPage[p]) byPage[p] = [];
+                    byPage[p].push(aya);
+                });
+                Object.keys(byPage).forEach(function(p) {
+                    byPage[p].sort(function(a, b) {
+                        return (a.line_start - b.line_start) || (a.aya_no - b.aya_no);
+                    });
+                });
+                return byPage;
+            }
+
+            function escapeHtml(s) {
+                if (!s) return '';
+                const div = document.createElement('div');
+                div.textContent = s;
+                return div.innerHTML;
+            }
+
+            /** إزالة رموز الوقف من كل الآية (قد تظهر كـ سم، سح، ضج حسب الخط) */
+            function cleanAyaText(text) {
+                if (!text || typeof text !== 'string') return '';
+                var out = '';
+                for (var i = 0; i < text.length; i++) {
+                    var code = text.charCodeAt(i);
+                    if (code >= 0xFBB0 && code <= 0xFBCF) continue;
+                    if (code >= 0xFCC0 && code <= 0xFCCF) continue;
+                    if (code >= 0xFDCF && code <= 0xFDFF) continue;
+                    if (code === 0x06DE || code === 0x0773 || code === 0x0774) continue;
+                    out += text.charAt(i);
+                }
+                return out.trim().replace(/\s+/g, ' ');
+            }
+
+            function renderCurrentPage() {
+                const verses = pagesMap[currentPageNum];
+                if (!verses || verses.length === 0) {
+                    pageView.innerHTML = '<p class="page-number-label">صفحة ' + currentPageNum + '</p>';
+                    return;
+                }
+
+                const first = verses[0];
+                const suraName = first.sura_name_ar ? first.sura_name_ar.trim() : '';
+                const showBasmala = first.aya_no === 1 && first.sura_no > 1;
+
+                let html = '';
+                if (showBasmala) {
+                    html += '<p class="basmala">' + escapeHtml(BASMALA) + '</p>';
+                }
+                html += '<div class="page-number-label">ص ' + currentPageNum + (suraName ? ' · ' + suraName : '') + '</div>';
+                html += '<div class="page-content">';
+                verses.forEach(function(v) {
+                    const cleanText = cleanAyaText(v.aya_text);
+                    html += '<span class="aya-wrap">' + escapeHtml(cleanText) + '<span class="aya-num">' + v.aya_no + '</span></span>';
+                });
+                html += '</div>';
+
+                pageView.innerHTML = html;
+            }
+
+            function updateUI() {
+                pageIndicator.textContent = 'صفحة ' + currentPageNum;
+                btnPrev.disabled = currentPageNum <= 1;
+                btnNext.disabled = currentPageNum >= TOTAL_PAGES;
+
+                const todayEnd = Math.min(dailyStartPage + dailyPages - 1, TOTAL_PAGES);
+                const totalInPlan = todayEnd - dailyStartPage + 1;
+                let done = 0;
+                if (currentPageNum >= dailyStartPage && currentPageNum <= todayEnd) {
+                    done = currentPageNum - dailyStartPage + 1;
+                } else if (currentPageNum > todayEnd) {
+                    done = totalInPlan;
+                }
+                const ratio = totalInPlan > 0 ? done / totalInPlan : 0;
+                progressRingFill.setAttribute('stroke-dashoffset', C - ratio * C);
+
+                if (currentPageNum === todayEnd + 1 && navigator.vibrate) {
+                    navigator.vibrate([20, 50, 20]);
+                }
+            }
+
+            function goToPage(pageNum) {
+                if (pageNum < 1 || pageNum > TOTAL_PAGES) return;
+                currentPageNum = pageNum;
+                savePosition(currentPageNum);
+                renderCurrentPage();
+                updateUI();
+            }
+
+            function goPrev() {
+                if (currentPageNum > 1) goToPage(currentPageNum - 1);
+            }
+
+            function goNext() {
+                if (currentPageNum < TOTAL_PAGES) goToPage(currentPageNum + 1);
+            }
+
+            function onSwipe(deltaX) {
+                if (deltaX > SWIPE_THRESHOLD) goPrev();
+                else if (deltaX < -SWIPE_THRESHOLD) goNext();
+            }
+
+            pageView.addEventListener('touchstart', function(e) {
+                touchStartX = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+            }, { passive: true });
+            pageView.addEventListener('touchend', function(e) {
+                const x = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientX : e.clientX;
+                onSwipe(x - touchStartX);
+            }, { passive: true });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight') goPrev();
+                else if (e.key === 'ArrowLeft') goNext();
+            });
+
+            fetch('assets/quran.json')
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    loadPlan();
+                    pagesMap = buildPagesMap(data);
+                    loadingState.style.display = 'none';
+                    pageView.style.display = 'block';
+                    btnPrev.style.display = 'flex';
+                    btnNext.style.display = 'flex';
+
+                    currentPageNum = getLastPage();
+                    renderCurrentPage();
+                    updateUI();
+
+                    btnPrev.addEventListener('click', goPrev);
+                    btnNext.addEventListener('click', goNext);
+                })
+                .catch(function(err) {
+                    loadingState.innerHTML = '<p style="color:#b91c1c;">فشل تحميل المصحف. تأكد من وجود ملف assets/quran.json</p>';
+                    console.error(err);
+                });
+        })();
+    </script>
+</body>
+</html>
