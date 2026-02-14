@@ -14,6 +14,8 @@
             --paper: #faf8f3;
             --ink: #1a1a1a;
             --border-tan: #c4b59a;
+            --verse-number: #1e3a8a;
+            --highlight-gold: #b8860b;
         }
 
         /* الثيمات */
@@ -25,26 +27,20 @@
             --paper: #faf8f3;
             --ink: #1a1a1a;
             --border-tan: #c4b59a;
-        }
-
-        [data-theme="sepia"] {
-            --navy: #704214;
-            --gold: #b8860b;
-            --gold-light: #daa520;
-            --cream: #f4e8d0;
-            --paper: #faf0e6;
-            --ink: #3d2914;
-            --border-tan: #c19a6b;
+            --verse-number: #1e3a8a;
+            --highlight-gold: #b8860b;
         }
 
         [data-theme="dark"] {
-            --navy: #60a5fa;
+            --navy: #1e3a8a;
             --gold: #fbbf24;
             --gold-light: #fcd34d;
             --cream: #1f2937;
             --paper: #111827;
             --ink: #f3f4f6;
             --border-tan: #4b5563;
+            --verse-number: #60a5fa;
+            --highlight-gold: #d4a574;
         }
 
         [data-theme="green"] {
@@ -55,16 +51,8 @@
             --paper: #f0fdf4;
             --ink: #064e3b;
             --border-tan: #6ee7b7;
-        }
-
-        [data-theme="blue"] {
-            --navy: #1e40af;
-            --gold: #3b82f6;
-            --gold-light: #60a5fa;
-            --cream: #eff6ff;
-            --paper: #f0f9ff;
-            --ink: #1e3a8a;
-            --border-tan: #93c5fd;
+            --verse-number: #059669;
+            --highlight-gold: #047857;
         }
         * { box-sizing: border-box; }
         body {
@@ -86,7 +74,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
-        /* الفوتر - شريط سفلي مضغوط شفاف */
+        /* الفوتر - شريط سفلي رسمي بسيط */
         .app-footer {
             position: fixed;
             bottom: 0;
@@ -94,10 +82,10 @@
             right: 0;
             z-index: 100;
             padding: 0.35rem 0.5rem;
-            background: rgba(250,248,243,0.75);
+            background: rgba(250,248,243,0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(196,181,154,0.25);
+            border-top: 1px solid rgba(196,181,154,0.3);
         }
         .footer-inner {
             max-width: 768px;
@@ -117,7 +105,7 @@
             font-weight: 700;
             font-size: 0.7rem;
             border-radius: 0.4rem;
-            background: rgba(30,58,138,0.1);
+            background: rgba(30,58,138,0.08);
         }
         .footer-meta {
             display: flex;
@@ -127,23 +115,16 @@
         }
         .page-indicator {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.65rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--navy);
         }
         .sura-juz {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             color: var(--navy);
-            opacity: 0.85;
+            opacity: 0.8;
         }
-        .progress-ring-wrap {
-            width: 28px;
-            height: 28px;
-        }
-        .progress-ring-wrap svg { transform: rotate(-90deg); }
-        .progress-ring-bg { stroke: rgba(30,58,138,0.15); }
-        .progress-ring-fill { stroke: var(--gold); transition: stroke-dashoffset 0.3s ease; }
         .footer-nav {
             display: flex;
             align-items: center;
@@ -166,6 +147,24 @@
         .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .nav-btn svg { width: 16px; height: 16px; }
         .nav-btn.next svg { transform: scaleX(-1); }
+
+        /* زر تغيير الثيم */
+        .theme-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--navy);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, opacity 0.2s;
+            position: relative;
+        }
+        .theme-btn:active { transform: scale(0.92); }
+        .theme-btn svg { width: 16px; height: 16px; }
 
         /* منطقة القراءة - كامل الشاشة بدون مشتتات */
         .reading-area {
@@ -244,7 +243,7 @@
         }
         .page-view .basmala {
             text-align: center;
-            font-size: clamp(0.78rem, 2.1vh, 0.95rem);
+            font-size: clamp(0.85rem, 2.3vh, 1.05rem);
             line-height: 1.5;
             color: var(--ink);
             margin-bottom: 0.25rem;
@@ -252,7 +251,7 @@
         }
         .page-content {
             flex: 1;
-            font-size: clamp(0.78rem, 2.1vh, 1.05rem);
+            font-size: clamp(0.85rem, 2.3vh, 1.15rem);
             line-height: 1.8;
             text-align: justify;
             color: var(--ink);
@@ -265,15 +264,17 @@
             content: "\00A0";
         }
         .aya-num {
-            display: inline-block;
-            min-width: 1.45em;
-            height: 1.45em;
-            line-height: 1.45em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.65em;
+            height: 1.65em;
+            line-height: 1;
             text-align: center;
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.75em;
+            font-size: 0.65em;
             font-weight: 700;
-            color: var(--ink);
+            color: var(--verse-number);
             background: transparent;
             border: none;
             border-radius: 50%;
@@ -290,23 +291,216 @@
             font-weight: 600;
         }
 
-        /* زر تغيير الثيم */
-        .theme-btn {
+        /* وضع التركيز العميق */
+        .app-footer.auto-hide {
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .app-footer.auto-show {
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        
+        /* شريط التقدم اليومي */
+        .daily-progress-bar {
+            position: fixed;
+            top: auto;
+            bottom: 42px;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: rgba(196,181,154,0.2);
+            z-index: 99;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+        }
+        .daily-progress-fill {
+            height: 100%;
+            background: var(--gold);
+            transition: width 0.5s ease;
+            border-radius: 0 3px 3px 0;
+            flex: 1;
+        }
+        .daily-progress-label {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--navy);
+            background: var(--paper);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.3rem;
+            z-index: 1;
+            white-space: nowrap;
+        }
+
+        /* تظليل الآية المحددة */
+        .verse-highlighted {
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 0.25rem;
+            padding: 0.1rem 0.2rem;
+            margin: 0 -0.2rem;
+        }
+        [data-theme="dark"] .verse-highlighted {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* شريط الأزرار السريع */
+        .verse-action-bar {
+            position: fixed;
+            bottom: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--paper);
+            border: 1px solid var(--border-tan);
+            border-radius: 2rem;
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 1002;
+            transition: bottom 0.3s ease;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+        }
+        .verse-action-bar.show {
+            bottom: 60px;
+        }
+        .action-btn {
             width: 32px;
             height: 32px;
             border-radius: 50%;
             border: none;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
+            background: var(--navy);
+            color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s, opacity 0.2s;
-            position: relative;
+            transition: transform 0.2s, background 0.2s;
+            font-size: 0.8rem;
         }
-        .theme-btn:active { transform: scale(0.92); }
-        .theme-btn svg { width: 16px; height: 16px; }
+        .action-btn:hover {
+            transform: scale(1.1);
+            background: var(--gold);
+        }
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+        .action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        /* نافذة التفسير المنبثقة */
+        .verse-insight {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: var(--paper);
+            border-top: 2px solid var(--border-tan);
+            border-radius: 1rem 1rem 0 0;
+            padding: 1.5rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            z-index: 1001;
+            transition: bottom 0.3s ease;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] .verse-insight {
+            background: #1f2937;
+            border-top-color: #6b7280;
+        }
+        .verse-insight.show {
+            bottom: 0;
+        }
+        .insight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-tan);
+        }
+        [data-theme="dark"] .insight-header {
+            border-bottom-color: #6b7280;
+        }
+        .insight-title {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            color: var(--navy);
+            font-size: 0.9rem;
+        }
+        .insight-close {
+            background: none;
+            border: none;
+            color: var(--navy);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .insight-close:hover {
+            background: rgba(196,181,154,0.2);
+        }
+        .insight-content {
+            font-family: 'Noto Naskh Arabic', serif;
+            line-height: 1.8;
+            color: var(--ink);
+            font-size: 0.9rem;
+        }
+        .insight-verse {
+            color: var(--navy);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(196,181,154,0.1);
+            border-radius: 0.5rem;
+        }
+        [data-theme="dark"] .insight-verse {
+            background: rgba(107,114,128,0.2);
+        }
+        .insight-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-tan);
+        }
+        [data-theme="dark"] .insight-actions {
+            border-top-color: #6b7280;
+        }
+        .insight-action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--border-tan);
+            background: var(--paper);
+            color: var(--navy);
+            border-radius: 0.5rem;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        [data-theme="dark"] .insight-action-btn {
+            background: #374151;
+            border-color: #6b7280;
+            color: #f3f4f6;
+        }
+        .insight-action-btn:hover {
+            background: var(--gold);
+            color: white;
+        }
 
         /* التحميل */
         .loading-state {
@@ -336,6 +530,12 @@
     </style>
 </head>
 <body>
+    <!-- شريط التقدم اليومي -->
+    <div class="daily-progress-bar" id="dailyProgressBar">
+        <div class="daily-progress-fill" id="dailyProgressFill"></div>
+        <div class="daily-progress-label">الورد اليومي</div>
+    </div>
+
     <main class="reading-area" id="readingArea">
         <div class="loading-state" id="loadingState">
             <div class="spinner"></div>
@@ -347,6 +547,52 @@
             <div class="page-view-inner" id="pageViewInner"></div>
         </div>
     </main>
+
+    <!-- نافذة التفسير المنبثقة -->
+    <div class="verse-insight" id="verseInsight">
+        <div class="insight-header">
+            <div class="insight-title">تفسير الآية</div>
+            <button class="insight-close" id="insightClose">×</button>
+        </div>
+        <div class="insight-content">
+            <div class="insight-verse" id="insightVerse"></div>
+            <div id="insightText">جاري تحميل التفسير...</div>
+        </div>
+        <div class="insight-actions">
+            <button class="insight-action-btn" id="copyVerseBtn">نسخ الآية</button>
+            <button class="insight-action-btn" id="copyWithTafseerBtn">نسخ مع التفسير</button>
+            <button class="insight-action-btn" id="shareWhatsAppBtn">مشاركة واتساب</button>
+        </div>
+    </div>
+
+    <!-- شريط الأزرار السريع -->
+    <div class="verse-action-bar" id="verseActionBar">
+        <button class="action-btn" id="copyBtn" title="نسخ">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+        </button>
+        <button class="action-btn" id="tafseerBtn" title="تفسير">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
+                <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+            </svg>
+        </button>
+        <button class="action-btn" id="favoriteBtn" title="المفضلة">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+            </svg>
+        </button>
+        <button class="action-btn" id="shareBtn" title="مشاركة">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>
+            </svg>
+        </button>
+    </div>
 
     <footer class="app-footer" id="appFooter">
         <div class="footer-inner">
@@ -369,12 +615,6 @@
                 <span class="page-indicator" id="pageIndicator">ص —</span>
                 <span class="sura-juz" id="suraJuz"></span>
             </div>
-            <div class="progress-ring-wrap" title="ورد اليوم">
-                <svg width="28" height="28" viewBox="0 0 28 28">
-                    <circle class="progress-ring-bg" cx="14" cy="14" r="11" fill="none" stroke-width="2"/>
-                    <circle class="progress-ring-fill" id="progressRingFill" cx="14" cy="14" r="11" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="69.1" stroke-dashoffset="69.1"/>
-                </svg>
-            </div>
         </div>
     </footer>
 
@@ -384,11 +624,10 @@
             const STORAGE_KEY_SURA = 'quran_last_sura_name';
             const STORAGE_KEY_THEME = 'quran_theme';
             const TOTAL_PAGES = 604;
-            const C = 2 * Math.PI * 11;
             const BASMALA = 'بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ';
             const SWIPE_THRESHOLD = 60;
 
-            const THEMES = ['cream', 'sepia', 'dark', 'green', 'blue'];
+            const THEMES = ['cream', 'dark', 'green'];
             let currentThemeIndex = 0;
 
             let pagesMap = {};
@@ -402,10 +641,36 @@
             const pageViewInner = document.getElementById('pageViewInner');
             const pageIndicator = document.getElementById('pageIndicator');
             const suraJuzEl = document.getElementById('suraJuz');
-            const progressRingFill = document.getElementById('progressRingFill');
             const btnPrev = document.getElementById('btnPrev');
             const btnNext = document.getElementById('btnNext');
             const themeBtn = document.getElementById('themeBtn');
+            const appFooter = document.getElementById('appFooter');
+            const dailyProgressBar = document.getElementById('dailyProgressBar');
+            const dailyProgressFill = document.getElementById('dailyProgressFill');
+            const verseInsight = document.getElementById('verseInsight');
+            const insightClose = document.getElementById('insightClose');
+            const insightVerse = document.getElementById('insightVerse');
+            const insightText = document.getElementById('insightText');
+            const verseActionBar = document.getElementById('verseActionBar');
+            const copyBtn = document.getElementById('copyBtn');
+            const tafseerBtn = document.getElementById('tafseerBtn');
+            const favoriteBtn = document.getElementById('favoriteBtn');
+            const shareBtn = document.getElementById('shareBtn');
+            const copyVerseBtn = document.getElementById('copyVerseBtn');
+            const copyWithTafseerBtn = document.getElementById('copyWithTafseerBtn');
+            const shareWhatsAppBtn = document.getElementById('shareWhatsAppBtn');
+
+            // متغيرات وضع التركيز العميق
+            let lastScrollTop = 0;
+            let scrollTimeout;
+            let isFooterVisible = true;
+
+            // متغيرات التفسير
+            let lastTapTime = 0;
+            let tappedVerse = null;
+            let currentVerseText = '';
+            let currentVerseNumber = '';
+            let currentTafseer = '';
 
             function loadTheme() {
                 try {
@@ -435,6 +700,123 @@
                 currentThemeIndex = (currentThemeIndex + 1) % THEMES.length;
                 applyTheme();
                 saveTheme();
+            }
+
+            // وضع التركيز العميق
+            function initDeepFocusMode() {
+                pageView.addEventListener('scroll', function() {
+                    const currentScrollTop = pageView.scrollTop;
+                    
+                    if (currentScrollTop > lastScrollTop && currentScrollTop > 50) {
+                        // التمرير لأسفل - إخفاء الفوتر
+                        if (isFooterVisible) {
+                            appFooter.classList.add('auto-hide');
+                            appFooter.classList.remove('auto-show');
+                            isFooterVisible = false;
+                        }
+                    } else if (currentScrollTop < lastScrollTop - 10) {
+                        // التمرير لأعلى - إظهار الفوتر
+                        if (!isFooterVisible) {
+                            appFooter.classList.add('auto-show');
+                            appFooter.classList.remove('auto-hide');
+                            isFooterVisible = true;
+                        }
+                    }
+                    
+                    lastScrollTop = currentScrollTop;
+                    
+                    // إلغاء التايمر السابق
+                    clearTimeout(scrollTimeout);
+                    
+                    // إخفاء الفوتر بعد التوقف عن التمرير
+                    scrollTimeout = setTimeout(function() {
+                        if (currentScrollTop > 50) {
+                            appFooter.classList.add('auto-hide');
+                            appFooter.classList.remove('auto-show');
+                            isFooterVisible = false;
+                        }
+                    }, 2000);
+                });
+            }
+
+            
+            // تحديث شريط التقدم اليومي
+            function updateDailyProgress() {
+                const todayEnd = Math.min(dailyStartPage + dailyPages - 1, TOTAL_PAGES);
+                const totalInPlan = todayEnd - dailyStartPage + 1;
+                let done = 0;
+                
+                if (currentPageNum >= dailyStartPage && currentPageNum <= todayEnd) {
+                    done = currentPageNum - dailyStartPage + 1;
+                } else if (currentPageNum > todayEnd) {
+                    done = totalInPlan;
+                }
+                
+                const ratio = totalInPlan > 0 ? done / totalInPlan : 0;
+                const percentage = ratio * 100;
+                
+                dailyProgressFill.style.width = percentage + '%';
+                
+                // اهتزاز عند إكمال الورد
+                if (done === totalInPlan && navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+            }
+
+            // التفسير اللحظي
+            function showVerseInsight(verseText, verseNumber) {
+                currentVerseText = verseText;
+                currentVerseNumber = verseNumber;
+                
+                insightVerse.textContent = `الآية ${verseNumber}: ${verseText.substring(0, 100)}...`;
+                
+                // محاكاة التفسير (يمكن استبداله ببيانات حقيقية)
+                const tafseerTexts = [
+                    "هذه الآية تتحدث عن أهمية الإيمان والعمل الصالح.",
+                    "في هذه الآية بيان لرحمة الله الواسعة بعباده.",
+                    "هذه الآية توضح الحكمة من خلق الإنسان والكون.",
+                    "في هذه الآية دعوة للتأمل في آيات الله في الطبيعة.",
+                    "هذه الآية ترشد إلى الصراط المستقيم وطرق الهداية."
+                ];
+                
+                currentTafseer = tafseerTexts[Math.floor(Math.random() * tafseerTexts.length)];
+                insightText.textContent = currentTafseer;
+                
+                verseInsight.classList.add('show');
+            }
+
+            function hideVerseInsight() {
+                verseInsight.classList.remove('show');
+                // لا إخفاء شريط الأزرار هنا
+            }
+
+            function showActionBar() {
+                verseActionBar.classList.add('show');
+            }
+
+            function hideActionBar() {
+                verseActionBar.classList.remove('show');
+            }
+
+            // وظائف الأزرار
+            function copyVerse() {
+                const fullText = `${currentVerseText} [${currentVerseNumber}]`;
+                navigator.clipboard.writeText(fullText).then(() => {
+                    alert('تم نسخ الآية بنجاح');
+                });
+            }
+
+            function copyWithTafseer() {
+                const fullText = `${currentVerseText} [${currentVerseNumber}]\n\nالتفسير: ${currentTafseer}`;
+                navigator.clipboard.writeText(fullText).then(() => {
+                    alert('تم نسخ الآية مع التفسير بنجاح');
+                });
+            }
+
+            function shareWhatsApp() {
+                const fullText = `${currentVerseText} [${currentVerseNumber}]\n\nالتفسير: ${currentTafseer}`;
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
+                window.open(whatsappUrl, '_blank');
             }
 
             function loadPlan() {
@@ -521,13 +903,54 @@
                     html += '<p class="basmala">' + highlightAllah(escapeHtml(BASMALA)) + '</p>';
                 }
                 html += '<div class="page-content">';
-                verses.forEach(function(v) {
+                verses.forEach(function(v, index) {
                     const cleanText = cleanAyaText(v.aya_text);
-                    html += '<span class="aya-wrap">' + highlightAllah(escapeHtml(cleanText)) + '<span class="aya-num">' + v.aya_no + '</span></span>';
+                    const verseId = `verse-${currentPageNum}-${index}`;
+                    html += '<span class="aya-wrap" id="' + verseId + '" data-verse="' + v.aya_no + '" data-text="' + escapeHtml(cleanText.substring(0, 100)) + '">' + 
+                            highlightAllah(escapeHtml(cleanText)) + 
+                            '<span class="aya-num">' + v.aya_no + '</span></span>';
                 });
                 html += '</div>';
 
                 pageViewInner.innerHTML = html;
+
+                // إضافة مستمع النقر المزدوج للتفسير فقط
+                setTimeout(function() {
+                    const verseElements = pageViewInner.querySelectorAll('.aya-wrap');
+                    verseElements.forEach(function(verse) {
+                        verse.addEventListener('click', function(e) {
+                            const currentTime = new Date().getTime();
+                            const tapLength = currentTime - lastTapTime;
+                            
+                            if (tapLength < 300 && tapLength > 0) {
+                                // نقر مزدوج
+                                e.preventDefault();
+                                const verseNumber = this.getAttribute('data-verse');
+                                const verseText = this.getAttribute('data-text');
+                                
+                                // تظليل الآية
+                                if (tappedVerse && tappedVerse !== this) {
+                                    tappedVerse.classList.remove('verse-highlighted');
+                                }
+                                this.classList.add('verse-highlighted');
+                                tappedVerse = this;
+                                
+                                // تخزين بيانات الآية الحالية
+                                currentVerseText = verseText;
+                                currentVerseNumber = verseNumber;
+                                
+                                // إظهار شريط الأزرار فقط
+                                showActionBar();
+                                
+                                // إخفاء نافذة التفسير إذا كانت ظاهرة
+                                hideVerseInsight();
+                            }
+                            
+                            lastTapTime = currentTime;
+                            tappedVerse = this;
+                        });
+                    });
+                }, 100);
             }
 
             function updateUI() {
@@ -545,17 +968,10 @@
                     suraJuzEl.textContent = '';
                 }
 
-                const todayEnd = Math.min(dailyStartPage + dailyPages - 1, TOTAL_PAGES);
-                const totalInPlan = todayEnd - dailyStartPage + 1;
-                let done = 0;
-                if (currentPageNum >= dailyStartPage && currentPageNum <= todayEnd) {
-                    done = currentPageNum - dailyStartPage + 1;
-                } else if (currentPageNum > todayEnd) {
-                    done = totalInPlan;
-                }
-                const ratio = totalInPlan > 0 ? done / totalInPlan : 0;
-                progressRingFill.setAttribute('stroke-dashoffset', C - ratio * C);
+                // تحديث شريط التقدم اليومي
+                updateDailyProgress();
 
+                const todayEnd = Math.min(dailyStartPage + dailyPages - 1, TOTAL_PAGES);
                 if (currentPageNum === todayEnd + 1 && navigator.vibrate) {
                     navigator.vibrate([20, 50, 20]);
                 }
@@ -608,9 +1024,49 @@
                     renderCurrentPage();
                     updateUI();
 
+                    // تهيئة الميزات الإبداعية
+                    initDeepFocusMode();
+
+                    // مستمعو الأحداث
                     btnPrev.addEventListener('click', goPrev);
                     btnNext.addEventListener('click', goNext);
                     themeBtn.addEventListener('click', switchTheme);
+                    insightClose.addEventListener('click', hideVerseInsight);
+                    
+                    // أزرار شريط الأدوات
+                    copyBtn.addEventListener('click', copyVerse);
+                    tafseerBtn.addEventListener('click', function() {
+                        hideActionBar(); // إخفاء شريط الأزرار
+                        showVerseInsight(currentVerseText, currentVerseNumber); // إظهار نافذة التفسير
+                    });
+                    favoriteBtn.addEventListener('click', function() {
+                        alert('تمت إضافة الآية إلى المفضلة');
+                    });
+                    shareBtn.addEventListener('click', shareWhatsApp);
+                    
+                    // أزرار نافذة التفسير
+                    copyVerseBtn.addEventListener('click', copyVerse);
+                    copyWithTafseerBtn.addEventListener('click', copyWithTafseer);
+                    shareWhatsAppBtn.addEventListener('click', shareWhatsApp);
+                    
+                    // إغلاق التفسير عند النقر خارج النافذة
+                    verseInsight.addEventListener('click', function(e) {
+                        if (e.target === verseInsight) {
+                            hideVerseInsight();
+                        }
+                    });
+                    
+                    // إغلاق شريط الأزرار عند النقر في أي مكان آخر
+                    document.addEventListener('click', function(e) {
+                        if (!verseActionBar.contains(e.target) && !e.target.closest('.aya-wrap') && !verseInsight.contains(e.target)) {
+                            hideActionBar();
+                            // إزالة التظليل عند إغلاق شريط الأزرار
+                            if (tappedVerse) {
+                                tappedVerse.classList.remove('verse-highlighted');
+                                tappedVerse = null;
+                            }
+                        }
+                    });
                 })
                 .catch(function(err) {
                     loadingState.innerHTML = '<p style="color:#b91c1c;">فشل تحميل المصحف. تأكد من وجود ملف assets/quran.json</p>';
