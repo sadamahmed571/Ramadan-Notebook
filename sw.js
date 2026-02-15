@@ -9,7 +9,8 @@ const STATIC_ASSETS = [
     '/index.html',
     '/quran.html',
     '/app-report.md',
-    '/assets/quran.json'
+    '/assets/quran.json',
+    '/assets/js/lib/lucide.min.js'
 ];
 
 // تثبيت Service Worker
@@ -117,21 +118,21 @@ self.addEventListener('message', event => {
         case 'SKIP_WAITING':
             self.skipWaiting();
             break;
-        
+
         case 'GET_VERSION':
             event.ports[0].postMessage({
                 type: 'VERSION_RESPONSE',
                 payload: CACHE_NAME
             });
             break;
-        
+
         case 'GET_CACHES':
             event.ports[0].postMessage({
                 type: 'CACHES_RESPONSE',
                 payload: [STATIC_CACHE, DYNAMIC_CACHE]
             });
             break;
-        
+
         case 'CLEAR_CACHE':
             event.waitUntil(
                 caches.delete(STATIC_CACHE)
@@ -143,7 +144,7 @@ self.addEventListener('message', event => {
                     })
             );
             break;
-        
+
         default:
             console.log('Unknown message type:', type);
     }
@@ -153,7 +154,7 @@ self.addEventListener('message', event => {
 self.addEventListener('message', event => {
     if (event.data && event.data.type === 'SYNC_FILES') {
         const files = event.data.files;
-        
+
         files.forEach(file => {
             fetch(file.url)
                 .then(response => response.text())

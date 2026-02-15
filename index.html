@@ -5,13 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>خُطىْ V3.0 | مفكرة رمضانية</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="logo.jpg" type="image/jpeg">
+    <meta name="theme-color" content="#1e3a8a">
 
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="assets/js/lib/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -174,7 +177,7 @@
         };
 
         // -------------------- 📅 CONSTANTS & DATASETS --------------------
-        // 🕋 صلاة مواقيت (تجريبية)
+        // 🕋 صلاة مواقيت
         const PRAYER_TIMES = [
             { id: 'fajr', name: 'الفجر', time: '05:00', timeEn: '05:00' },
             { id: 'dhuhr', name: 'الظهر', time: '12:30', timeEn: '12:30' },
@@ -221,6 +224,44 @@
 
                         <button onClick={handleStart} class="w-full bg-navy hover:bg-navy/90 text-white py-3 rounded-xl text-sm font-bold shadow-lg shadow-navy/20 transition-all active:scale-95">
                             لنبدأ
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const GiftWelcomeModal = ({ onClose }) => {
+            const params = new URLSearchParams(window.location.search);
+            const from = params.get('from') || 'شخص محب';
+            const to = params.get('to') || '';
+
+            useEffect(() => { lucide.createIcons(); }, []);
+
+            return (
+                <div class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop text-right">
+                    <div class="glass-card rounded-3xl max-w-sm w-full p-8 animate-fade-in shadow-[0_30px_60px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 w-32 h-32 bg-gold/10 rounded-full blur-3xl"></div>
+
+                        <div class="w-20 h-20 bg-gradient-to-br from-gold/30 to-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner ring-4 ring-gold/10">
+                            <i data-lucide="gift" class="w-10 h-10 text-gold animate-bounce"></i>
+                        </div>
+
+                        <h2 class="text-2xl font-black text-navy mb-4">هدية خاصة لك! 🌙</h2>
+
+                        <div class="bg-navy/5 p-4 rounded-2xl mb-6 border border-navy/5">
+                            <p class="text-[14px] text-navy font-medium leading-relaxed">
+                                أهلاً بك يا <span class="text-gold font-black">{to}</span>،<br />
+                                لقد قام <span class="text-gold font-black">{from}</span> بإهدائك تطبيق <span class="font-black">"خُطىْ"</span> ليعينك على الطاعات في شهر الخير.
+                            </p>
+                        </div>
+
+                        <p class="text-[11px] text-gray-400 mb-6 italic">
+                            * قمنا بحفظ اسمك تلقائياً، يمكنك تغييره في أي وقت من خلال الضغط على أيقونة المستخدم بالأعلى.
+                        </p>
+
+                        <button onClick={() => onClose(to)} class="w-full bg-navy hover:bg-navy/90 text-white py-4 rounded-2xl text-[15px] font-bold shadow-xl shadow-navy/30 transition-all active:scale-95 flex items-center justify-center gap-2">
+                            ابدأ رحلة الطاعات
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
@@ -393,7 +434,7 @@
                         <div class="text-center bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm min-w-[75px]">
                             <i data-lucide="moon-star" class="w-7 h-7 mx-auto"></i>
                             <span class="text-[13px] block mt-1 font-bold">{hijriDay} رمضان</span>
-                            <span class="text-[10px] block opacity-75 font-medium border-t border-white/20 mt-1 pt-0.5">{gregorianDate}</span>
+                            <span class="text-[11px] block opacity-75 font-medium border-t border-white/20 mt-1 pt-0.5">{gregorianDate}</span>
                         </div>
                     </div>
 
@@ -502,7 +543,7 @@
                                 </button>
                             )}
                         </div>
-                        <p class="text-[9px] text-gray-400 mt-3 text-center">بامكانك اضافة صلوات التروايح و القيام او الغاء اضافتها في المتتبع</p>
+                        <p class="text-[10px] text-gray-400 mt-3 text-center">بامكانك اضافة صلوات التروايح و القيام او الغاء اضافتها في المتتبع</p>
                     </div>
                 </div>
             );
@@ -585,7 +626,7 @@
                                 <span class="text-[12px] text-navy mr-6">هدفنا: {plan.totalQurans === 1 ? 'ختمة واحدة' : plan.totalQurans === 2 ? 'ختمتان' : `${plan.totalQurans} ختمات`}</span>
                             )}
                         </div>
-                       
+
                     </div>
 
                     {/* Visual  ختمة Progress */}
@@ -642,7 +683,7 @@
                     totalQurans: qurans,
                     totalPages,
                     dailyPages,
-                    currentDay: 12, // تجريبي
+                    currentDay: 1, // Reset to Day 1
                     completedDays: []
                 };
                 onSave(plan);
@@ -709,30 +750,78 @@
         // -------------------- ✨ مبادرة اليوم المقترحة من خُطى --------------------
         const PersonalReflectionWidget = ({ hijriDay }) => {
             const [initiative, setInitiative] = useState(null);
+            const [liked, setLiked] = useState(false);
+            const [committed, setCommitted] = useState(false);
 
             useEffect(() => {
-                // Find initiative for today or fallback
                 const todayInit = DAILY_INITIATIVES.find(i => i.day === hijriDay) || DAILY_INITIATIVES[0];
                 setInitiative(todayInit);
-                lucide.createIcons();
             }, [hijriDay]);
+
+            useEffect(() => {
+                if (window.lucide) lucide.createIcons();
+            }, [initiative, liked, committed]);
 
             if (!initiative) return null;
 
+            const shareInitiative = () => {
+                const message = `🌟 مبادرة اليوم من تطبيق خُطىْ:\n\n*${initiative.title}*\n${initiative.content}\n\nشاركنا الخير! ✨`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+            };
+
             return (
-                <div class="glass-card p-4 rounded-xl mb-3 bg-gradient-to-br from-amber-50/40 to-white dark:from-gray-800 dark:to-gray-900 border border-gold/10">
+                <div class="glass-card p-4 rounded-xl mb-3 bg-gradient-to-br from-amber-50/40 to-white dark:from-gray-800 dark:to-gray-900 border border-gold/10 relative overflow-hidden">
                     <div class="flex items-center gap-3 mb-3 border-b border-gold/10 pb-2">
                         <div class="w-8 h-8 hide-element-on-print bg-gold/20 rounded-full flex items-center justify-center shrink-0">
                             <i data-lucide="sparkles" class="w-4 h-4 text-navy"></i>
                         </div>
-                        <h3 class="text-sm font-bold text-navy dark:text-gold leading-tight">مبادرة اليوم المقترحة من خُطى</h3>
+                        <h3 class="text-[16px] font-bold text-navy dark:text-gold leading-tight">مبادرات خُطى</h3>
                     </div>
 
-                    <div class="text-right">
-                        <h4 class="text-[15px]   text-navy mb-2">{initiative.title}</h4>
-                        <p class="text-[12px] text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                            {initiative.content}
-                        </p>
+                    <div class="flex gap-4">
+                        {/* Initiative Content */}
+                        <div class="text-right flex-1 bg-white/40 p-3 rounded-lg border border-white/20">
+                            <h4 class="text-[16px] font-medium text-navy mb-1.5">{initiative.title}</h4>
+                            <p class="text-[13px] leading-[1.4] text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                                {initiative.content}
+                            </p>
+                        </div>
+
+                        {/* Interactive Buttons - Vertical on Left (End of flex in RTL) */}
+                        <div class="flex flex-col gap-2.5 shrink-0 justify-center">
+                            <div class="flex items-center gap-1.5 justify-end">
+                                <span class="text-[11px] font-medium text-gray-400 uppercase tracking-tighter">أعجبتني</span>
+                                <button
+                                    onClick={() => { setLiked(!liked); triggerHaptic('light'); }}
+                                    class={`w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-90 ${liked ? 'bg-red-50 text-red-500 border-red-100 shadow-inner' : 'bg-white text-gray-400 border-gray-100 shadow-sm'} border`}
+                                >
+                                    <i data-lucide="heart" class={`w-3.5 h-3.5 ${liked ? 'fill-current' : ''}`}></i>
+                                </button>
+
+                            </div>
+
+                            <div class="flex items-center gap-1.5 justify-end">
+                                <span class="text-[11px] font-medium text-gray-400 uppercase tracking-tighter">{committed ? 'فعلتها' : 'سأقوم بها'}</span>
+                                <button
+                                    onClick={() => { setCommitted(!committed); triggerHaptic('success'); if (!committed) triggerConfetti(false); }}
+                                    class={`w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-90 ${committed ? 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-inner' : 'bg-white text-gray-400 border-gray-100 shadow-sm'} border`}
+                                >
+                                    <i data-lucide={committed ? "check-square" : "square"} class="w-3.5 h-3.5"></i>
+                                </button>
+
+                            </div>
+
+                            <div class="flex items-center gap-1.5 justify-end">
+                                <span class="text-[11px] font-medium text-gray-400 uppercase tracking-tighter">مشاركة</span>
+                                <button
+                                    onClick={shareInitiative}
+                                    class="w-7 h-7 rounded-lg bg-white text-gray-400 border border-gray-100 flex items-center justify-center transition-all active:scale-90 hover:text-navy hover:bg-gray-50 shadow-sm"
+                                >
+                                    <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                                </button>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -905,7 +994,7 @@
                     <div class="grid grid-cols-2 gap-3">
                         {q.options.map((opt, idx) => {
                             const isCorrect = opt === q.correct;
-                            let btnClass = "w-full text-xs py-3 rounded-xl transition-all duration-300 font-medium text-right px-4 border-2 "; // Increased padding
+                            let btnClass = "w-full text-xs py-2 rounded-xl transition-all duration-300 font-medium text-right px-4 border-2 "; // Increased padding
 
                             if (quizState.feedbackGiven) {
                                 if (isCorrect) {
@@ -953,7 +1042,7 @@
         };
 
         // -------------------- 💧 متتبع الماء الذكي (قفل وقت الصيام) --------------------
-        const HydrationTrackerV3 = ({ hijriDay = 12 }) => {
+        const HydrationTrackerV3 = ({ hijriDay }) => {
             const [cups, setCups] = useState(0);
             const [showWarning, setShowWarning] = useState(false);
             const totalCups = 8;
@@ -993,7 +1082,7 @@
                                 {cups >= 8 ? 'مستوى ترطيب مثالي! أحسنت 🌟' : cups >= 4 ? 'جيد، استمر في شرب الماء بانتظام 💧' : 'تذكر شرب الماء لتجنب الصداع 🥤'}
                             </p>
                         </div>
-                        <div class="text-xs font-medium text-navy bg-blue-50 py-1 px-3 rounded-full border border-blue-100">
+                        <div class="text-[11px] font-medium text-navy bg-blue-50 py-1 px-3 rounded-full border border-blue-100">
                             {cups}/{totalCups} أكواب
                         </div>
                     </div>
@@ -1022,7 +1111,7 @@
 
                         {/* القسم الأيسر: المعلومة (40%) */}
                         <div class="w-[50%] flex flex-col justify-center gap-2 py-1 text-right">
-                            <p class="text-[13px] text-gray-600 leading-[1.7]">
+                            <p class="text-[12px] text-gray-700 leading-[1.6]">
                                 {dailyTip}
                             </p>
                         </div>
@@ -1091,7 +1180,7 @@
                 // if (!recipientPhone.trim()) return alert('يرجى إدخال رقم الهاتف للمشاركة عبر واتساب، أو استخدم "نسخ الرابط"'); // Optional phone
 
                 const link = generateGiftLink();
-                const uniqueMessage = `مبارك عليكم الشهر الفضيل 🌙\nيسرني أن أهديكم تطبيق "خُطىْ" ليكون رفيقكم في الطاعات وتنظيم الأوقات خلال شهر رمضان المبارك.\n\nهدية خاصة مُعدة لكم:\n${link}\n\nنسأل الله أن يتقبل منا ومنكم صالح الأعمال.`;
+                const uniqueMessage = `إلى ${recipientName.trim()} الغالي/ة، مبارك عليكم الشهر الفضيل 🌙\n\nبمناسبة شهر رمضان المبارك، أحببتُ أن أهديك تطبيق "خُطىْ" ليكون رفيقك في الطاعات وتنظيم الأوقات.\n\nمن: ${customSenderName.trim() || 'صديق محب'}\nلرؤية هديتك اضغط هنا:\n${link}\n\nنسأل الله أن يتقبل منا ومنكم صالح الأعمال.`;
 
                 const fullPhone = `${countryCode}${recipientPhone.replace(/^0+/, '')}`;
                 window.open(`https://wa.me/${recipientPhone ? fullPhone : ''}?text=${encodeURIComponent(uniqueMessage)}`, '_blank');
@@ -1104,7 +1193,7 @@
                 if (!recipientName.trim()) return alert('يرجى إدخال اسم المهدى إليه');
 
                 const link = generateGiftLink();
-                const uniqueMessage = `مبارك عليكم الشهر الفضيل 🌙\nيسرني أن أهديكم تطبيق "خُطىْ" ليكون رفيقكم في الطاعات وتنظيم الأوقات خلال شهر رمضان المبارك.\n\nهدية خاصة مُعدة لكم:\n${link}\n\nنسأل الله أن يتقبل منا ومنكم صالح الأعمال.`;
+                const uniqueMessage = `إلى ${recipientName.trim()} الغالي/ة، مبارك عليكم الشهر الفضيل 🌙\n\nبمناسبة شهر رمضان المبارك، أحببتُ أن أهديك تطبيق "خُطىْ" ليكون رفيقك في الطاعات وتنظيم الأوقات.\n\nمن: ${customSenderName.trim() || 'صديق محب'}\nلرؤية هديتك اضغط هنا:\n${link}\n\nنسأل الله أن يتقبل منا ومنكم صالح الأعمال.`;
 
                 navigator.clipboard.writeText(uniqueMessage).then(() => {
                     setCopied(true);
@@ -1122,14 +1211,14 @@
                         class="flex justify-between items-center cursor-pointer select-none"
                     >
                         <div class="flex-1">
-                            <h2 class="text-l font-black text-navy dark:text-gold flex items-center gap-2">
+                            <h2 class="text-[16px] font-black text-navy dark:text-gold flex items-center gap-2">
                                 لمن تحب
                                 <i
                                     data-lucide={isExpanded ? "chevron-up" : "chevron-down"}
                                     class="w-4 h-4 text-gold transition-transform duration-300"
                                 ></i>
                             </h2>
-                            <p class="text-[10px] text-gray-600 font-medium leading-relaxed mt-1">
+                            <p class="text-[11px] text-gray-600 font-medium leading-relaxed mt-1">
                                 قدم تطبيق خطى كهدية يصل بأسم الشخص المُهدى إليه
                             </p>
                         </div>
@@ -1138,7 +1227,7 @@
                         <div class="bg-gradient-to-br from-gold/10 to-gold/5 px-3 py-2 rounded-xl flex flex-col items-center justify-center min-w-[70px] border border-gold/20 shadow-sm">
                             <i data-lucide="gift" class="w-4 h-4 text-gold opacity-80 mb-1"></i>
                             <span class="text-[18px] text-red-400 font-bold leading-none">{giftCredits}</span>
-                            <span class="text-[9px] text-red-400 leading-tight">هدايا متبقية</span>
+                            <span class="text-[10px] text-red-400 leading-tight">هدايا متبقية</span>
                         </div>
                     </div>
 
@@ -1146,7 +1235,7 @@
                     <div class={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
                         <div class="space-y-3 pt-2">
                             <div>
-                                <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">اسم المهدى إليه</label>
+                                <label class="block text-[11px] font-medium text-gray-400 mb-1 mr-1 uppercase">اسم المهدى إليه</label>
                                 <input
                                     type="text"
                                     value={recipientName}
@@ -1157,12 +1246,12 @@
                             </div>
 
                             <div>
-                                <label class="block text-[11px] font-bold text-gray-400 mb-1 mr-1 uppercase">رقم الهاتف (اختياري)</label>
+                                <label class="block text-[12px] font-medium text-gray-400 mb-1 mr-1 uppercase">رقم الهاتف (اختياري)</label>
                                 <div class="flex flex-row-reverse gap-2">
                                     <select
                                         value={countryCode}
                                         onChange={(e) => setCountryCode(e.target.value)}
-                                        class="bg-gray-50 border border-gray-100 rounded-xl px-2 text-[11px] outline-none focus:ring-1 focus:ring-gold"
+                                        class="bg-gray-50 border border-gray-100 rounded-xl px-2 text-[12px] outline-none focus:ring-1 focus:ring-gold"
                                     >
                                         {COUNTRY_CODES.map(c => (
                                             <option key={c.code} value={c.code}>{c.name} {c.code}</option>
@@ -1174,14 +1263,14 @@
                                         onChange={(e) => setRecipientPhone(e.target.value)}
                                         placeholder="777..."
                                         dir="ltr"
-                                        class="flex-1 p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all text-right"
+                                        class="flex-1 p-2.5 bg-white border border-gray-100 rounded-xl text-xs focus:ring-2 focus:ring-gold outline-none transition-all text-left"
                                     />
 
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-1 uppercase">اسم مقدم الإهداء</label>
+                                <label class="block text-[11px] font-medium text-gray-500 mb-1 mr-1 uppercase">اسم مقدم الإهداء</label>
                                 <input
                                     type="text"
                                     value={customSenderName}
@@ -1194,14 +1283,14 @@
                             <div class="flex gap-2 pt-1">
                                 <button
                                     onClick={handleShareWhatsApp}
-                                    class="flex-1 bg-[#25D366] text-white py-2 rounded-xl text-[10px] font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
+                                    class="flex-1 bg-[#25D366] text-white py-2 rounded-xl text-[11px] font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
                                 >
                                     <i data-lucide="message-circle" class="w-3 h-3"></i>
                                     مشاركة واتساب
                                 </button>
                                 <button
                                     onClick={handleCopyLink}
-                                    class="flex-1 bg-navy text-white py-2 rounded-xl text-[10px] font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
+                                    class="flex-1 bg-navy text-white py-2 rounded-xl text-[11px] font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
                                 >
                                     <i data-lucide={copied ? "check" : "copy"} class="w-3 h-3"></i>
                                     {copied ? 'تم النسخ!' : 'نسخ الرسالة'}
@@ -1301,8 +1390,158 @@
             );
         };
 
+        // -------------------- 🕌 نافذة تهنئة يوم الجمعة --------------------
+        const FridayGreetingModal = ({ onClose }) => {
+            useEffect(() => { if (window.lucide) lucide.createIcons(); }, []);
+            return (
+                <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-backdrop">
+                    <div class="glass-card rounded-2xl max-w-sm w-full p-8 text-center animate-fade-in shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20">
+                        <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                            <i data-lucide="sun" class="w-8 h-8 text-amber-600 animate-pulse"></i>
+                        </div>
+                        <h2 class="text-xl font-black text-navy mb-3 italic">جمعة مباركة طيبة! ✨</h2>
+                        <p class="text-[14px] text-gray-600 leading-relaxed mb-6 font-medium">
+                            نور الله جمعتك بالإيمان، وأنار قلبك بالقرآن، وزادك طاعةً وقبولاً في هذا اليوم المبارك.
+                        </p>
+
+                        <div class="flex flex-col gap-3">
+                            <a href="quran.html?page=293" class="w-full bg-amber-600 hover:bg-amber-700 text-white py-3.5 rounded-xl text-sm font-bold shadow-lg shadow-amber-900/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+                                <i data-lucide="book-open" class="w-4 h-4"></i>
+                                لنقرأ سورة الكهف؟
+                            </a>
+                            <button onClick={onClose} class="w-full bg-gray-50 hover:bg-gray-100 text-gray-400 py-3 rounded-xl text-[12px] font-bold transition-all active:scale-95 border border-gray-100">
+                                إغلاق
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // -------------------- 🕌 قسم خاص بيوم الجمعة --------------------
+        const FridaySpecial = () => {
+            const isFriday = new Date().getDay() === 5;
+            const [salawatCount, setSalawatCount] = useState(() => parseInt(localStorage.getItem('friday_salawat_v3')) || 0);
+            const [showGreeting, setShowGreeting] = useState(false);
+
+            useEffect(() => {
+                if (isFriday) {
+                    const lastSeen = localStorage.getItem('last_friday_seen_v3');
+                    const today = new Date().toDateString();
+                    if (lastSeen !== today) {
+                        setShowGreeting(true);
+                    }
+                }
+            }, [isFriday]);
+
+            const closeGreeting = () => {
+                setShowGreeting(false);
+                localStorage.setItem('last_friday_seen_v3', new Date().toDateString());
+            };
+
+            useEffect(() => {
+                localStorage.setItem('friday_salawat_v3', salawatCount);
+                if (window.lucide) lucide.createIcons();
+            }, [salawatCount]);
+
+            if (!isFriday) return null;
+
+            return (
+                <>
+                    {showGreeting && <FridayGreetingModal onClose={closeGreeting} />}
+                    <div class="glass-card p-4 rounded-2xl mb-4 bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900 text-white relative overflow-hidden shadow-2xl border border-white/10 animate-fade-in group">
+                        {/* Decorative Background Icons */}
+                        <div class="absolute -top-6 -left-6 opacity-10 group-hover:rotate-12 transition-transform duration-700">
+                            <i data-lucide="sun" class="w-24 h-24"></i>
+                        </div>
+                        <div class="absolute -bottom-6 -right-6 opacity-10 group-hover:-rotate-12 transition-transform duration-700">
+                            <i data-lucide="sparkles" class="w-24 h-24"></i>
+                        </div>
+
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md">
+                                        <i data-lucide="mosque" class="w-4 h-4 text-amber-100"></i>
+                                    </div>
+                                    <h3 class="text-[17px] font-black tracking-tight">فضائل يوم الجمعة</h3>
+                                </div>
+                                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-bold backdrop-blur-sm">ساعة استجابة ✨</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3">
+                                <a href="quran.html?page=293" class="flex items-center justify-between bg-white/10 hover:bg-white/20 p-3.5 rounded-xl backdrop-blur-sm border border-white/10 transition-all group/btn">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-emerald-500/30 p-2 rounded-lg">
+                                            <i data-lucide="book-open" class="w-4 h-4 text-emerald-200"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-[14px] font-bold leading-tight">سورة الكهف</div>
+                                            <p class="text-[10px] opacity-75">نورٌ ما بين الجمعتين</p>
+                                        </div>
+                                    </div>
+                                    <i data-lucide="chevron-left" class="w-4 h-4 opacity-50 group-hover/btn:translate-x-[-4px] transition-transform"></i>
+                                </a>
+
+                                <div class="bg-white/10 p-3.5 rounded-xl backdrop-blur-sm border border-white/10 flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-rose-500/30 p-2 rounded-lg">
+                                            <i data-lucide="heart" class="w-4 h-4 text-rose-200"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-[14px] font-bold leading-tight">الصلاة على النبي</div>
+                                            <p class="text-[10px] opacity-75">{salawatCount} صلاة مسجلة</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setSalawatCount(p => p + 1);
+                                            triggerHaptic('medium');
+                                            if ((salawatCount + 1) % 10 === 0) triggerConfetti(false);
+                                        }}
+                                        class="bg-amber-500 hover:bg-amber-400 text-white px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-lg shadow-amber-900/20 active:scale-90 transition-all"
+                                    >
+                                        +1 صلِّ
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-t border-white/10 text-center">
+                                <p class="text-[11px] font-medium opacity-80 leading-relaxed italic">
+                                    "أكثروا عليّ من الصلاة يوم الجمعة، فإن صلاتكم معروضة عليّ"
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            );
+        };
+
         // -------------------- 🚀 MAIN APP V3.0 --------------------
         function App() {
+            // Force reset for V6 to clear experimental app data
+            useEffect(() => {
+                if (!localStorage.getItem('app_v6_reset_done')) {
+                    const keysToClear = [
+                        'habitStreakV3', 'quizHistoryV3', 'quizStateV3',
+                        'additionalHabitsV3', 'quranPlanV3', 'giftCreditsV3',
+                        'lastStreakDate', 'farewellSeenV3'
+                    ];
+                    keysToClear.forEach(k => localStorage.removeItem(k));
+
+                    // Clear Dexie database if it exists
+                    if (window.db && db.appState) {
+                        db.appState.clear().then(() => {
+                            localStorage.setItem('app_v6_reset_done', 'true');
+                            window.location.reload();
+                        });
+                    } else {
+                        localStorage.setItem('app_v6_reset_done', 'true');
+                        window.location.reload();
+                    }
+                }
+            }, []);
+
             const [mounted, setMounted] = useState(false);
             const [tasbihCount, setTasbihCount] = useState(0);
             const [tasbihSession, setTasbihSession] = useState(0);
@@ -1367,7 +1606,15 @@
             const [showOnboarding, setShowOnboarding] = useState(!onboardingSeen);
 
             // خطة القرآن
-            const hijriDay = 12; // اليوم الحالي من رمضان (يُفضل ربطها بـ API لاحقاً)
+            // Ramadan Day Tracker (Dynamic calculation based on start date: Feb 17, 2026)
+            const RAMADAN_START_2026 = new Date('2026-02-17');
+            const todayDate = new Date();
+            const timeDiff = todayDate.getTime() - RAMADAN_START_2026.getTime();
+            const calculatedDay = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+
+            // If we are before Ramadan, default to day 1 for exploration.
+            // If during, use calculated day. Max out at day 30.
+            const hijriDay = Math.min(30, Math.max(1, calculatedDay));
             const [quranPlan, setQuranPlan] = useState(() => {
                 const saved = localStorage.getItem('quranPlanV3');
                 return saved ? JSON.parse(saved) : null;
@@ -1586,9 +1833,13 @@
 
             if (!mounted) return null;
 
+            const isGift = new URLSearchParams(window.location.search).get('gift') === 'true';
+
             return (
                 <div class="min-h-screen px-4 py-6 font-sans flex flex-col gap-5 relative overflow-hidden max-w-[768px] mx-auto">
-                    {showOnboarding && <OnboardingModal onClose={closeOnboarding} />}
+                    {showOnboarding && (
+                        isGift ? <GiftWelcomeModal onClose={closeOnboarding} /> : <OnboardingModal onClose={closeOnboarding} />
+                    )}
                     {showFarewell && <FarewellModal onClose={closeFarewell} />}
 
                     {/* الهوية البصرية - خُطىْ */}
@@ -1623,7 +1874,10 @@
                     </div>
 
                     {/* الهيدر + الصلاة - تم نقله ليكون الأول */}
-                    <SmartLunarHeader hijriDay={12} />
+                    <SmartLunarHeader hijriDay={hijriDay} />
+
+                    {/* قسم الجمعة الخاص */}
+                    <FridaySpecial />
 
                     {/* ويدجت الحكمة - تم نقله للأسفل */}
 
@@ -1666,7 +1920,7 @@
 
 
                     {/* ويدجت الحكمة */}
-                    <WisdomWidget hijriDay={12} />
+                    <WisdomWidget hijriDay={hijriDay} />
 
                     {/* التذييل والإهداء */}
                     <FooterCredit />
@@ -1724,6 +1978,27 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+
+        // -------------------- 📡 PWA SERVICE WORKER REGISTRATION --------------------
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => {
+                        console.log('Service Worker Registered!', reg);
+
+                        // Handle manual updates
+                        reg.onupdatefound = () => {
+                            const installingWorker = reg.installing;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('New content is available; please refresh.');
+                                }
+                            };
+                        };
+                    })
+                    .catch(err => console.log('Service Worker registration failed: ', err));
+            });
+        }
     </script>
 </body>
 

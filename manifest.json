@@ -1,0 +1,21 @@
+{
+  "name": "خُطىْ | رفيقك الرمضاني",
+  "short_name": "خُطىْ",
+  "description": "مفكرة رمضانية متكاملة، مصحف إلكتروني، تتبع للصلوات، ومسابقات ثقافية.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#1e3a8a",
+  "theme_color": "#1e3a8a",
+  "icons": [
+    {
+      "src": "logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

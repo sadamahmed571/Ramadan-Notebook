@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>المصحف الإلكتروني | خُطىْ</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="logo.jpg" type="image/jpeg">
+    <meta name="theme-color" content="#1e3a8a">
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap"
         rel="stylesheet">
@@ -36,13 +39,13 @@
 
         [data-theme="dark"] {
             --navy: #1e3a8a;
-            --gold: #fbbf24;
-            --gold-light: #fcd34d;
+            --gold: #b09f74;
+            --gold-light: #b39944;
             --cream: #1f2937;
             --paper: #111827;
-            --ink: #f3f4f6;
+            --ink: #d0ceca;
             --border-tan: #4b5563;
-            --verse-number: #60a5fa;
+            --verse-number: #c4bb9e;
             --highlight-gold: #d4a574;
         }
 
@@ -92,7 +95,7 @@
             left: 0;
             right: 0;
             z-index: 100;
-            padding: 0.35rem 0.5rem;
+            padding: 0.4rem 0.5rem;
             background: rgba(250, 248, 243, 0.95);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -125,25 +128,28 @@
 
         .footer-info {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: flex-start;
-            gap: 0.05rem;
-            margin-right: 0.5rem;
-            padding-left: 0.5rem;
+            gap: 0.7rem;
+            margin-left: 0.1rem;
+            padding-left: 0.1rem;
         }
 
         .page-indicator {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.75rem;
+            font-size: 0.6rem;
             font-weight: 700;
             color: var(--navy);
+            text-align: center;
         }
 
         .sura-juz {
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
+            font-weight: 700;
             color: var(--navy);
-            opacity: 0.8;
+            opacity: 0.9;
+            text-align: center;
         }
 
         .footer-nav {
@@ -166,6 +172,28 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .footer-nav .search-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gold);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .footer-nav .search-btn:hover {
+            background: var(--navy);
+            transform: scale(1.05);
         }
 
         .footer-nav .theme-btn:hover,
@@ -177,14 +205,15 @@
 
         .footer-nav .theme-btn svg,
         .footer-nav .favorites-btn svg,
-        .footer-nav .performance-btn svg {
+        .footer-nav .performance-btn svg,
+        .footer-nav .search-btn svg {
             width: 16px;
             height: 16px;
         }
 
         .footer-nav .nav-btn {
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             border: none;
             background: var(--navy);
@@ -283,14 +312,14 @@
             width: 100%;
             height: 100%;
             background: var(--paper);
-            padding: 0.5rem 8px 0.5rem 8px;
+            padding: 0.2rem 5px 0.2rem 5px;
             margin: 0 8px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* نقوش إسلامية مصحفية - يمين ويسار */
+        /* زخارف جانبية - يمين ويسار */
         .page-view::before,
         .page-view::after {
             content: "";
@@ -306,14 +335,13 @@
 
         .page-view::before {
             right: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32'%3E%3Cpath fill='none' stroke='%23c4b59a' stroke-width='0.5' d='M12 0v6M12 26v6M4 16h6M14 16h6M7 7l3.5 3.5M13.5 12.5l3.5 3.5M7 25l3.5-3.5M13.5 19.5l3.5-3.5M17 7l-3.5 3.5M3.5 12.5L0 16M17 25l-3.5-3.5M3.5 19.5L0 16'/%3E%3Ccircle cx='12' cy='16' r='3' fill='none' stroke='%23c4b59a' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23c9a227' stroke-width='0.4' opacity='0.8' d='M12 10 Q16 16 12 22 Q8 16 12 10'/%3E%3C/svg%3E");
         }
 
         .page-view::after {
             left: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32'%3E%3Cpath fill='none' stroke='%23c4b59a' stroke-width='0.5' d='M12 0v6M12 26v6M4 16h6M14 16h6M7 7l3.5 3.5M13.5 12.5l3.5 3.5M7 25l3.5-3.5M13.5 19.5l3.5-3.5M17 7l-3.5 3.5M3.5 12.5L0 16M17 25l-3.5-3.5M3.5 19.5L0 16'/%3E%3Ccircle cx='12' cy='16' r='3' fill='none' stroke='%23c4b59a' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23c9a227' stroke-width='0.4' opacity='0.8' d='M12 10 Q16 16 12 22 Q8 16 12 10'/%3E%3C/svg%3E");
         }
 
+        /* زخارف علوية وسفلية */
         .ornament.ornament-top,
         .ornament.ornament-bottom {
             position: absolute;
@@ -324,7 +352,6 @@
             opacity: 0.5;
             background-repeat: repeat-x;
             background-size: 32px 24px;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='24' viewBox='0 0 32 24'%3E%3Cpath fill='none' stroke='%23c4b59a' stroke-width='0.5' d='M16 0v6M16 24v6M10 12h6M22 12h6M12 5l3.5 3.5M16.5 9.5l3.5 3.5M12 19l3.5-3.5M16.5 14.5l3.5-3.5M22 5l-3.5 3.5M5.5 9.5L2 12M22 19l-3.5-3.5M5.5 14.5L2 12'/%3E%3Ccircle cx='16' cy='12' r='3' fill='none' stroke='%23c4b59a' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23c9a227' stroke-width='0.4' opacity='0.8' d='M16 8 Q20 12 16 16 Q12 12 16 8'/%3E%3C/svg%3E");
         }
 
         .ornament.ornament-top {
@@ -335,13 +362,48 @@
             bottom: 0;
         }
 
+        /* -------------------- 🎨 Theme-Aware Ornaments -------------------- */
+
+        /* 1. Cream Theme (Default) */
+        [data-theme="cream"] .page-view::before,
+        [data-theme="cream"] .page-view::after {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32'%3E%3Cpath fill='none' stroke='%23c4b59a' stroke-width='0.5' d='M12 0v6M12 26v6M4 16h6M14 16h6M7 7l3.5 3.5M13.5 12.5l3.5 3.5M7 25l3.5-3.5M13.5 19.5l3.5-3.5M17 7l-3.5 3.5M3.5 12.5L0 16'/%3E%3Ccircle cx='12' cy='16' r='3' fill='none' stroke='%23c4b59a' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23c9a227' stroke-width='0.4' opacity='0.8' d='M12 10 Q16 16 12 22 Q8 16 12 10'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="cream"] .ornament.ornament-top,
+        [data-theme="cream"] .ornament.ornament-bottom {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='24' viewBox='0 0 32 24'%3E%3Cpath fill='none' stroke='%23c4b59a' stroke-width='0.5' d='M16 0v6M16 24v6M10 12h6M22 12h6M12 5l3.5 3.5M16.5 9.5l3.5 3.5M12 19l3.5-3.5M16.5 14.5l3.5-3.5M22 5l-3.5 3.5M5.5 9.5L2 12M22 19l-3.5-3.5M5.5 14.5L2 12'/%3E%3Ccircle cx='16' cy='12' r='3' fill='none' stroke='%23c4b59a' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23c9a227' stroke-width='0.4' opacity='0.8' d='M16 8 Q20 12 16 16 Q12 12 16 8'/%3E%3C/svg%3E");
+        }
+
+        /* 2. Dark Theme */
+        [data-theme="dark"] .page-view::before,
+        [data-theme="dark"] .page-view::after {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32'%3E%3Cpath fill='none' stroke='%234b5563' stroke-width='0.5' d='M12 0v6M12 26v6M4 16h6M14 16h6M7 7l3.5 3.5M13.5 12.5l3.5 3.5M7 25l3.5-3.5M13.5 19.5l3.5-3.5M17 7l-3.5 3.5M3.5 12.5L0 16'/%3E%3Ccircle cx='12' cy='16' r='3' fill='none' stroke='%234b5563' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23fbbf24' stroke-width='0.4' opacity='0.8' d='M12 10 Q16 16 12 22 Q8 16 12 10'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="dark"] .ornament.ornament-top,
+        [data-theme="dark"] .ornament.ornament-bottom {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='24' viewBox='0 0 32 24'%3E%3Cpath fill='none' stroke='%234b5563' stroke-width='0.5' d='M16 0v6M16 24v6M10 12h6M22 12h6M12 5l3.5 3.5M16.5 9.5l3.5 3.5M12 19l3.5-3.5M16.5 14.5l3.5-3.5M22 5l-3.5 3.5M5.5 9.5L2 12M22 19l-3.5-3.5M5.5 14.5L2 12'/%3E%3Ccircle cx='16' cy='12' r='3' fill='none' stroke='%234b5563' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23fbbf24' stroke-width='0.4' opacity='0.8' d='M16 8 Q20 12 16 16 Q12 12 16 8'/%3E%3C/svg%3E");
+        }
+
+        /* 3. Green Theme */
+        [data-theme="green"] .page-view::before,
+        [data-theme="green"] .page-view::after {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='32' viewBox='0 0 24 32'%3E%3Cpath fill='none' stroke='%236ee7b7' stroke-width='0.5' d='M12 0v6M12 26v6M4 16h6M14 16h6M7 7l3.5 3.5M13.5 12.5l3.5 3.5M7 25l3.5-3.5M13.5 19.5l3.5-3.5M17 7l-3.5 3.5M3.5 12.5L0 16'/%3E%3Ccircle cx='12' cy='16' r='3' fill='none' stroke='%236ee7b7' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23059669' stroke-width='0.4' opacity='0.8' d='M12 10 Q16 16 12 22 Q8 16 12 10'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="green"] .ornament.ornament-top,
+        [data-theme="green"] .ornament.ornament-bottom {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='24' viewBox='0 0 32 24'%3E%3Cpath fill='none' stroke='%236ee7b7' stroke-width='0.5' d='M16 0v6M16 24v6M10 12h6M22 12h6M12 5l3.5 3.5M16.5 9.5l3.5 3.5M12 19l3.5-3.5M16.5 14.5l3.5-3.5M22 5l-3.5 3.5M5.5 9.5L2 12M22 19l-3.5-3.5M5.5 14.5L2 12'/%3E%3Ccircle cx='16' cy='12' r='3' fill='none' stroke='%236ee7b7' stroke-width='0.45'/%3E%3Cpath fill='none' stroke='%23059669' stroke-width='0.4' opacity='0.8' d='M16 8 Q20 12 16 16 Q12 12 16 8'/%3E%3C/svg%3E");
+        }
+
         .page-view-inner {
             position: relative;
             z-index: 1;
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 32px 0;
+            padding: 25px 0;
             overflow: hidden;
         }
 
@@ -350,24 +412,74 @@
         }
 
         .page-view .basmala,
+        .page-view .sura-header,
         .page-view .page-content {
             position: relative;
             z-index: 1;
         }
 
+        .sura-header {
+            width: 100%;
+            height: 64px;
+            margin: 1px 0 1px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* 🖼️ Sura Header Theme Overrides */
+
+        /* 1. Cream Sura Header */
+        [data-theme="cream"] .sura-header {
+            opacity: 0.9;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='100' viewBox='0 0 800 100'%3E%3Crect x='4' y='4' width='792' height='92' rx='12' fill='%231e3a8a'/%3E%3Crect x='12' y='12' width='776' height='76' rx='8' fill='%23faf8f3'/%3E%3Cpath d='M12 12 L60 12 L12 60 Z' fill='%23e6c84c' opacity='0.8'/%3E%3Cpath d='M788 12 L740 12 L788 60 Z' fill='%23e6c84c' opacity='0.8'/%3E%3Cpath d='M12 88 L60 88 L12 40 Z' fill='%23e6c84c' opacity='0.8'/%3E%3Cpath d='M788 88 L740 88 L788 40 Z' fill='%23e6c84c' opacity='0.8'/%3E%3Ccircle cx='35' cy='35' r='5' fill='%23c9a227'/%3E%3Ccircle cx='765' cy='35' r='5' fill='%23c9a227'/%3E%3Ccircle cx='35' cy='65' r='5' fill='%23c9a227'/%3E%3Ccircle cx='765' cy='65' r='5' fill='%23c9a227'/%3E%3Cpath d='M100 50 Q110 20 150 20 L650 20 Q690 20 700 50 Q690 80 650 80 L150 80 Q110 80 100 50' fill='none' stroke='%23c9a227' stroke-width='2'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="cream"] .sura-header .sura-name {
+            color: #1e3a8a;
+        }
+
+        /* 2. Dark Sura Header */
+        [data-theme="dark"] .sura-header {
+            opacity: 0.8;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='100' viewBox='0 0 800 100'%3E%3Crect x='4' y='4' width='792' height='92' rx='12' fill='%231e3a8a'/%3E%3Crect x='12' y='12' width='776' height='76' rx='8' fill='%23111827'/%3E%3Cpath d='M12 12 L60 12 L12 60 Z' fill='%23fcd34d' opacity='0.8'/%3E%3Cpath d='M788 12 L740 12 L788 60 Z' fill='%23fcd34d' opacity='0.8'/%3E%3Cpath d='M12 88 L60 88 L12 40 Z' fill='%23fcd34d' opacity='0.8'/%3E%3Cpath d='M788 88 L740 88 L788 40 Z' fill='%23fcd34d' opacity='0.8'/%3E%3Ccircle cx='35' cy='35' r='5' fill='%23fbbf24'/%3E%3Ccircle cx='765' cy='35' r='5' fill='%23fbbf24'/%3E%3Ccircle cx='35' cy='65' r='5' fill='%23fbbf24'/%3E%3Ccircle cx='765' cy='65' r='5' fill='%23fbbf24'/%3E%3Cpath d='M100 50 Q110 20 150 20 L650 20 Q690 20 700 50 Q690 80 650 80 L150 80 Q110 80 100 50' fill='none' stroke='%23fcd34d' stroke-width='2'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="dark"] .sura-header .sura-name {
+            color: #b4974c;
+        }
+
+        /* 3. Green Sura Header */
+        [data-theme="green"] .sura-header {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='100' viewBox='0 0 800 100'%3E%3Crect x='4' y='4' width='792' height='92' rx='12' fill='%23065f46'/%3E%3Crect x='12' y='12' width='776' height='76' rx='8' fill='%23f0fdf4'/%3E%3Cpath d='M12 12 L60 12 L12 60 Z' fill='%2310b981' opacity='0.8'/%3E%3Cpath d='M788 12 L740 12 L788 60 Z' fill='%2310b981' opacity='0.8'/%3E%3Cpath d='M12 88 L60 88 L12 40 Z' fill='%2310b981' opacity='0.8'/%3E%3Cpath d='M788 88 L740 88 L788 40 Z' fill='%2310b981' opacity='0.8'/%3E%3Ccircle cx='35' cy='35' r='5' fill='%23059669'/%3E%3Ccircle cx='765' cy='35' r='5' fill='%23059669'/%3E%3Ccircle cx='35' cy='65' r='5' fill='%23059669'/%3E%3Ccircle cx='765' cy='65' r='5' fill='%23059669'/%3E%3Cpath d='M100 50 Q110 20 150 20 L650 20 Q690 20 700 50 Q690 80 650 80 L150 80 Q110 80 100 50' fill='none' stroke='%23059669' stroke-width='2'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="green"] .sura-header .sura-name {
+            color: #065f46;
+        }
+
+        .sura-header .sura-name {
+            font-family: 'Noto Naskh Arabic', serif;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
         .page-view .basmala {
             text-align: center;
-            font-size: clamp(0.85rem, 2.3vh, 1.05rem);
-            line-height: 1.5;
-            color: var(--ink);
-            margin-bottom: 0.25rem;
+            font-size: clamp(0.7rem, 2vh, 0.9rem);
+            line-height: 1;
+            color: #cb5f5f;
+            margin-bottom: 0.45rem;
             flex-shrink: 0;
         }
 
         .page-content {
             flex: 1;
-            font-size: clamp(0.85rem, 2.3vh, 1.15rem);
-            line-height: 1.8;
+            font-size: clamp(0.8rem, 2.1vh, 1.3rem);
+            line-height: 1.9;
             text-align: justify;
             color: var(--ink);
             overflow: hidden;
@@ -385,22 +497,21 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 1.65em;
-            height: 1.65em;
+            min-width: 2.2em;
+            height: 2.2em;
             line-height: 1;
             text-align: center;
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.65em;
-            font-weight: 700;
+            font-size: 0.6em;
+            font-weight: 600;
             color: var(--verse-number);
             background: transparent;
-            border: none;
+            border: 1px gray dashed;
             border-radius: 50%;
             margin-left: 0.35rem;
             margin-right: 0.35rem;
             vertical-align: middle;
-            box-shadow: 0 0 0 1.5px rgba(196, 181, 154, 0.75),
-                0 0 0 3px rgba(196, 181, 154, 0.35);
+
         }
 
         /* تمييز لفظ الجلالة */
@@ -510,7 +621,7 @@
             -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid rgba(251, 191, 36, 0.3);
             border-radius: 1.5rem 1.5rem 0 0;
-            max-height: 75vh;
+            height: 75vh;
             z-index: 2000;
             transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
             box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
@@ -540,7 +651,7 @@
         }
 
         .panel-header {
-            padding: 1rem 1.25rem;
+            padding: 0.9rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -593,17 +704,17 @@
         .favorites-list {
             display: flex;
             flex-direction: column;
-            gap: 1.25rem;
+            gap: 1rem;
         }
 
         .favorite-card {
             background: white;
             border-radius: 1rem;
-            padding: 0.75rem 1rem;
+            padding: 0.65rem 0.9rem;
             border: 1px solid rgba(0, 0, 0, 0.04);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
             position: relative;
             transition: all 0.3s ease;
+            margin-top: 15px;
         }
 
         .favorite-card::before {
@@ -639,7 +750,7 @@
 
         .card-info span {
             font-size: 0.7rem;
-            color: #94a3b8;
+            color: #b02351;
             font-weight: 600;
         }
 
@@ -692,7 +803,7 @@
             font-family: 'Noto Naskh Arabic', serif;
             font-size: 0.95rem;
             line-height: 1.8;
-            color: var(--ink);
+            color: var(--navy);
             text-align: right;
             margin: 0;
         }
@@ -1017,7 +1128,7 @@
         }
 
         .panel-title-v2 {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--navy);
             display: flex;
@@ -1030,12 +1141,13 @@
             border: none;
             width: 36px;
             height: 36px;
+            font-size: 22px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: #64748b;
+            color: red;
             transition: all 0.2s;
         }
 
@@ -1160,13 +1272,13 @@
         .stat-item-v2 {
             background: white;
             border: 1px solid #f1f5f9;
-            padding: 1rem;
+            padding: 0.5rem;
             border-radius: 1rem;
             text-align: center;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.9rem;
             transition: all 0.2s;
         }
 
@@ -1179,7 +1291,7 @@
             width: 20px;
             height: 20px;
             color: #10b981;
-            margin-bottom: 0.25rem;
+            margin-right: 0.25rem;
         }
 
         .stat-value-v2 {
@@ -1189,9 +1301,9 @@
         }
 
         .stat-label-v2 {
-            font-size: 0.65rem;
+            font-size: 0.75rem;
             color: #64748b;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         /* 📈 Weekly Activity Bars */
@@ -1389,6 +1501,218 @@
             justify-content: center;
             transition: transform 0.2s, background 0.2s;
             font-size: 0.8rem;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+            background: var(--gold);
+        }
+
+        /* لوحة البحث والفهرس */
+        .search-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-panel.show {
+            transform: translateY(0);
+        }
+
+        [data-theme="dark"] .search-panel {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.7rem;
+        }
+
+        .search-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        [data-theme="dark"] .search-title {
+            color: var(--gold);
+        }
+
+        .search-input-container {
+            position: relative;
+            margin-bottom: 0.7rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(0, 0, 0, 0.03);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.7rem;
+            color: var(--ink);
+            transition: all 0.3s;
+        }
+
+        [data-theme="dark"] .search-input {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border-color: var(--gold);
+        }
+
+        [data-theme="dark"] .search-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-icon-inside {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .index-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            min-height: 40px;
+        }
+
+        .index-tab {
+            padding: 5px 10px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.05);
+            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        [data-theme="dark"] .index-tab {
+            background: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .index-tab.active {
+            background: var(--navy);
+            color: white;
+        }
+
+        .index-list {
+            flex: 1;
+            overflow-y: auto;
+            display: grid;
+            gap: 0.5rem;
+            padding-right: 0.2rem;
+        }
+
+        .index-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.3rem 0.9rem;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        [data-theme="dark"] .index-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .index-item:hover {
+            border-color: var(--gold);
+        }
+
+        .sura-number-badge {
+            width: 28px;
+            height: 28px;
+            background: none;
+            color: var(--navy);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.7rem;
+            margin-left: 0.75rem;
+        }
+
+        [data-theme="dark"] .sura-number-badge {
+            background: none;
+            color: var(--gold);
+        }
+
+        .sura-info {
+            flex: 1;
+        }
+
+        .sura-name-list {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--navy);
+            display: block;
+        }
+
+        [data-theme="dark"] .sura-name-list {
+            color: white;
+        }
+
+        .sura-details {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.1rem;
+        }
+
+        .page-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--ink);
+            background: none;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+        }
+
+        [data-theme="dark"] .page-badge {
+            background: none;
+            color: #cbd5e1;
         }
 
         .action-btn:hover {
@@ -1600,28 +1924,16 @@
     <!-- شريط الأزرار السريع -->
     <div class="verse-action-bar" id="verseActionBar">
         <button class="action-btn" id="copyBtn" title="نسخ">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-            </svg>
+            <i data-lucide="copy"></i>
         </button>
         <button class="action-btn" id="tafseerBtn" title="تفسير">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z" />
-                <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z" />
-            </svg>
+            <i data-lucide="book-open"></i>
         </button>
         <button class="action-btn" id="favoriteBtn" title="المفضلة">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path
-                    d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-            </svg>
+            <i data-lucide="heart"></i>
         </button>
         <button class="action-btn" id="shareBtn" title="مشاركة واتساب">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path
-                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.465 3.488" />
-            </svg>
+            <i data-lucide="share-2"></i>
         </button>
     </div>
 
@@ -1629,23 +1941,30 @@
     <div class="performance-panel" id="performancePanel">
         <div class="panel-header-v2">
             <h3 class="panel-title-v2">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 20V10M18 20V4M6 20v-6" />
-                </svg>
+                <i data-lucide="bar-chart-2"></i>
                 تحليل الورد القرآني
             </h3>
             <button class="close-btn-v2" id="performanceClose">×</button>
+        </div>
+        <!-- شبكة الإحصائيات -->
+        <div class="stats-grid-v2">
+            <div class="stat-item-v2">
+                <i data-lucide="zap" class="stat-icon-v2"></i>
+                <div class="stat-value-v2" id="v2StatStreak">0</div>
+                <div class="stat-label-v2">أيام متتالية</div>
+            </div>
+            <div class="stat-item-v2">
+                <i data-lucide="bar-chart-2" class="stat-icon-v2"></i>
+                <div class="stat-value-v2" id="v2StatDonePages">0</div>
+                <div class="stat-label-v2">صفحة منجزة</div>
+            </div>
         </div>
 
         <!-- بطاقة التقدم الرئيسية -->
         <div class="analytics-main-card">
             <div class="card-header-flex">
                 <div class="card-title-sm">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
+                    <i data-lucide="book" width="16" height="16"></i>
                     التقدم العام في الختمة
                 </div>
                 <span class="progress-label-v2" id="v2PlanProgressText">0/30 يوم</span>
@@ -1655,11 +1974,11 @@
             </div>
             <div class="flex justify-between"
                 style="display:flex; justify-content: space-between; margin-top: 0.5rem; border-top: 1px dashed rgba(0,0,0,0.05); padding-top: 0.5rem;">
-                <span id="v2CurrentPageReached" style="font-size: 0.75rem; color: #1e3a8a; font-weight: 700;">أنت الآن
+                <span id="v2CurrentPageReached" style="font-size: 0.75rem; color: #1e3a8a; font-weight: 500;">أنت الآن
                     في: صفحة 1</span>
-                <span id="v2NextMilestone" style="font-size: 0.75rem; color: #64748b; font-weight: 600;">المحطة التالية:
+                <span id="v2NextMilestone" style="font-size: 0.75rem; color: #64748b; font-weight: 500;">المحطة التالية:
                     صفحة 1</span>
-                <span id="v2ProjectedEnd" style="font-size: 0.75rem; color: #10b981; font-weight: 700;">هدف: ختمة
+                <span id="v2ProjectedEnd" style="font-size: 0.75rem; color: #10b981; font-weight: 500;">هدف: ختمة
                     واحدة</span>
             </div>
         </div>
@@ -1673,34 +1992,13 @@
             <button class="catchup-btn" id="v2CatchupBtn">تدارك الآن</button>
         </div>
 
-        <!-- شبكة الإحصائيات -->
-        <div class="stats-grid-v2">
-            <div class="stat-item-v2">
-                <svg class="stat-icon-v2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-                <div class="stat-value-v2" id="v2StatStreak">0</div>
-                <div class="stat-label-v2">أيام متتالية</div>
-            </div>
-            <div class="stat-item-v2">
-                <svg class="stat-icon-v2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 20v-6M6 20V10M18 20V4" />
-                </svg>
-                <div class="stat-value-v2" id="v2StatDonePages">0</div>
-                <div class="stat-label-v2">صفحة منجزة</div>
-            </div>
-        </div>
+
 
         <!-- قسم الأيام (متابعة الإنجاز) -->
         <div class="activity-chart-v2">
             <div class="chart-header-v2">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                سجل الورد اليومي (30 يوم)
+                <i data-lucide="calendar" width="16" height="16"></i>
+                متابعة الإنجاز
             </div>
             <div id="v2DaysGrid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem;">
                 <!-- سيتم إنشاؤه عبر JS -->
@@ -1711,19 +2009,14 @@
         <div class="activity-chart-v2" style="margin-bottom: 2rem;">
             <div class="chart-header-v2" style="cursor: pointer;"
                 onclick="document.getElementById('v2FullSchedule').classList.toggle('hidden')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
+                <i data-lucide="file-text" width="16" height="16"></i>
                 جدول توزيع الصفحات
-                <span style="font-size: 0.6rem; margin-right: auto; opacity: 0.6;">(اضغط للتوسيع)</span>
+
             </div>
             <div id="v2FullSchedule" class="hidden" style="max-height: 200px; overflow-y: auto; font-size: 0.75rem;">
                 <table style="width: 100%; border-collapse: collapse; text-align: right;">
-                    <thead style="position: sticky; top: 0; background: white; border-bottom: 1px solid #eee;">
+                    <thead
+                        style="color: #64748b; position: sticky; top: 0; background: white; border-bottom: 1px solid #eee;">
                         <tr>
                             <th style="padding: 0.5rem;">اليوم</th>
                             <th style="padding: 0.5rem;">من</th>
@@ -1755,34 +2048,52 @@
         </div>
     </div>
 
+    <!-- لوحة البحث والفهرس -->
+    <div class="search-panel" id="searchPanel">
+        <div class="search-header">
+            <div class="search-title">
+                <i data-lucide="compass" width="24"></i>
+                الفهرس والبحث
+            </div>
+            <button class="close-btn-v2" id="searchClose">×</button>
+        </div>
+
+        <div class="search-input-container">
+            <input type="text" class="search-input" id="mainSearchInput"
+                placeholder="ابحث عن اسم سورة، رقم صفحة، أو آية...">
+            <i data-lucide="search" class="search-icon-inside" width="18"></i>
+        </div>
+
+        <div class="index-tabs">
+            <button class="index-tab active" data-tab="suras">السور</button>
+            <button class="index-tab" data-tab="verses">الآيات</button>
+            <button class="index-tab" data-tab="pages">انتقال للصفحة</button>
+        </div>
+
+        <div class="index-list" id="indexList">
+            <!-- Data will be populated by JS -->
+        </div>
+    </div>
+
     <footer class="app-footer" id="appFooter">
         <div class="footer-inner">
             <!-- القسم الأيمن -->
             <div class="footer-right">
                 <a href="index.html" class="back-btn" title="رجوع للرئيسية">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                        <polyline points="9 22 9 12 15 12" />
-                    </svg>
+                    <i data-lucide="home"></i>
                 </a>
                 <div class="footer-nav">
+                    <button class="search-btn" id="searchBtn" title="البحث والفهرس">
+                        <i data-lucide="search"></i>
+                    </button>
                     <button type="button" class="favorites-btn" id="favoritesBtn" title="المفضلة">
-                        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1">
-                            <path
-                                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                        </svg>
+                        <i data-lucide="heart"></i>
                     </button>
                     <button type="button" class="performance-btn" id="performanceBtn" title="تفاصيل الورد">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 20V10M12 20V4M6 20v-6" />
-                        </svg>
+                        <i data-lucide="bar-chart-2"></i>
                     </button>
                     <button type="button" class="theme-btn" id="themeBtn" title="تغيير الثيم">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="5" />
-                            <path
-                                d="M12 1v6M12 17v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6M17 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24" />
-                        </svg>
+                        <i data-lucide="sun"></i>
                     </button>
                 </div>
             </div>
@@ -1795,14 +2106,10 @@
                 </div>
                 <div class="footer-nav">
                     <button type="button" class="nav-btn" id="btnPrev" title="السابق">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 18l6-6-6-6" />
-                        </svg>
+                        <i data-lucide="chevron-right"></i>
                     </button>
                     <button type="button" class="nav-btn" id="btnNext" title="التالي">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 18l-6-6 6-6" />
-                        </svg>
+                        <i data-lucide="chevron-left"></i>
                     </button>
                 </div>
             </div>
@@ -1822,10 +2129,19 @@
             let currentThemeIndex = 0;
 
             let pagesMap = {};
+            let tafseerData = [];
+            let tafseerMap = {}; // For O(1) lookup
             let currentPageNum = 1;
             let dailyStartPage = 1;
             let dailyPages = 20; // Default fallback
             try {
+                // Force reset for V6 to clear experimental favorites/stats
+                if (!localStorage.getItem('quran_v6_reset_done')) {
+                    localStorage.removeItem('quran_favorites');
+                    localStorage.removeItem('quran_performance');
+                    localStorage.setItem('quran_v6_reset_done', 'true');
+                }
+
                 const savedPlan = localStorage.getItem('quranPlanV3');
                 if (savedPlan) {
                     const plan = JSON.parse(savedPlan);
@@ -1863,7 +2179,145 @@
             const favoritesPanel = document.getElementById('favoritesPanel');
             const favoritesClose = document.getElementById('favoritesClose');
             const performanceClose = document.getElementById('performanceClose');
+
+            // بيانات السور للفهرسة السريعة
+            const SURA_DATA = [
+                { id: 1, name: "الفاتحة", page: 1, verses: 7, loc: "مكية" }, { id: 2, name: "البقرة", page: 2, verses: 286, loc: "مدنية" },
+                { id: 3, name: "آل عمران", page: 50, verses: 200, loc: "مدنية" }, { id: 4, name: "النساء", page: 77, verses: 176, loc: "مدنية" },
+                { id: 5, name: "المائدة", page: 106, verses: 120, loc: "مدنية" }, { id: 6, name: "الأنعام", page: 128, verses: 165, loc: "مكية" },
+                { id: 7, name: "الأعراف", page: 151, verses: 206, loc: "مكية" }, { id: 8, name: "الأنفال", page: 177, verses: 75, loc: "مدنية" },
+                { id: 9, name: "التوبة", page: 187, verses: 129, loc: "مدنية" }, { id: 10, name: "يونس", page: 208, verses: 109, loc: "مكية" },
+                { id: 11, name: "هود", page: 221, verses: 123, loc: "مكية" }, { id: 12, name: "يوسف", page: 235, verses: 111, loc: "مكية" },
+                { id: 13, name: "الرعد", page: 249, verses: 43, loc: "مدنية" }, { id: 14, name: "إبراهيم", page: 255, verses: 52, loc: "مكية" },
+                { id: 15, name: "الحجر", page: 262, verses: 99, loc: "مكية" }, { id: 16, name: "النحل", page: 267, verses: 128, loc: "مكية" },
+                { id: 17, name: "الإسراء", page: 282, verses: 111, loc: "مكية" }, { id: 18, name: "الكهف", page: 293, verses: 110, loc: "مكية" },
+                { id: 19, name: "مريم", page: 305, verses: 98, loc: "مكية" }, { id: 20, name: "طه", page: 312, verses: 135, loc: "مكية" },
+                { id: 21, name: "الأنبياء", page: 322, verses: 112, loc: "مكية" }, { id: 22, name: "الحج", page: 332, verses: 78, loc: "مدنية" },
+                { id: 23, name: "المؤمنون", page: 342, verses: 118, loc: "مكية" }, { id: 24, name: "النور", page: 350, verses: 64, loc: "مدنية" },
+                { id: 25, name: "الفرقان", page: 359, verses: 77, loc: "مكية" }, { id: 26, name: "الشعراء", page: 367, verses: 227, loc: "مكية" },
+                { id: 27, name: "النمل", page: 377, verses: 93, loc: "مكية" }, { id: 28, name: "القصص", page: 385, verses: 88, loc: "مكية" },
+                { id: 29, name: "العنكبوت", page: 396, verses: 69, loc: "مكية" }, { id: 30, name: "الروم", page: 404, verses: 60, loc: "مكية" },
+                { id: 31, name: "لقمان", page: 411, verses: 34, loc: "مكية" }, { id: 32, name: "السجدة", page: 415, verses: 30, loc: "مكية" },
+                { id: 33, name: "الأحزاب", page: 418, verses: 73, loc: "مدنية" }, { id: 34, name: "سبأ", page: 428, verses: 54, loc: "مكية" },
+                { id: 35, name: "فاطر", page: 434, verses: 45, loc: "مكية" }, { id: 36, name: "يس", page: 440, verses: 83, loc: "مكية" },
+                { id: 37, name: "الصافات", page: 446, verses: 182, loc: "مكية" }, { id: 38, name: "ص", page: 453, verses: 88, loc: "مكية" },
+                { id: 39, name: "الزمر", page: 458, verses: 75, loc: "مكية" }, { id: 40, name: "غافر", page: 467, verses: 85, loc: "مكية" },
+                { id: 41, name: "فصلت", page: 477, verses: 54, loc: "مكية" }, { id: 42, name: "الشورى", page: 483, verses: 53, loc: "مكية" },
+                { id: 43, name: "الزخرف", page: 489, verses: 89, loc: "مكية" }, { id: 44, name: "الدخان", page: 496, verses: 59, loc: "مكية" },
+                { id: 45, name: "الجاثية", page: 499, verses: 37, loc: "مكية" }, { id: 46, name: "الأحقاف", page: 502, verses: 35, loc: "مكية" },
+                { id: 47, name: "محمد", page: 507, verses: 38, loc: "مدنية" }, { id: 48, name: "الفتح", page: 511, verses: 29, loc: "مدنية" },
+                { id: 49, name: "الحجرات", page: 515, verses: 18, loc: "مدنية" }, { id: 50, name: "ق", page: 518, verses: 45, loc: "مكية" },
+                { id: 51, name: "الذاريات", page: 520, verses: 60, loc: "مكية" }, { id: 52, name: "الطور", page: 523, verses: 49, loc: "مكية" },
+                { id: 53, name: "النجم", page: 526, verses: 62, loc: "مكية" }, { id: 54, name: "القمر", page: 528, verses: 55, loc: "مكية" },
+                { id: 55, name: "الرحمن", page: 531, verses: 78, loc: "مدنية" }, { id: 56, name: "الواقعة", page: 534, verses: 96, loc: "مكية" },
+                { id: 57, name: "الحديد", page: 537, verses: 29, loc: "مدنية" }, { id: 58, name: "المجادلة", page: 542, verses: 22, loc: "مدنية" },
+                { id: 59, name: "الحشر", page: 545, verses: 24, loc: "مدنية" }, { id: 60, name: "الممتحنة", page: 549, verses: 13, loc: "مدنية" },
+                { id: 61, name: "الصف", page: 551, verses: 14, loc: "مدنية" }, { id: 62, name: "الجمعة", page: 553, verses: 11, loc: "مدنية" },
+                { id: 63, name: "المنافقون", page: 554, verses: 11, loc: "مدنية" }, { id: 64, name: "التغابن", page: 556, verses: 18, loc: "مدنية" },
+                { id: 65, name: "الطلاق", page: 558, verses: 12, loc: "مدنية" }, { id: 66, name: "التحريم", page: 560, verses: 12, loc: "مدنية" },
+                { id: 67, name: "الملك", page: 562, verses: 30, loc: "مكية" }, { id: 68, name: "القلم", page: 564, verses: 52, loc: "مكية" },
+                { id: 69, name: "الحاقة", page: 566, verses: 52, loc: "مكية" }, { id: 70, name: "المعارج", page: 568, verses: 44, loc: "مكية" },
+                { id: 71, name: "نوح", page: 570, verses: 28, loc: "مكية" }, { id: 72, name: "الجن", page: 572, verses: 28, loc: "مكية" },
+                { id: 73, name: "المزمل", page: 574, verses: 20, loc: "مكية" }, { id: 74, name: "المدثر", page: 575, verses: 56, loc: "مكية" },
+                { id: 75, name: "القيامة", page: 577, verses: 40, loc: "مكية" }, { id: 76, name: "الإنسان", page: 578, verses: 31, loc: "مدنية" },
+                { id: 77, name: "المرسلات", page: 580, verses: 50, loc: "مكية" }, { id: 78, name: "النبأ", page: 582, verses: 40, loc: "مكية" },
+                { id: 79, name: "النازعات", page: 583, verses: 46, loc: "مكية" }, { id: 80, name: "عبس", page: 585, verses: 42, loc: "مكية" },
+                { id: 81, name: "التكوير", page: 586, verses: 29, loc: "مكية" }, { id: 82, name: "الانفطار", page: 587, verses: 19, loc: "مكية" },
+                { id: 83, name: "المطففين", page: 587, verses: 36, loc: "مكية" }, { id: 84, name: "الانشقاق", page: 589, verses: 25, loc: "مكية" },
+                { id: 85, name: "البروج", page: 590, verses: 22, loc: "مكية" }, { id: 86, name: "الطارق", page: 591, verses: 17, loc: "مكية" },
+                { id: 87, name: "الأعلى", page: 591, verses: 19, loc: "مكية" }, { id: 88, name: "الغاشية", page: 592, verses: 26, loc: "مكية" },
+                { id: 89, name: "الفجر", page: 593, verses: 30, loc: "مكية" }, { id: 90, name: "البلد", page: 594, verses: 20, loc: "مكية" },
+                { id: 91, name: "الشمس", page: 595, verses: 15, loc: "مكية" }, { id: 92, name: "الليل", page: 595, verses: 21, loc: "مكية" },
+                { id: 93, name: "الضحى", page: 596, verses: 11, loc: "مكية" }, { id: 94, name: "الشرح", page: 596, verses: 8, loc: "مكية" },
+                { id: 95, name: "التين", page: 597, verses: 8, loc: "مكية" }, { id: 96, name: "العلق", page: 597, verses: 19, loc: "مكية" },
+                { id: 97, name: "القدر", page: 598, verses: 5, loc: "مكية" }, { id: 98, name: "البينة", page: 598, verses: 8, loc: "مدنية" },
+                { id: 99, name: "الزلزلة", page: 599, verses: 8, loc: "مدنية" }, { id: 100, name: "العاديات", page: 599, verses: 11, loc: "مكية" },
+                { id: 101, name: "القارعة", page: 600, verses: 11, loc: "مكية" }, { id: 102, name: "التكاثر", page: 600, verses: 8, loc: "مكية" },
+                { id: 103, name: "العصر", page: 601, verses: 3, loc: "مكية" }, { id: 104, name: "الهمزة", page: 601, verses: 9, loc: "مكية" },
+                { id: 105, name: "الفيل", page: 601, verses: 5, loc: "مكية" }, { id: 106, name: "قريش", page: 602, verses: 4, loc: "مكية" },
+                { id: 107, name: "الماعون", page: 602, verses: 7, loc: "مكية" }, { id: 108, name: "الكوثر", page: 602, verses: 3, loc: "مكية" },
+                { id: 109, name: "الكافرون", page: 603, verses: 6, loc: "مكية" }, { id: 110, name: "النصر", page: 603, verses: 3, loc: "مدنية" },
+                { id: 111, name: "المسد", page: 603, verses: 5, loc: "مكية" }, { id: 112, name: "الإخلاص", page: 604, verses: 4, loc: "مكية" },
+                { id: 113, name: "الفلق", page: 604, verses: 5, loc: "مكية" }, { id: 114, name: "الناس", page: 604, verses: 6, loc: "مكية" }
+            ];
+
             const favoritesList = document.getElementById('favoritesList');
+            const searchBtn = document.getElementById('searchBtn');
+            const searchPanel = document.getElementById('searchPanel');
+            const searchClose = document.getElementById('searchClose');
+            const mainSearchInput = document.getElementById('mainSearchInput');
+            const indexList = document.getElementById('indexList');
+            const indexTabs = document.querySelectorAll('.index-tab');
+
+            // Search Panel & Indexing Functions
+            function toggleSearchPanel() {
+                const isHidden = !searchPanel.classList.contains('show');
+                if (isHidden) {
+                    searchPanel.classList.add('show');
+                    mainSearchInput.focus();
+                    renderIndex('suras'); // Default view
+                } else {
+                    searchPanel.classList.remove('show');
+                }
+            }
+
+            if (searchBtn) searchBtn.addEventListener('click', toggleSearchPanel);
+            if (searchClose) searchClose.addEventListener('click', toggleSearchPanel);
+
+            // Tabs Logic
+            indexTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    indexTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const tabName = tab.dataset.tab;
+                    renderIndex(tabName);
+                });
+            });
+
+            // Search Logic
+            mainSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const activeTab = document.querySelector('.index-tab.active').dataset.tab;
+
+                if (activeTab === 'pages') {
+                    // Check if input is a valid page number
+                    const pageNum = parseInt(query);
+                    if (pageNum >= 1 && pageNum <= 604) {
+                        goToPage(pageNum);
+                        toggleSearchPanel();
+                    }
+                } else {
+                    renderIndex(activeTab, query);
+                }
+            });
+
+            function renderIndex(type, query = '') {
+                indexList.innerHTML = '';
+
+                if (type === 'suras') {
+                    const filtered = SURA_DATA.filter(s => s.name.includes(query));
+                    filtered.forEach(sura => {
+                        const item = document.createElement('div');
+                        item.className = 'index-item';
+                        item.onclick = () => {
+                            goToPage(sura.page);
+                            toggleSearchPanel();
+                        };
+                        item.innerHTML = `
+                            <div class="sura-info">
+                                <span class="sura-name-list">سورة ${sura.name}</span>
+                                <div class="sura-details">${sura.loc} · ${sura.verses} آية</div>
+                            </div>
+                            <div class="page-badge">ص ${sura.page}</div>
+                            <div class="sura-number-badge">${sura.id}</div>
+                        `;
+                        indexList.appendChild(item);
+                    });
+                }
+                else if (type === 'pages') {
+                    indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">أدخل رقم الصفحة (1-604) في الأعلى للذهاب إليها مباشرة</div>';
+                }
+            }
 
             // متغيرات وضع التركيز العميق
             let lastScrollTop = 0;
@@ -2232,7 +2686,7 @@
 
                         const dayBox = document.createElement('div');
                         dayBox.style.cssText = `
-                            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+                            padding: 5px; display: flex; align-items: center; justify-content: center;
                             font-family: 'Tajawal', sans-serif; font-size: 0.7rem; font-weight: 700;
                             border-radius: 6px; transition: all 0.2s; border: 1px solid #eee;
                             background: ${isDone ? '#10b981' : isCurrent ? '#1e3a8a' : isMissed ? '#fef2f2' : '#f8fafc'};
@@ -2241,7 +2695,7 @@
                             ${isCurrent ? 'box-shadow: 0 0 10px rgba(30, 58, 138, 0.3);' : ''}
                         `;
                         dayBox.textContent = d;
-                        if (isDone) dayBox.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg>';
+                        if (isDone) dayBox.innerHTML = '<i data-lucide="check" style="width: 12px; height: 12px;"></i>';
                         v2DaysGrid.appendChild(dayBox);
                     }
                 }
@@ -2255,7 +2709,7 @@
                         const row = document.createElement('tr');
                         row.style.borderBottom = '1px solid #f1f5f9';
                         if (d === hijriDay) row.style.backgroundColor = 'rgba(30, 58, 138, 0.05)';
-                        row.innerHTML = `<td style="padding: 0.4rem; font-weight: 700;">يوم ${d}</td><td style="padding: 0.4rem; color: #64748b;">ص ${startP}</td><td style="padding: 0.4rem; color: #64748b;">ص ${endP}</td>`;
+                        row.innerHTML = `<td style="color: #64748b; padding: 0.2rem; font-weight: 500;"> ${d} رمضان </td><td style="padding: 0.4rem; color: #64748b;">ص ${startP}</td><td style="padding: 0.4rem; color: #64748b;">ص ${endP}</td>`;
                         v2ScheduleBody.appendChild(row);
                     }
                 }
@@ -2295,6 +2749,113 @@
                         }
                     }, 300);
                 }, 1000);
+            }
+
+            // Search Panel & Indexing Functions
+            function toggleSearchPanel() {
+                const isHidden = !searchPanel.classList.contains('show');
+                if (isHidden) {
+                    searchPanel.classList.add('show');
+                    mainSearchInput.focus();
+                    renderIndex('suras'); // Default view
+                } else {
+                    searchPanel.classList.remove('show');
+                }
+            }
+
+            if (searchBtn) searchBtn.addEventListener('click', toggleSearchPanel);
+            if (searchClose) searchClose.addEventListener('click', toggleSearchPanel);
+
+            // Tabs Logic
+            indexTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    indexTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const tabName = tab.dataset.tab;
+                    renderIndex(tabName);
+                });
+            });
+
+            // Search Logic
+            mainSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const activeTab = document.querySelector('.index-tab.active').dataset.tab;
+
+                if (activeTab === 'pages') {
+                    // Check if input is a valid page number
+                    const pageNum = parseInt(query);
+                    if (pageNum >= 1 && pageNum <= 604) {
+                        goToPage(pageNum);
+                        toggleSearchPanel();
+                    }
+                } else {
+                    renderIndex(activeTab, query);
+                }
+            });
+
+            function renderIndex(type, query = '') {
+                indexList.innerHTML = '';
+
+                if (type === 'suras') {
+                    const filtered = SURA_DATA.filter(s => s.name.includes(query));
+                    filtered.forEach(sura => {
+                        const item = document.createElement('div');
+                        item.className = 'index-item';
+                        item.onclick = () => {
+                            goToPage(sura.page);
+                            toggleSearchPanel();
+                        };
+                        item.innerHTML = `
+                            <div class="sura-info">
+                                <span class="sura-name-list">سورة ${sura.name}</span>
+                                <div class="sura-details">${sura.loc} · ${sura.verses} آية</div>
+                            </div>
+                            <div class="page-badge">ص ${sura.page}</div>
+                            <div class="sura-number-badge">${sura.id}</div>
+                        `;
+                        indexList.appendChild(item);
+                    });
+                }
+                else if (type === 'verses') {
+                    if (query.length < 3) {
+                        indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">اكتب 3 أحرف على الأقل للبحث في الآيات...</div>';
+                        return;
+                    }
+
+                    const filtered = tafseerData.filter(v => v.aya_text_emlaey.includes(query)).slice(0, 50);
+                    if (filtered.length === 0) {
+                        indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">لم يتم العثور على نتائج</div>';
+                        return;
+                    }
+
+                    filtered.forEach(v => {
+                        const item = document.createElement('div');
+                        item.className = 'index-item';
+                        item.onclick = () => {
+                            goToPage(v.page);
+                            toggleSearchPanel();
+                            // Optionally highlight the verse after a small delay
+                            setTimeout(() => {
+                                const el = document.querySelector(`[data-verse="${v.aya_no}"]`);
+                                if (el) {
+                                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    el.click();
+                                }
+                            }, 500);
+                        };
+                        item.innerHTML = `
+                            <div class="sura-info">
+                                <span class="sura-name-list">${v.sura_name_ar} - آية ${v.aya_no}</span>
+                                <div class="sura-details" style="font-size:0.75rem; color:var(--navy); line-height:1.4; margin-top:0.3rem;">${v.aya_text}</div>
+                            </div>
+                            <div class="page-badge">ص ${v.page}</div>
+                        `;
+                        indexList.appendChild(item);
+                    });
+                }
+                else if (type === 'pages') {
+                    indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">أدخل رقم الصفحة (1-604) في الأعلى للذهاب إليها مباشرة</div>';
+                }
             }
 
             function loadTheme() {
@@ -2381,6 +2942,8 @@
                 const percentage = ratio * 100;
 
                 dailyProgressFill.style.width = percentage + '%';
+                const label = document.querySelector('.daily-progress-label');
+                if (label) label.textContent = `الورد اليومي: ${Math.round(percentage)}%`;
 
                 // اهتزاز عند إكمال الورد
                 if (done === totalInPlan && navigator.vibrate) {
@@ -2390,20 +2953,29 @@
 
             // التفسير اللحظي
             function showVerseInsight(verseText, verseNumber) {
+                // Determine current sura_no based on currentSuraName or look at the first verse on current page
+                const currentSurasOnPage = (pagesMap[currentPageNum] || []).filter(v => v.sura_name_ar.trim() === currentSuraName.trim());
+                const suraNo = currentSurasOnPage.length > 0 ? currentSurasOnPage[0].sura_no : null;
+
+                if (!suraNo) {
+                    insightText.textContent = "عذراً، لم يتم العثور على التفسير لهذه السورة.";
+                    verseInsight.classList.add('show');
+                    return;
+                }
+
                 currentVerseText = verseText;
                 currentVerseNumber = verseNumber;
 
-                // محاكاة التفسير (يمكن استبداله ببيانات حقيقية)
-                const tafseerTexts = [
-                    "هذه الآية تتحدث عن أهمية الإيمان والعمل الصالح.",
-                    "في هذه الآية بيان لرحمة الله الواسعة بعباده.",
-                    "هذه الآية توضح الحكمة من خلق الإنسان والكون.",
-                    "في هذه الآية دعوة للتأمل في آيات الله في الطبيعة.",
-                    "هذه الآية ترشد إلى الصراط المستقيم وطرق الهداية."
-                ];
+                const key = `${suraNo}-${verseNumber}`;
+                const data = tafseerMap[key];
 
-                currentTafseer = tafseerTexts[Math.floor(Math.random() * tafseerTexts.length)];
-                insightText.textContent = currentTafseer;
+                if (data) {
+                    currentTafseer = data.aya_tafseer;
+                    insightText.innerHTML = currentTafseer;
+                } else {
+                    currentTafseer = "التفسير غير متوفر لهذه الآية حالياً.";
+                    insightText.textContent = currentTafseer;
+                }
 
                 verseInsight.classList.add('show');
             }
@@ -2422,10 +2994,14 @@
             }
 
             // وظائف الأزرار
-            function copyVerse() {
+            function copyVerse(trigger) {
+                let targetBtn = copyBtn;
+                if (trigger instanceof HTMLElement) targetBtn = trigger;
+                else if (trigger && trigger.currentTarget instanceof HTMLElement) targetBtn = trigger.currentTarget;
+
                 const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}`;
                 navigator.clipboard.writeText(fullText).then(() => {
-                    showNotification('تم النسخ', copyBtn);
+                    showNotification('تم النسخ', targetBtn);
                 });
             }
 
@@ -2435,24 +3011,11 @@
                 });
             }
 
-            function copyWithTafseer() {
-                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}\n\nالتفسير: ${currentTafseer}`;
-                navigator.clipboard.writeText(fullText).then(() => {
-                    showNotification('تم النسخ', copyWithTafseerBtn);
-                });
-            }
-
             function shareWhatsApp() {
                 const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}`;
                 const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
                 window.open(whatsappUrl, '_blank');
                 showNotification('تم المشاركة', shareBtn);
-            }
-
-            window.shareFavoriteVerse = function (text) {
-                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-                window.open(whatsappUrl, '_blank');
-                showNotification('تم المشاركة', event ? event.target.closest('.favorite-action-btn') : null);
             }
 
             function shareWhatsAppWithTafseer() {
@@ -2538,25 +3101,53 @@
                     return;
                 }
 
-                const first = verses[0];
-                const showBasmala = first.aya_no === 1 && first.sura_no > 1;
-
-                // تخزين اسم السورة الحالي
-                currentSuraName = first.sura_name_ar ? first.sura_name_ar.trim() : '';
-
                 let html = '';
-                if (showBasmala) {
-                    html += '<p class="basmala">' + highlightAllah(escapeHtml(BASMALA)) + '</p>';
-                }
-                html += '<div class="page-content">';
+                let inPageContent = false;
+                let firstSuraFound = false;
+
                 verses.forEach(function (v, index) {
+                    if (v.aya_no === 1) {
+                        if (inPageContent) {
+                            html += '</div>';
+                            inPageContent = false;
+                        }
+
+                        // Sura Header
+                        const sName = v.sura_name_ar ? v.sura_name_ar.trim() : '';
+                        html += '<div class="sura-header"><span class="sura-name">سورة ' + sName + '</span></div>';
+
+                        // Update current sura name for the UI
+                        if (!firstSuraFound) {
+                            currentSuraName = sName;
+                            firstSuraFound = true;
+                        }
+
+                        // Basmala (except for Fatiha (1) and Tawba (9))
+                        if (v.sura_no !== 1 && v.sura_no !== 9) {
+                            html += '<p class="basmala">' + highlightAllah(escapeHtml(BASMALA)) + '</p>';
+                        }
+                    }
+
+                    if (!inPageContent) {
+                        html += '<div class="page-content">';
+                        inPageContent = true;
+                    }
+
                     const cleanText = cleanAyaText(v.aya_text);
                     const verseId = `verse-${currentPageNum}-${index}`;
                     html += '<span class="aya-wrap" id="' + verseId + '" data-verse="' + v.aya_no + '" data-full-text="' + escapeHtml(cleanText) + '">' +
                         highlightAllah(escapeHtml(cleanText)) +
                         '<span class="aya-num">' + v.aya_no + '</span></span>';
                 });
-                html += '</div>';
+
+                if (inPageContent) {
+                    html += '</div>';
+                }
+
+                // If no sura started on this page (middle of a sura), update the name from the first verse
+                if (!firstSuraFound && verses.length > 0) {
+                    currentSuraName = verses[0].sura_name_ar ? verses[0].sura_name_ar.trim() : '';
+                }
 
                 // إضافة تأثير الانتقال
                 pageView.classList.add('page-transition-out');
@@ -2695,21 +3286,48 @@
                     loadingState.style.display = 'none';
                     pageView.style.display = 'block';
 
-                    // التحقق من وجود معلمة الصفحة في الرابط
+                    // تحديد الصفحة الافتتاحية: الرابط أولاً، ثم آخر صفحة وصل إليها، ثم بداية ورد اليوم
                     const urlParams = new URLSearchParams(window.location.search);
                     const pageParam = urlParams.get('page');
-                    let startPage = getLastPage();
+                    let startPage = 1;
 
                     if (pageParam) {
                         const p = parseInt(pageParam, 10);
-                        if (p >= 1 && p <= TOTAL_PAGES) {
-                            startPage = p;
+                        if (p >= 1 && p <= TOTAL_PAGES) startPage = p;
+                    } else {
+                        const lastSaved = getLastPage();
+                        if (lastSaved > 1) {
+                            startPage = lastSaved;
+                        } else {
+                            // إذا كانت أول مرة، نذهب لبداية ورد اليوم حسب الخطة
+                            try {
+                                const savedPlan = localStorage.getItem('quranPlanV3');
+                                if (savedPlan) {
+                                    const plan = JSON.parse(savedPlan);
+                                    const day = plan.currentDay || 1;
+                                    const dPages = plan.dailyPages || 20;
+                                    startPage = 1 + (day - 1) * dPages;
+                                }
+                            } catch (e) { }
                         }
                     }
 
-                    currentPageNum = startPage;
+                    currentPageNum = Math.min(Math.max(1, startPage), TOTAL_PAGES);
                     renderCurrentPage();
                     updateUI();
+
+                    // تحميل التفسير في الخلفية لتسريع البداية
+                    fetch('assets/tafseerMouaser_v03.json')
+                        .then(r => r.json())
+                        .then(data => {
+                            tafseerData = data;
+                            // بنية خريطة للبحث السريع: "suraNo-ayaNo"
+                            data.forEach(v => {
+                                tafseerMap[`${v.sura_no}-${v.aya_no}`] = v;
+                            });
+                            console.log("Tafseer loaded successfully");
+                        })
+                        .catch(err => console.error("Error loading tafseer:", err));
 
                     // تهيئة الميزات الإبداعية
                     initDeepFocusMode();
@@ -2740,6 +3358,17 @@
                     performanceBtn.addEventListener('click', showPerformancePanel);
                     favoritesClose.addEventListener('click', hideFavoritesPanel);
                     performanceClose.addEventListener('click', hidePerformancePanel);
+
+                    // أزرار نافذة التفسير
+                    if (copyVerseBtn) copyVerseBtn.addEventListener('click', copyVerse);
+                    if (copyWithTafseerBtn) copyWithTafseerBtn.addEventListener('click', function () {
+                        const fullText = `${currentSuraName} (${currentVerseNumber}): ${currentVerseText}\n\nالتفسير: ${currentTafseer}`;
+                        navigator.clipboard.writeText(fullText).then(() => {
+                            showNotification('تم النسخ', copyWithTafseerBtn);
+                        });
+                    });
+                    if (shareWhatsAppBtn) shareWhatsAppBtn.addEventListener('click', shareWhatsAppWithTafseer);
+
                     document.getElementById('v2CatchupBtn').addEventListener('click', function () {
                         const nextPageText = document.getElementById('v2NextMilestone').textContent;
                         const pageMatch = nextPageText.match(/\d+/);
@@ -2763,6 +3392,13 @@
                             const isClickOnBtn = performanceBtn.contains(e.target);
                             if (!isClickInside && !isClickOnBtn) {
                                 hidePerformancePanel();
+                            }
+                        }
+                        if (searchPanel && searchPanel.classList.contains('show')) {
+                            const isClickInside = searchPanel.contains(e.target);
+                            const isClickOnBtn = searchBtn.contains(e.target);
+                            if (!isClickInside && !isClickOnBtn) {
+                                toggleSearchPanel();
                             }
                         }
                     });
@@ -2804,6 +3440,19 @@
                     console.error(err);
                 });
         })();
+    </script>
+    <script src="assets/js/lib/lucide.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
+        });
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW Registered in Quran Page', reg))
+                    .catch(err => console.log('SW Registration Failed', err));
+            });
+        }
     </script>
 </body>
 
