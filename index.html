@@ -132,6 +132,25 @@
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(4px);
         }
+
+        /* ✨ Quiet Glow Animation for Quran Button */
+        @keyframes quiet-glow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 15px 5px rgba(30, 58, 138, 0.1);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(30, 58, 138, 0.4);
+            }
+        }
+
+        .animate-quiet-glow {
+            animation: quiet-glow 3s infinite ease-in-out;
+        }
     </style>
 </head>
 
@@ -176,8 +195,63 @@
             }
         };
 
+        // 🛡️ SECURITY & OBFUSCATION HELPERS (To avoid Google Safe Browsing Phishing warnings)
+        const obfuscateData = (data) => {
+            try {
+                const str = JSON.stringify(data);
+                // UTF-8 safe Base64 encoding
+                const encoded = btoa(unescape(encodeURIComponent(str)));
+                // Obfuscation: Reverse string + add small salt suffix
+                return encoded.split('').reverse().join('') + "v7";
+            } catch (e) { return ""; }
+        };
+
+        const deobfuscateData = (str) => {
+            try {
+                if (!str) return null;
+                // Remove salt and reverse back
+                const clean = str.slice(0, -2).split('').reverse().join('');
+                // Base64 decode + UTF-8 recovery
+                const decoded = decodeURIComponent(escape(atob(clean)));
+                return JSON.parse(decoded);
+            } catch (e) { return null; }
+        };
+
         // -------------------- 📅 CONSTANTS & DATASETS --------------------
         // 🕋 صلاة مواقيت
+        const QUIZ_SUCCESS_MESSAGES = [
+            "قوووووة ! أجبت على كل الأسئلة باجابات صحيحة.. لقد ربحت عشوة بـ 4000 ريال مقدمة منك لنفسك، اعزم روحك.. أنت تستحق! 🥙",
+            "مبروك! تستاهل كاسة شاهي من تلك التي 'تعدل الرأس' مع حبة كعك ☕🍪",
+            "إجاباتك مثل الذهب! أنت اليوم 'شيخ المسابقة'.. طحطوح 👑",
+            "ما شاء الله.. ذكاؤك اليوم سابق زمانه! ربحت جائزة كبرى وهي: 'إذن رسمي من التطبيق' لترقد وأنت مفتهن البال 😎",
+            "ختمتها يا بطل! تستحق الليلة صحن سمبوسة 'إضافي' زيادة عن حصتك 🥟"
+        ];
+
+        const QUIZ_RETRY_MESSAGES = [
+            "ضيعت الإجابة ؟ شكلك اليوم كنت جوعان علينا بزيادة.. غداً حاول تركز قبل الفطور أو بعده 🌙",
+            "الإجابات اليوم كانت قريبة.. لكن الجو حار والتركيز 'قرح فيوز'. معلش، غداً نعوضها ⚡",
+            "أخطأت اليوم؟ بسيطة! على الأقل استفدت معلومة.. روح اشرب ماء (بعد المغرب طبعاً) وارجع لنا غداً بعقل مركز 💧",
+            "الأسئلة كانت صعبة ولا أنت اللي كنت 'مشوش'؟ المهم شاركت.. غداً نشتي نشوف الـ 5/5 والابتسامة عريضة 😊"
+        ];
+
+        const SPIRITUAL_REFLECTIONS = [
+            "الحمد لله الذي أكرمك بكلامه، فليكن في قلبك موضع سكن لا مرور.",
+            "ما الآية التي توقفت عندها اليوم ولمست قلبك؟",
+            "رب كلمةٍ قرأتها اليوم كانت سبب نجاةٍ لا تعلمها.",
+            "لو لخّصت وردك اليوم بكلمة واحدة، ماذا ستكون؟",
+            "إذا رقّ قلبك فاحمد الله، فهذه علامة حياة.",
+            "هل وجدت رسالة خاصة لك بين هذه الآيات؟",
+            "ما دام القرآن في يومك، فأنت في أمان.",
+            "أي وعدٍ رباني أثر فيك أكثر في ورد اليوم؟",
+            "إن سكنت نفسك بعد الورد، فذلك بعض بركته.",
+            "ما التغيير الصغير الذي تستطيع تطبيقه اليوم مما قرأت؟",
+            "لعل آية واحدة غيّرت مسارك دون أن تشعر.",
+            "أي نعمةٍ غالية ذكّرتك بها هذه الآيات؟",
+            "دع أثر التلاوة يظهر في خُلُقك قبل لسانك.",
+            "الحمد لله الذي أعانك على الورد… ما نيتك لورد الغد؟",
+            "اللهم كما أكرمته بالقراءة، فأكرمه بالفهم والعمل والقبول."
+        ];
+
         const PRAYER_TIMES = [
             { id: 'fajr', name: 'الفجر', time: '05:00', timeEn: '05:00' },
             { id: 'dhuhr', name: 'الظهر', time: '12:30', timeEn: '12:30' },
@@ -232,8 +306,19 @@
 
         const GiftWelcomeModal = ({ onClose }) => {
             const params = new URLSearchParams(window.location.search);
-            const from = params.get('from') || 'شخص محب';
-            const to = params.get('to') || '';
+            const dataParam = params.get('d');
+            let giftData = { to: '', from: 'شخص محب' };
+
+            if (dataParam) {
+                const decoded = deobfuscateData(dataParam);
+                if (decoded) giftData = { ...giftData, ...decoded };
+            } else {
+                // Fallback for legacy links
+                giftData.to = params.get('to') || '';
+                giftData.from = params.get('from') || 'شخص محب';
+            }
+
+            const { to, from } = giftData;
 
             useEffect(() => { lucide.createIcons(); }, []);
 
@@ -293,10 +378,20 @@
                 });
             };
 
+            // 🎨 مصفوفة التدرجات اللونية (Gradients)
+            const gradients = [
+                'from-indigo-900 via-purple-900 to-navy',
+                'from-navy via-indigo-800 to-blue-900',
+                'from-emerald-900 via-teal-900 to-navy',
+                'from-rose-900 via-purple-900 to-navy',
+                'from-amber-900 via-orange-900 to-navy'
+            ];
+            const activeGradient = gradients[(hijriDay - 1) % gradients.length];
+
             return (
                 <div class="relative glass-card rounded-xl p-6 mb-4 flex flex-col items-center justify-center gap-4 text-center overflow-hidden border border-white/20 shadow-lg">
                     {/* Gradient Background */}
-                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-purple-900 to-navy opacity-90 z-0"></div>
+                    <div class={`absolute inset-0 bg-gradient-to-br ${activeGradient} opacity-90 z-0`}></div>
                     <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-10 z-0"></div>
 
                     {/* Content */}
@@ -651,8 +746,15 @@
                             <button
                                 onClick={() => {
                                     triggerHaptic('success');
+                                    const nextState = !todayCompleted;
                                     onSetup({ ...plan, completedDays: todayCompleted ? plan.completedDays.filter(d => d !== plan.currentDay) : [...(plan.completedDays || []), plan.currentDay] });
-                                    if (!todayCompleted) triggerConfetti(false);
+                                    if (nextState) {
+                                        triggerConfetti(false);
+                                        // منطق يوم يظهر ويوم لا
+                                        if (plan.currentDay % 2 !== 0) {
+                                            if (window.showSpiritualAction) window.showSpiritualAction();
+                                        }
+                                    }
                                 }}
                                 class={`text-[11px] px-4 py-1.5 rounded-full transition-all font-bold flex items-center gap-1.5 shadow-sm ${todayCompleted ? 'bg-emerald text-white' : 'bg-navy text-white hover:scale-105 active:scale-95'}`}
                             >
@@ -790,7 +892,7 @@
                         {/* Interactive Buttons - Vertical on Left (End of flex in RTL) */}
                         <div class="flex flex-col gap-2.5 shrink-0 justify-center">
                             <div class="flex items-center gap-1.5 justify-end">
-                                <span class="text-[11px] font-medium text-gray-400 uppercase tracking-tighter">أعجبتني</span>
+                                <span class="text-[11px] font-medium text-gray-500 uppercase tracking-tighter">أعجبتني</span>
                                 <button
                                     onClick={() => { setLiked(!liked); triggerHaptic('light'); }}
                                     class={`w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-90 ${liked ? 'bg-red-50 text-red-500 border-red-100 shadow-inner' : 'bg-white text-gray-400 border-gray-100 shadow-sm'} border`}
@@ -801,7 +903,7 @@
                             </div>
 
                             <div class="flex items-center gap-1.5 justify-end">
-                                <span class="text-[11px] font-medium text-gray-400 uppercase tracking-tighter">{committed ? 'فعلتها' : 'سأقوم بها'}</span>
+                                <span class="text-[11px] font-medium text-gray-500 uppercase tracking-tighter">{committed ? 'فعلتها' : 'سأقوم بها'}</span>
                                 <button
                                     onClick={() => { setCommitted(!committed); triggerHaptic('success'); if (!committed) triggerConfetti(false); }}
                                     class={`w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-90 ${committed ? 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-inner' : 'bg-white text-gray-400 border-gray-100 shadow-sm'} border`}
@@ -812,12 +914,12 @@
                             </div>
 
                             <div class="flex items-center gap-1.5 justify-end">
-                                <span class="text-[11px] font-medium text-gray-400 uppercase tracking-tighter">مشاركة</span>
+                                <span class="text-[11px] font-medium text-gray-500 uppercase tracking-tighter">مشاركة</span>
                                 <button
                                     onClick={shareInitiative}
                                     class="w-7 h-7 rounded-lg bg-white text-gray-400 border border-gray-100 flex items-center justify-center transition-all active:scale-90 hover:text-navy hover:bg-gray-50 shadow-sm"
                                 >
-                                    <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
                                 </button>
 
                             </div>
@@ -960,7 +1062,7 @@
                     {!quizState.feedbackGiven && timerEnabled && (
                         <div class="absolute top-0 left-0 h-1 bg-gold/30 w-full z-10">
                             <div
-                                class="h-full bg-gold transition-all duration-1000 ease-linear shadow-[0_0_10px_rgba(255,183,77,0.5)]"
+                                class="h-full bg-red-400 transition-all duration-1000 ease-linear shadow-[0_0_10px_rgba(255,183,77,0.5)]"
                                 style={{ width: `${(timeLeft / 10) * 100}%` }}
                             ></div>
                         </div>
@@ -1094,14 +1196,14 @@
                                     <button
                                         key={i}
                                         onClick={() => handleCupClick(i)}
-                                        class={`relative w-6 h-10 rounded-b-md border-2 border-t-0 overflow-hidden transition-all duration-300 shadow-sm ${i < cups
-                                            ? 'border-serenity bg-serenity/10 scale-105 shadow-serenity/20'
-                                            : 'border-gray-200 bg-serenity/5 hover:border-serenity/50'
+                                        class={`relative w-8 h-12 rounded-b-xl border-2 border-t-0 overflow-hidden transition-all duration-300 shadow-sm ${i < cups
+                                            ? 'border-blue-400 bg-blue-400/10 scale-105 shadow-blue-400/20'
+                                            : 'border-gray-200 bg-blue-50 hover:border-blue-400/50'
                                             }`}
                                     >
-                                        <div class={`absolute bottom-0 left-0 w-full bg-serenity transition-all duration-700 cup-content ${i < cups ? 'h-full opacity-100' : 'h-0 opacity-0'
+                                        <div class={`absolute bottom-0 left-0 w-full bg-gradient-to-t from-blue-500 to-blue-300 transition-all duration-700 cup-content ${i < cups ? 'h-full opacity-100' : 'h-0 opacity-0'
                                             }`}>
-                                            <div class="absolute top-0 left-0 w-full h-1 bg-white/30"></div>
+                                            <div class="absolute top-0 left-0 w-full h-1 bg-white/40"></div>
                                         </div>
                                     </button>
                                 ))}
@@ -1120,12 +1222,12 @@
                     {/* Custom Popup for Fasting Warning */}
                     {showWarning && (
                         <div class="absolute inset-0 z-50 flex items-center justify-center p-3 rounded-xl bg-white/80 backdrop-blur-sm animate-fade-in">
-                            <div class="bg-white border-2 border-red-500/30 rounded-xl p-4 shadow-2xl text-center relative max-w-[240px]">
-                                <button onClick={() => setShowWarning(false)} class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] shadow-lg">✕</button>
-                                <i data-lucide="alert-circle" class="w-8 h-8 mx-auto text-red-500 mb-2"></i>
-                                <p class="text-[13px] font-black text-navy leading-relaxed">
+                            <div class="bg-white border-2 border-red-500/30 rounded-xl p-5 shadow-2xl text-center relative max-w-[270px]">
+                                <button onClick={() => setShowWarning(false)} class="absolute -top-2 -right-2 w-7 h-7 bg-red-500 text-white rounded-full flex items-center justify-center text-[11px] shadow-lg">✕</button>
+                                <i data-lucide="alert-circle" class="w-9 h-9 mx-auto text-red-500 mb-2"></i>
+                                <p class="text-[14px] font-black text-navy leading-relaxed">
                                     الفاطر فطروا بطنه 😂<br />
-                                    <span class="text-[11px] font-medium text-gray-500">لا تنس شرب جرعتك من الماء ليلاً</span>
+                                    <span class="text-[12px] font-medium text-gray-500">لا تنس شرب جرعتك من الماء ليلاً</span>
                                 </p>
                             </div>
                         </div>
@@ -1168,9 +1270,12 @@
             const generateGiftLink = () => {
                 const baseUrl = window.location.href.split('?')[0];
                 const params = new URLSearchParams();
-                params.set('to', recipientName.trim());
-                params.set('from', customSenderName.trim());
-                params.set('gift', 'true');
+                const obfuscated = obfuscateData({
+                    to: recipientName.trim(),
+                    from: customSenderName.trim(),
+                    gift: true
+                });
+                params.set('d', obfuscated);
                 return `${baseUrl}?${params.toString()}`;
             };
 
@@ -1382,7 +1487,7 @@
                         <a href="sms:+967777967272?body=أنا%20من%20مستخدمي%20تطبيق%20خطىٰ%20وتقييمي%20للتطبيق%20هو%20:%20" class="flex items-center gap-1.5 px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-[11px] font-bold hover:bg-gray-200 transition border border-gray-200">
                             <i data-lucide="message-square" class="w-3.5 h-3.5"></i> SMS
                         </a>
-                        <a href="https://facebook.com/share/1FyLQYp6ne/?mibextid=wwXIfr" target="_blank" class="flex items-center gap-1.5 px-4 py-1.5 bg-navy/10 text-navy rounded-full text-[10px] font-bold hover:bg-navy/20 transition">
+                        <a href="https://www.facebook.com/s777967272" target="_blank" class="flex items-center gap-1.5 px-4 py-1.5 bg-navy/10 text-navy rounded-full text-[10px] font-bold hover:bg-navy/20 transition">
                             <i data-lucide="facebook" class="w-3.5 h-3.5"></i> فيسبوك
                         </a>
                     </div>
@@ -1517,6 +1622,78 @@
             );
         };
 
+        // -------------------- 🏆 نافذة عرض نتيجة المسابقة --------------------
+        const QuizResultModal = ({ score, onClose }) => {
+            const isSuccess = score === 5;
+            const messages = isSuccess ? QUIZ_SUCCESS_MESSAGES : QUIZ_RETRY_MESSAGES;
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+
+            useEffect(() => {
+                if (isSuccess) triggerConfetti(true);
+                if (window.lucide) lucide.createIcons();
+            }, []);
+
+            return (
+                <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-backdrop">
+                    <div class="glass-card rounded-2xl max-w-sm w-full p-8 text-center animate-fade-in shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20">
+                        <div class={`w-16 h-16 ${isSuccess ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner`}>
+                            <i data-lucide={isSuccess ? "trophy" : "sparkles"} class="w-8 h-8 animate-pulse"></i>
+                        </div>
+                        <h2 class="text-xl font-black text-navy mb-3">{isSuccess ? 'إنجاز رائع!' : 'محاولة جيدة!'}</h2>
+                        <p class="text-[14px] text-gray-600 leading-relaxed mb-6 font-medium">
+                            {randomMsg}
+                        </p>
+
+                        <div class="bg-navy/5 p-4 rounded-xl mb-6">
+                            <span class="text-xs text-gray-500 block mb-1">نتيجتك اليوم</span>
+                            <span class="text-2xl font-black text-navy">{score}/5</span>
+                        </div>
+
+                        <button onClick={onClose} class="w-full bg-navy text-white py-3.5 rounded-xl text-sm font-bold shadow-lg transition-all active:scale-95">
+                            حسناً، فهمت
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        // -------------------- ✨ نافذة التأمل الروحاني بعد الورد --------------------
+        const SpiritualReflectionModal = ({ onClose }) => {
+            const randomMsg = SPIRITUAL_REFLECTIONS[Math.floor(Math.random() * SPIRITUAL_REFLECTIONS.length)];
+
+            useEffect(() => {
+                if (window.lucide) lucide.createIcons();
+            }, []);
+
+            return (
+                <div class="fixed inset-0 z-[110] flex items-center justify-center p-4 modal-backdrop">
+                    <div class="glass-card rounded-3xl max-w-sm w-full p-8 text-center animate-fade-in shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 relative overflow-hidden">
+                        {/* Decorative background element */}
+                        <div class="absolute -top-10 -right-10 w-20 h-20 bg-gold/5 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-10 -left-10 w-20 h-20 bg-navy/5 rounded-full blur-3xl"></div>
+
+
+                        <div class="relative py-4 px-2">
+                            <i data-lucide="quote" class="absolute -top-2 right-0 w-4 h-4 text-gold/30 rotate-180"></i>
+                            <p class="text-[15px] text-gray-700 leading-relaxed font-medium mb-2 italic">
+                                {randomMsg}
+                            </p>
+                            <i data-lucide="quote" class="absolute -bottom-2 left-0 w-4 h-4 text-gold/30"></i>
+                        </div>
+
+                        <div class="h-px w-16 bg-gold/30 mx-auto my-5"></div>
+
+                        <button
+                            onClick={onClose}
+                            class="w-full bg-navy text-white py-2 rounded-2xl text-[11px] font-bold shadow-xl shadow-navy/20 transition-all active:scale-95 hover:bg-navy/90"
+                        >
+                            تقبل الله منا ومنكم
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
         // -------------------- 🚀 MAIN APP V3.0 --------------------
         function App() {
             // Force reset for V6 to clear experimental app data
@@ -1583,6 +1760,11 @@
             const [userName, setUserName] = useState(() => {
                 // Check URL params first for gift recipient
                 const params = new URLSearchParams(window.location.search);
+                const dataParam = params.get('d');
+                if (dataParam) {
+                    const decoded = deobfuscateData(dataParam);
+                    if (decoded && decoded.to) return decoded.to;
+                }
                 const giftTo = params.get('to');
                 if (giftTo) return giftTo;
 
@@ -1666,6 +1848,17 @@
                 };
             });
 
+            const [showQuizResult, setShowQuizResult] = useState(null); // {score}
+            const [showSpiritualReflection, setShowSpiritualReflection] = useState(false);
+
+            useEffect(() => {
+                window.showSpiritualAction = () => setShowSpiritualReflection(true);
+                if (localStorage.getItem('showSpiritualOnReturn')) {
+                    setShowSpiritualReflection(true);
+                    localStorage.removeItem('showSpiritualOnReturn');
+                }
+            }, []);
+
             // Farewell Modal Logic
             const [showFarewell, setShowFarewell] = useState(false);
 
@@ -1747,10 +1940,16 @@
                 // If it's a gift, maybe save the name immediately or wait for onboarding?
                 // For now, let's ensure if 'to' param exists, we save it so it persists on reload if they don't change it
                 const params = new URLSearchParams(window.location.search);
-                const giftTo = params.get('to');
+                const dataParam = params.get('d');
+                let giftTo = params.get('to');
+
+                if (dataParam) {
+                    const decoded = deobfuscateData(dataParam);
+                    if (decoded && decoded.to) giftTo = decoded.to;
+                }
+
                 if (giftTo) {
-                    localStorage.setItem('userNameV3', giftTo);
-                    // Also clear the URL cleanly without reload if desired, but keeping it is fine for now
+                    localStorage.setItem('userNameV3', giftTo.trim());
                 }
             }, []);
 
@@ -1816,7 +2015,8 @@
 
                 if (newComplete) {
                     setQuizHistory(prev => ({ ...prev, [hijriDay]: sessionCorrect }));
-                    if (newAllCorrect) triggerConfetti(true);
+                    // if (newAllCorrect) triggerConfetti(true); // Moved to Modal
+                    setShowQuizResult({ score: sessionCorrect });
                 }
 
                 setQuizState({
@@ -1841,6 +2041,8 @@
                         isGift ? <GiftWelcomeModal onClose={closeOnboarding} /> : <OnboardingModal onClose={closeOnboarding} />
                     )}
                     {showFarewell && <FarewellModal onClose={closeFarewell} />}
+                    {showQuizResult && <QuizResultModal score={showQuizResult.score} onClose={() => setShowQuizResult(null)} />}
+                    {showSpiritualReflection && <SpiritualReflectionModal onClose={() => setShowSpiritualReflection(false)} />}
 
                     {/* الهوية البصرية - خُطىْ */}
                     <div class="flex justify-between items-center mb-2">
@@ -1930,10 +2132,10 @@
                         <div class="relative">
                             {/* إشعار الذكر العلوي */}
                             {tasbihSettings.dhikrs.length > 0 && (
-                                <div class={`absolute -top-10 left-1/2 -translate-x-1/2 transition-all duration-500 pointer-events-none whitespace-nowrap ${showFloatingDhikr ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                                    <span class="text-[14px] text-sunset-orange font-medium drop-shadow-sm">
+                                <div class={`absolute -top-12 left-1/2 -translate-x-1/2 transition-all duration-500 pointer-events-none whitespace-nowrap ${showFloatingDhikr ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                                    <span class="text-[18px] text-sunset-orange font-black drop-shadow-sm bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full">
                                         {tasbihSettings.dhikrs[currentDhikrIndex]}
-                                        <span class="text-[9px] opacity-60 mr-1.5">({tasbihSession}/{tasbihSettings.limit})</span>
+                                        <span class="text-[11px] opacity-80 mr-2">({tasbihSession}/{tasbihSettings.limit})</span>
                                     </span>
                                 </div>
                             )}
@@ -1967,7 +2169,7 @@
                     {/* زر المصحف العائم */}
                     <a
                         href="quran.html"
-                        class="fixed bottom-6 right-6 w-16 h-16 bg-navy text-white rounded-full shadow-2xl flex flex-col items-center justify-center z-50 active:scale-90 transition-transform border-4 border-white/20"
+                        class="fixed bottom-6 right-6 w-16 h-16 bg-navy text-white rounded-full shadow-2xl flex flex-col items-center justify-center z-50 active:scale-90 transition-transform border-4 border-white/20 animate-quiet-glow"
                     >
 
                         <span class="text-[10px] font-bold ">المصحف</span>

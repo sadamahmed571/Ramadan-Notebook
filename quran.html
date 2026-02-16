@@ -7,6 +7,10 @@
     <title>المصحف الإلكتروني | خُطىْ</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="logo.jpg" type="image/jpeg">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+	
     <meta name="theme-color" content="#1e3a8a">
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap"
@@ -510,7 +514,7 @@
             border-radius: 50%;
             margin-left: 0.35rem;
             margin-right: 0.35rem;
-            vertical-align: middle;
+
 
         }
 
@@ -606,6 +610,27 @@
         .page-view.page-transition-in.active {
             opacity: 1;
             transform: translateX(0);
+        }
+
+        /* تمييز الآية عند البحث */
+        .verse-search-highlight {
+            background: rgba(251, 191, 36, 0.2) !important;
+            border-radius: 4px;
+            animation: search-pulse 1.5s ease infinite;
+        }
+
+        @keyframes search-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(251, 191, 36, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
+            }
         }
 
         /* قائمة المفضلة المنبثقة - تصميم عصري فاخر */
@@ -1602,35 +1627,68 @@
 
         .index-tabs {
             display: flex;
+            align-items: center;
+            justify-content: space-between;
             gap: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            background: rgba(0, 0, 0, 0.02);
+            padding: 4px;
+            border-radius: 14px;
+        }
+
+        .tabs-scroll {
+            display: flex;
+            gap: 0.35rem;
             overflow-x: auto;
-            padding-bottom: 0.5rem;
-            min-height: 40px;
+            scrollbar-width: none;
+            flex: 1;
+        }
+
+        .tabs-scroll::-webkit-scrollbar {
+            display: none;
         }
 
         .index-tab {
-            padding: 5px 10px;
-            border-radius: 12px;
-            background: rgba(0, 0, 0, 0.05);
+            padding: 6px 12px;
+            border-radius: 10px;
+            background: transparent;
             color: #64748b;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             border: none;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.2s;
         }
 
-        [data-theme="dark"] .index-tab {
-            background: rgba(255, 255, 255, 0.1);
-            color: #94a3b8;
+        .index-tab.active {
+            background: white;
+            color: var(--navy);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        .index-tab.active {
+        [data-theme="dark"] .index-tab.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--gold);
+        }
+
+        .search-stats-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
             background: var(--navy);
             color: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
+            font-family: 'Tajawal', sans-serif;
         }
+
+        [data-theme="dark"] .search-stats-badge {
+            background: var(--gold);
+            color: var(--navy);
+        }
+
 
         .index-list {
             flex: 1;
@@ -1638,6 +1696,9 @@
             display: grid;
             gap: 0.5rem;
             padding-right: 0.2rem;
+			   font-family: "Vazirmatn", sans-serif;
+
+
         }
 
         .index-item {
@@ -1771,14 +1832,22 @@
         .insight-title {
             font-family: 'Tajawal', sans-serif;
             font-weight: 700;
-            color: var(--navy);
+            color: var(--ink);
             font-size: 0.9rem;
+        }
+
+        .insight-span {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+            color: var(--ink);
+            font-size: 0.6rem;
+            opacity: 0.5;
         }
 
         .insight-close {
             background: none;
             border: none;
-            color: var(--navy);
+            color: var(--ink);
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0;
@@ -1835,7 +1904,7 @@
             color: var(--navy);
             border-radius: 0.5rem;
             font-family: 'Tajawal', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -1909,7 +1978,10 @@
     <div class="verse-insight" id="verseInsight">
         <div class="insight-header">
             <div class="insight-title">تفسير الآية</div>
+
+
             <button class="insight-close" id="insightClose">×</button>
+
         </div>
         <div class="insight-content">
             <div id="insightText">جاري تحميل التفسير...</div>
@@ -1918,7 +1990,10 @@
             <button class="insight-action-btn" id="copyVerseBtn">نسخ الآية</button>
             <button class="insight-action-btn" id="copyWithTafseerBtn">نسخ مع التفسير</button>
             <button class="insight-action-btn" id="shareWhatsAppBtn">مشاركة واتساب</button>
+
         </div>
+        <span class="insight-span">التفسير الميسر -
+            الطبعة السادسة 1440 - 2019</span>
     </div>
 
     <!-- شريط الأزرار السريع -->
@@ -1958,6 +2033,16 @@
                 <div class="stat-value-v2" id="v2StatDonePages">0</div>
                 <div class="stat-label-v2">صفحة منجزة</div>
             </div>
+        </div>
+
+        <!-- زر إنجاز الورد اليومي -->
+        <div id="v2MarkDoneContainer" class="analytics-main-card hidden"
+            style="margin-bottom: 1rem; border: 2px solid rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.05); padding: 1rem; border-radius: 16px;">
+            <button id="v2MarkDoneBtn" class="catchup-btn"
+                style="width: 100%; height: 50px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: #10b981; border-radius: 14px; font-weight: 800; font-size: 0.95rem; color: white; border: none; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+                <i data-lucide="circle" id="v2MarkDoneIcon"></i>
+                <span id="v2MarkDoneText">أنهيت وردي لهذا اليوم</span>
+            </button>
         </div>
 
         <!-- بطاقة التقدم الرئيسية -->
@@ -2065,9 +2150,12 @@
         </div>
 
         <div class="index-tabs">
-            <button class="index-tab active" data-tab="suras">السور</button>
-            <button class="index-tab" data-tab="verses">الآيات</button>
-            <button class="index-tab" data-tab="pages">انتقال للصفحة</button>
+            <div class="tabs-scroll">
+                <button class="index-tab active" data-tab="suras">السور</button>
+                <button class="index-tab" data-tab="verses">الآيات</button>
+                <button class="index-tab" data-tab="pages">انتقال للصفحة</button>
+            </div>
+            <div class="search-stats-badge" id="searchResultsCount">0 نتائج</div>
         </div>
 
         <div class="index-list" id="indexList">
@@ -2270,7 +2358,7 @@
                     indexTabs.forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
                     const tabName = tab.dataset.tab;
-                    renderIndex(tabName);
+                    renderIndex(tabName, mainSearchInput.value);
                 });
             });
 
@@ -2293,9 +2381,13 @@
 
             function renderIndex(type, query = '') {
                 indexList.innerHTML = '';
+                const normalizedQuery = normalizeArabic(query.toLowerCase());
+                const countBadge = document.getElementById('searchResultsCount');
 
                 if (type === 'suras') {
-                    const filtered = SURA_DATA.filter(s => s.name.includes(query));
+                    const filtered = SURA_DATA.filter(s => normalizeArabic(s.name).includes(normalizedQuery));
+                    if (countBadge) countBadge.textContent = `${filtered.length} نتائج`;
+
                     filtered.forEach(sura => {
                         const item = document.createElement('div');
                         item.className = 'index-item';
@@ -2314,7 +2406,72 @@
                         indexList.appendChild(item);
                     });
                 }
+                else if (type === 'verses') {
+                    if (normalizedQuery.length < 2) {
+                        if (countBadge) countBadge.textContent = `0 نتائج`;
+                        indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">ابحث عن كلمة في الآيات (أدخل حرفين على الأقل)</div>';
+                        return;
+                    }
+
+                    let allMatches = [];
+                    for (let p = 1; p <= 604; p++) {
+                        const pageVerses = pagesMap[p] || [];
+                        for (const v of pageVerses) {
+                            if (normalizeArabic(cleanAyaText(v.aya_text)).includes(normalizedQuery)) {
+                                allMatches.push(v);
+                            }
+                        }
+                    }
+
+                    const totalCount = allMatches.length;
+                    if (countBadge) countBadge.textContent = `${totalCount} نتائج`;
+
+                    if (totalCount === 0) {
+                        indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">لم يتم العثور على أي آية تحتوي على هذا النص</div>';
+                        return;
+                    }
+
+                    // عرض تنبيه إذا كانت النتائج كثيرة
+                    if (totalCount > 50) {
+                        const limitNote = document.createElement('div');
+                        limitNote.style.cssText = 'padding: 0.5rem; text-align: center; font-size: 0.65rem; color: #94a3b8; font-weight: 500;';
+                        limitNote.textContent = 'يتم عرض أول 50 نتيجة فقط';
+                        indexList.appendChild(limitNote);
+                    }
+
+                    const displayMatches = allMatches.slice(0, 50);
+
+                    displayMatches.forEach(v => {
+                        const item = document.createElement('div');
+                        item.className = 'index-item';
+                        item.onclick = () => {
+                            goToPage(v.page);
+                            setTimeout(() => {
+                                const ayaWraps = document.querySelectorAll('.aya-wrap');
+                                for (const wrap of ayaWraps) {
+                                    if (parseInt(wrap.getAttribute('data-verse')) === v.aya_no) {
+                                        wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        wrap.classList.add('verse-search-highlight');
+                                        setTimeout(() => wrap.classList.remove('verse-search-highlight'), 3000);
+                                        break;
+                                    }
+                                }
+                            }, 500);
+                            toggleSearchPanel();
+                        };
+                        const cleanText = cleanAyaText(v.aya_text);
+                        item.innerHTML = `
+                            <div class="sura-info">
+                                <span class="sura-name-list">${v.sura_name_ar} - آية ${v.aya_no}</span>
+                                <div class="sura-details" style="font-family: Arial, sans-serif; font-size: 0.95rem; color: #1e3a8a; margin-top: 6px; line-height: 1.6; font-weight: 500;">${cleanText}</div>
+                            </div>
+                            <div class="page-badge">ص ${v.page}</div>
+                        `;
+                        indexList.appendChild(item);
+                    });
+                }
                 else if (type === 'pages') {
+                    if (countBadge) countBadge.textContent = `-`;
                     indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">أدخل رقم الصفحة (1-604) في الأعلى للذهاب إليها مباشرة</div>';
                 }
             }
@@ -2566,7 +2723,7 @@
 
             // مساعدات الأزرار داخل المفضلات
             window.copyFavoriteVerse = function (sura, num, text, btn) {
-                const fullText = `${sura} (${num}): ${text}`;
+                const fullText = `${sura} (${num}): { ${text} }`;
                 navigator.clipboard.writeText(fullText).then(() => {
                     const icon = btn.querySelector('i');
                     const originalAttr = icon.getAttribute('data-lucide');
@@ -2581,7 +2738,7 @@
             };
 
             window.shareFavoriteVerse = function (sura, num, text) {
-                const message = `﴿${text}﴾\n[${sura}: ${num}]\n\nتمت المشاركة من تطبيق خُطى 🌙`;
+                const message = `{ ${text} }\n[${sura}: ${num}]\n\nتمت المشاركة من تطبيق خُطى 🌙`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
             };
 
@@ -2617,8 +2774,8 @@
 
                 let plan = null;
                 try {
-                    const savedPlan = localStorage.getItem('quranPlanV3');
-                    if (savedPlan) plan = JSON.parse(savedPlan);
+                    const saved = localStorage.getItem('quranPlanV3');
+                    if (saved) plan = JSON.parse(saved);
                 } catch (e) { console.error("Error parsing plan", e); }
 
                 if (!plan) {
@@ -2713,6 +2870,49 @@
                         v2ScheduleBody.appendChild(row);
                     }
                 }
+
+                // تحديث زر الإنجاز اليومي
+                const markDoneBtn = document.getElementById('v2MarkDoneBtn');
+                const markDoneContainer = document.getElementById('v2MarkDoneContainer');
+                if (markDoneContainer && plan) {
+                    markDoneContainer.classList.remove('hidden');
+                    const isTodayDone = completedDays.includes(hijriDay);
+                    if (isTodayDone) {
+                        markDoneBtn.style.background = '#e2e8f0';
+                        markDoneBtn.style.color = '#1e3a8a';
+                        document.getElementById('v2MarkDoneText').textContent = 'تم إنجاز ورد اليوم';
+                        document.getElementById('v2MarkDoneIcon').setAttribute('data-lucide', 'check-circle');
+                    } else {
+                        markDoneBtn.style.background = '#10b981';
+                        markDoneBtn.style.color = 'white';
+                        document.getElementById('v2MarkDoneText').textContent = 'أنهيت وردي لهذا اليوم';
+                        document.getElementById('v2MarkDoneIcon').setAttribute('data-lucide', 'circle');
+                    }
+                    if (window.lucide) lucide.createIcons();
+
+                    markDoneBtn.onclick = () => {
+                        const sPlan = localStorage.getItem('quranPlanV3');
+                        if (sPlan) {
+                            let p = JSON.parse(sPlan);
+                            const hDay = p.currentDay || 12;
+                            let newlyDone = false;
+                            if (p.completedDays.includes(hDay)) {
+                                p.completedDays = p.completedDays.filter(d => d !== hDay);
+                            } else {
+                                p.completedDays.push(hDay);
+                                triggerHaptic('success');
+                                newlyDone = true;
+                            }
+                            localStorage.setItem('quranPlanV3', JSON.stringify(p));
+
+                            if (newlyDone && (hDay % 2 !== 0)) {
+                                localStorage.setItem('showSpiritualOnReturn', 'true');
+                            }
+
+                            renderPerformanceStatsV2();
+                        }
+                    };
+                }
             }
 
             function alternateDailyPages() { return dailyPages || 20; }
@@ -2792,71 +2992,6 @@
                     renderIndex(activeTab, query);
                 }
             });
-
-            function renderIndex(type, query = '') {
-                indexList.innerHTML = '';
-
-                if (type === 'suras') {
-                    const filtered = SURA_DATA.filter(s => s.name.includes(query));
-                    filtered.forEach(sura => {
-                        const item = document.createElement('div');
-                        item.className = 'index-item';
-                        item.onclick = () => {
-                            goToPage(sura.page);
-                            toggleSearchPanel();
-                        };
-                        item.innerHTML = `
-                            <div class="sura-info">
-                                <span class="sura-name-list">سورة ${sura.name}</span>
-                                <div class="sura-details">${sura.loc} · ${sura.verses} آية</div>
-                            </div>
-                            <div class="page-badge">ص ${sura.page}</div>
-                            <div class="sura-number-badge">${sura.id}</div>
-                        `;
-                        indexList.appendChild(item);
-                    });
-                }
-                else if (type === 'verses') {
-                    if (query.length < 3) {
-                        indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">اكتب 3 أحرف على الأقل للبحث في الآيات...</div>';
-                        return;
-                    }
-
-                    const filtered = tafseerData.filter(v => v.aya_text_emlaey.includes(query)).slice(0, 50);
-                    if (filtered.length === 0) {
-                        indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">لم يتم العثور على نتائج</div>';
-                        return;
-                    }
-
-                    filtered.forEach(v => {
-                        const item = document.createElement('div');
-                        item.className = 'index-item';
-                        item.onclick = () => {
-                            goToPage(v.page);
-                            toggleSearchPanel();
-                            // Optionally highlight the verse after a small delay
-                            setTimeout(() => {
-                                const el = document.querySelector(`[data-verse="${v.aya_no}"]`);
-                                if (el) {
-                                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                    el.click();
-                                }
-                            }, 500);
-                        };
-                        item.innerHTML = `
-                            <div class="sura-info">
-                                <span class="sura-name-list">${v.sura_name_ar} - آية ${v.aya_no}</span>
-                                <div class="sura-details" style="font-size:0.75rem; color:var(--navy); line-height:1.4; margin-top:0.3rem;">${v.aya_text}</div>
-                            </div>
-                            <div class="page-badge">ص ${v.page}</div>
-                        `;
-                        indexList.appendChild(item);
-                    });
-                }
-                else if (type === 'pages') {
-                    indexList.innerHTML = '<div style="text-align:center; color:#64748b; padding:2rem;">أدخل رقم الصفحة (1-604) في الأعلى للذهاب إليها مباشرة</div>';
-                }
-            }
 
             function loadTheme() {
                 try {
@@ -2999,7 +3134,7 @@
                 if (trigger instanceof HTMLElement) targetBtn = trigger;
                 else if (trigger && trigger.currentTarget instanceof HTMLElement) targetBtn = trigger.currentTarget;
 
-                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}`;
+                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: { ${currentVerseText} }`;
                 navigator.clipboard.writeText(fullText).then(() => {
                     showNotification('تم النسخ', targetBtn);
                 });
@@ -3012,14 +3147,14 @@
             }
 
             function shareWhatsApp() {
-                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}`;
+                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: { ${currentVerseText} }`;
                 const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
                 window.open(whatsappUrl, '_blank');
                 showNotification('تم المشاركة', shareBtn);
             }
 
             function shareWhatsAppWithTafseer() {
-                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: ${currentVerseText}\n\nالتفسير: ${currentTafseer}`;
+                const fullText = `${currentSuraName} - الآية ${currentVerseNumber}: { ${currentVerseText} }\n\nالتفسير: ${currentTafseer}`;
                 const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
                 window.open(whatsappUrl, '_blank');
                 showNotification('تم المشاركة', shareWhatsAppBtn);
@@ -3074,20 +3209,58 @@
                 return div.innerHTML;
             }
 
-            /** إزالة رموز الوقف (عرض عربي U+FB00–FDFF) واختصارات الوقف في نهاية الآية (سم، سح، ضج...) */
+            /** إزالة رموز الوقف واختصارات الوقف في نهاية الآية (سم، سح، ضج، قلي، صلي...) */
             function cleanAyaText(text) {
                 if (!text || typeof text !== 'string') return '';
-                var out = '';
-                for (var i = 0; i < text.length; i++) {
-                    var code = text.charCodeAt(i);
+
+                // 1. إزالة رموز اليونيكود الخاصة بالوقف والتنسيق (الرموز الصغيرة فوق الكلمات)
+                // النطاق 06D6-06ED يشمل معظم علامات الوقف والضبط
+                let out = text.replace(/[\u06D6-\u06ED\u08D4-\u08ED\u06DE\u0773\u0774\u06DD]/g, '');
+
+                // 2. إزالة رموز العرض العربي الخاص (Presentation Forms)
+                let cleaned = '';
+                for (var i = 0; i < out.length; i++) {
+                    var code = out.charCodeAt(i);
                     if (code >= 0xFB00 && code <= 0xFDFF) continue;
-                    if (code === 0x06DE || code === 0x0773 || code === 0x0774 || code === 0x06DD) continue;
-                    out += text.charAt(i);
+                    cleaned += out.charAt(i);
                 }
-                out = out.trim().replace(/\s+/g, ' ');
-                out = out.replace(/\s*س\s*م\s*$/g, '').replace(/\s*س\s*ح\s*$/g, '').replace(/\s*ض\s*ج\s*$/g, '');
-                out = out.replace(/\s*(?:سم|سح|ضج|قلي|صل)\s*$/g, '');
-                return out.trim();
+
+                // 3. تنظيف المسافات الزائدة
+                cleaned = cleaned.trim().replace(/\s+/g, ' ');
+
+                // 4. إزالة الكلمات الرمزية المضافة في نهاية الآيات
+                const symbols = ['سم', 'سح', 'ضج', 'قلي', 'صلي', 'صل', 'ج', 'م', 'لا', 'ق'];
+
+                // تنظيف إضافي للقضاء على المسافات داخل الرموز (مثل س م -> سم)
+                symbols.forEach(s => {
+                    const spacedSymbol = s.split('').join(' ');
+                    const regSpaced = new RegExp('\\s*' + spacedSymbol + '\\s*$', 'g');
+                    cleaned = cleaned.replace(regSpaced, '').trim();
+                });
+
+                let prevLength;
+                do {
+                    prevLength = cleaned.length;
+                    symbols.forEach(s => {
+                        // نبحث عن الرمز في نهاية النص بحيث يكون مسبوقاً بمسافة أو علامة ترقيم
+                        const reg = new RegExp('([\\s\\(\\)\\[\\]])' + s + '$', 'g');
+                        cleaned = cleaned.replace(reg, '').trim();
+                    });
+                } while (cleaned.length !== prevLength);
+
+                return cleaned.trim();
+            }
+
+            /** توحيد النص العربي للبحث - إزالة الحركات وتبسيط الأحرف */
+            function normalizeArabic(text) {
+                if (!text) return '';
+                return text
+                    .replace(/[\u0640\u064B-\u0652\u0653-\u065F\u0670\u06D6-\u06ED\u08D4-\u08ED\u06DD\u06DE]/g, '') // إزالة التشكيل وعلامات الوقف القرآنية
+                    .replace(/\u0671/g, 'ا')                      // ٱ (ألف الوصل) -> ا
+                    .replace(/[أإآ]/g, 'ا')                       // توحيد الألف
+                    .replace(/ى/g, 'ي')                            // توحيد الياء والألف المقصورة
+                    .replace(/ة/g, 'ه')                            // توحيد التاء المربوطة والهاء
+                    .trim();
             }
 
             function highlightAllah(text) {
@@ -3258,8 +3431,8 @@
             }
 
             function onSwipe(deltaX) {
-                if (deltaX > SWIPE_THRESHOLD) goPrev();
-                else if (deltaX < -SWIPE_THRESHOLD) goNext();
+                if (deltaX > SWIPE_THRESHOLD) goNext();
+                else if (deltaX < -SWIPE_THRESHOLD) goPrev();
             }
 
             pageView.addEventListener('touchstart', function (e) {
@@ -3362,7 +3535,7 @@
                     // أزرار نافذة التفسير
                     if (copyVerseBtn) copyVerseBtn.addEventListener('click', copyVerse);
                     if (copyWithTafseerBtn) copyWithTafseerBtn.addEventListener('click', function () {
-                        const fullText = `${currentSuraName} (${currentVerseNumber}): ${currentVerseText}\n\nالتفسير: ${currentTafseer}`;
+                        const fullText = `${currentSuraName} (${currentVerseNumber}): { ${currentVerseText} }\n\nالتفسير: ${currentTafseer}`;
                         navigator.clipboard.writeText(fullText).then(() => {
                             showNotification('تم النسخ', copyWithTafseerBtn);
                         });

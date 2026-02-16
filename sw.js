@@ -1,7 +1,7 @@
 // Service Worker لتطبيق القرآن الكريم
-const CACHE_NAME = 'quran-app-v1';
-const STATIC_CACHE = 'quran-static-v1';
-const DYNAMIC_CACHE = 'quran-dynamic-v1';
+const CACHE_NAME = 'quran-app-v2';
+const STATIC_CACHE = 'quran-static-v2';
+const DYNAMIC_CACHE = 'quran-dynamic-v2';
 
 // الملفات الأساسية التي يجب تخزينها دائماً
 const STATIC_ASSETS = [
